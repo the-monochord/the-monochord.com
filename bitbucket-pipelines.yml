@@ -1,0 +1,26 @@
+image: node:10
+
+pipelines:
+  branches:
+    master:
+      - step:
+          script:
+            - yes | apt-get update
+            - yes | apt-get install python-dev python-pip
+            - pip install awscli
+
+            - npm ci
+            - npm run test
+            - npm run build
+            - npm run pack-resources-for-ec2
+
+            - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+            - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+            - export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION
+
+            - aws s3 mv the-monochord.zip s3://static.the-monochord.com
+            - aws s3 cp static-cdn s3://static.the-monochord.com --recursive
+
+            - aws cloudfront create-invalidation --distribution-id E3EK44RFBMKVDR --paths /css/monochord.css /js/monochord.js
+
+            - aws deploy create-deployment --application-name the-monochord --deployment-group-name the-monochord --deployment-config-name CodeDeployDefault.OneAtATime --s3-location bucket=static.the-monochord.com,bundleType=zip,key=the-monochord.zip --file-exists-behavior OVERWRITE --ignore-application-stop-failures

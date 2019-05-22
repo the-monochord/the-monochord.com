@@ -1,0 +1,14 @@
+node_modules/**/*
+sessions/**/*
+static-cdn/**/*
+src/**/*
+npm-debug.log*
+*.zip
+bitbucket-pipelines.yml
+LICENSE
+README.md
+package-lock.json
+webpack.config.babel.js
+.DS_Store
+.env
+security/**/*

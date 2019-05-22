@@ -1,0 +1,28 @@
+@import '../../reset.scss';
+
+.App {
+  min-height: 100%;
+  user-select: none;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+:global(.theme-light) {
+  @import '../../palettes/light.scss';
+
+  &.App {
+    background: $background;
+    color: $color2;
+  }
+}
+
+:global(.theme-dark) {
+  @import '../../palettes/dark.scss';
+
+  &.App {
+    background: $background;
+    color: $color2;
+  }
+}

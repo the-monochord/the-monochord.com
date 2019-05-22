@@ -1,0 +1,17 @@
+:global {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  body {
+    font-family: sans-serif;
+    font-size: 16px;
+  }
+
+  #app {
+    height: 100%;
+  }
+}
