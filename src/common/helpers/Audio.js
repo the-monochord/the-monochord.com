@@ -6,24 +6,20 @@ import { roundToNDecimals } from './number'
 
 const instruments = {}
 
-const setInstrument = (name, instrument) => {
-  instruments[name] = instrument
-}
-
-const setSequence = (Tone, { sequence, instrument, repetition = 1 }) => {
+const setSequence = (Transport, { sequence, instrument, repetition = 1 }) => {
   const notes = repetition > 1 ? reduce(concat, [], repeat(sequence, repetition)) : sequence
 
   reduce((counter, note) => {
     if (Array.isArray(note)) {
       if (!isNil(note[0])) {
-        Tone.Transport.schedule(
+        Transport.schedule(
           time => instruments[instrument].triggerAttackRelease(note[0], `${Math.round(16 / note[1])}n`, time),
           `0:0:${counter * 2}`
         )
       }
     } else {
       if (!isNil(note)) {
-        Tone.Transport.schedule(
+        Transport.schedule(
           time => instruments[instrument].triggerAttackRelease(note, '16n', time),
           `0:0:${counter * 2}`
         )
@@ -33,61 +29,57 @@ const setSequence = (Tone, { sequence, instrument, repetition = 1 }) => {
   }, 0)(notes)
 }
 
-const scheduleSong = (Tone, Transport, loop = false) => {
-  setInstrument('guitar1', new Tone.Synth().chain(new Tone.Panner(-0.4), new Tone.Gain(0.5), Tone.Master))
-  setInstrument('guitar2', new Tone.Synth().chain(new Tone.Panner(-0.1), new Tone.Gain(0.5), Tone.Master))
-  setInstrument('guitar3', new Tone.Synth().chain(new Tone.Panner(0.1), new Tone.Gain(0.5), Tone.Master))
-  setInstrument('guitar4', new Tone.Synth().chain(new Tone.Panner(0.4), new Tone.Gain(0.5), Tone.Master))
+const loadInstruments = Tone => {
+  instruments.guitar1 = new Tone.Synth().chain(new Tone.Panner(-0.4), new Tone.Gain(0.5), Tone.Master)
+  instruments.guitar2 = new Tone.Synth().chain(new Tone.Panner(-0.1), new Tone.Gain(0.5), Tone.Master)
+  instruments.guitar3 = new Tone.Synth().chain(new Tone.Panner(0.1), new Tone.Gain(0.5), Tone.Master)
+  instruments.guitar4 = new Tone.Synth().chain(new Tone.Panner(0.4), new Tone.Gain(0.5), Tone.Master)
 
-  setInstrument(
-    'bass1',
-    new Tone.Synth({ oscillator: { type: 'square' } }).chain(
-      new Tone.Filter(700, 'lowpass'),
-      new Tone.Panner(0.7),
-      new Tone.Gain(0.8),
-      Tone.Master
-    )
+  instruments.bass1 = new Tone.Synth({ oscillator: { type: 'square' } }).chain(
+    new Tone.Filter(700, 'lowpass'),
+    new Tone.Panner(0.7),
+    new Tone.Gain(0.8),
+    Tone.Master
   )
 
-  setInstrument(
-    'bass2',
-    new Tone.Synth({ oscillator: { type: 'square' } }).chain(
-      new Tone.Filter(700, 'lowpass'),
-      new Tone.Panner(-0.7),
-      new Tone.Gain(0.8),
-      Tone.Master
-    )
+  instruments.bass2 = new Tone.Synth({ oscillator: { type: 'square' } }).chain(
+    new Tone.Filter(700, 'lowpass'),
+    new Tone.Panner(-0.7),
+    new Tone.Gain(0.8),
+    Tone.Master
   )
+}
 
+const scheduleSong = (Transport, loop = false) => {
   Transport.loop = loop
 
   const sequence = ['D5', 'G4', null, ['B4', 2], 'F#4', 'B3', null, 'E4', 'A4', 'F#4', null]
 
-  setSequence(Tone, {
+  setSequence(Transport, {
     instrument: 'guitar1',
     sequence: sequence,
     repetition: 2
   })
 
-  setSequence(Tone, {
+  setSequence(Transport, {
     instrument: 'guitar2',
     sequence: rotateRight(2, sequence),
     repetition: 2
   })
 
-  setSequence(Tone, {
+  setSequence(Transport, {
     instrument: 'guitar3',
     sequence: rotateLeft(3, sequence),
     repetition: 2
   })
 
-  setSequence(Tone, {
+  setSequence(Transport, {
     instrument: 'guitar4',
     sequence: rotateRight(5, sequence),
     repetition: 2
   })
 
-  setSequence(Tone, {
+  setSequence(Transport, {
     instrument: 'bass1',
     sequence: [
       'A1',
@@ -114,7 +106,7 @@ const scheduleSong = (Tone, Transport, loop = false) => {
     ]
   })
 
-  setSequence(Tone, {
+  setSequence(Transport, {
     instrument: 'bass2',
     sequence: [
       'A1',
@@ -160,12 +152,14 @@ class Audio extends EventEmitter {
     const Tone = module.default
     this._.Tone = Tone
     this.emit('ready')
+
+    this.setTempo()
+    loadInstruments(this._.Tone)
+    scheduleSong(Tone.Transport, true)
   }
 
   play() {
     const { Tone } = this._
-    this.setTempo()
-    scheduleSong(Tone, Tone.Transport, true)
     Tone.Transport.start()
   }
 
@@ -184,15 +178,22 @@ class Audio extends EventEmitter {
   renderToWav(filename) {
     const { Tone } = this._
 
-    this.setTempo()
     const durationInSeconds = roundToNDecimals(3, Tone.Transport.loopEnd)
 
     Tone.Offline(OfflineTransport => {
+      // Tone now points to the offline context
       this.setTempo(OfflineTransport)
-      scheduleSong(Tone, OfflineTransport, false)
+      loadInstruments(this._.Tone)
+      scheduleSong(OfflineTransport, false)
+
       OfflineTransport.start()
     }, durationInSeconds).then(buffer => {
       AudioFileManager(buffer.get()).save(filename)
+
+      // Tone is now back to the normal context, need to reset settings
+      this.setTempo()
+      loadInstruments(this._.Tone)
+      scheduleSong(Tone.Transport, true)
     })
   }
 }
