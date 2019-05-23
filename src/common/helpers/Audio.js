@@ -9,7 +9,7 @@ const instruments = {}
 const setSequence = (Transport, { sequence, instrument, repetition = 1 }) => {
   const notes = repetition > 1 ? reduce(concat, [], repeat(sequence, repetition)) : sequence
 
-  reduce((counter, { pitch, duration, startAt = `0:0:${counter * 2}` }) => {
+  reduce((counter, { pitch, duration = 1, startAt = `0:0:${counter * 2}` }) => {
     if (!isNil(pitch)) {
       Transport.schedule(
         time => instruments[instrument].triggerAttackRelease(pitch, `${Math.round(16 / duration)}n`, time),
@@ -46,17 +46,17 @@ const scheduleSong = (Transport, loop = false) => {
   Transport.loop = loop
 
   const sequence = [
-    { pitch: 'D5', duration: 1 },
-    { pitch: 'G4', duration: 1 },
-    { pitch: null, duration: 1 },
+    { pitch: 'D5' },
+    { pitch: 'G4' },
+    { pitch: null },
     { pitch: 'B4', duration: 2 },
-    { pitch: 'F#4', duration: 1 },
-    { pitch: 'B3', duration: 1 },
-    { pitch: null, duration: 1 },
-    { pitch: 'E4', duration: 1 },
-    { pitch: 'A4', duration: 1 },
-    { pitch: 'F#4', duration: 1 },
-    { pitch: null, duration: 1 }
+    { pitch: 'F#4' },
+    { pitch: 'B3' },
+    { pitch: null },
+    { pitch: 'E4' },
+    { pitch: 'A4' },
+    { pitch: 'F#4' },
+    { pitch: null }
   ]
 
   setSequence(Transport, {
@@ -86,52 +86,52 @@ const scheduleSong = (Transport, loop = false) => {
   setSequence(Transport, {
     instrument: 'bass1',
     sequence: [
-      { pitch: 'A1', duration: 1 },
-      { pitch: null, duration: 1 },
-      { pitch: 'A2', duration: 1 },
-      { pitch: null, duration: 1 },
-      { pitch: 'A1', duration: 1 },
-      { pitch: 'A2', duration: 1 },
+      { pitch: 'A1' },
+      { pitch: null },
+      { pitch: 'A2' },
+      { pitch: null },
+      { pitch: 'A1' },
+      { pitch: 'A2' },
       { pitch: null, duration: 2 },
-      { pitch: 'C2', duration: 1 },
+      { pitch: 'C2' },
       { pitch: null, duration: 2 },
-      { pitch: 'C3', duration: 1 },
-      { pitch: 'C2', duration: 1 },
-      { pitch: null, duration: 1 },
-      { pitch: 'C3', duration: 1 },
-      { pitch: null, duration: 1 },
-      { pitch: 'E1', duration: 1 },
-      { pitch: 'E2', duration: 1 },
+      { pitch: 'C3' },
+      { pitch: 'C2' },
+      { pitch: null },
+      { pitch: 'C3' },
+      { pitch: null },
+      { pitch: 'E1' },
+      { pitch: 'E2' },
       { pitch: null, duration: 2 },
-      { pitch: 'E1', duration: 1 },
-      { pitch: null, duration: 1 },
-      { pitch: 'E2', duration: 1 },
-      { pitch: null, duration: 1 }
+      { pitch: 'E1' },
+      { pitch: null },
+      { pitch: 'E2' },
+      { pitch: null }
     ]
   })
 
   setSequence(Transport, {
     instrument: 'bass2',
     sequence: [
-      { pitch: 'A1', duration: 1 },
+      { pitch: 'A1' },
       { pitch: null, duration: 2 },
-      { pitch: 'A2', duration: 1 },
-      { pitch: 'A1', duration: 1 },
-      { pitch: null, duration: 1 },
-      { pitch: 'A2', duration: 1 },
-      { pitch: null, duration: 1 },
-      { pitch: 'C2', duration: 1 },
-      { pitch: 'C3', duration: 1 },
+      { pitch: 'A2' },
+      { pitch: 'A1' },
+      { pitch: null },
+      { pitch: 'A2' },
+      { pitch: null },
+      { pitch: 'C2' },
+      { pitch: 'C3' },
       { pitch: null, duration: 2 },
-      { pitch: 'C2', duration: 1 },
+      { pitch: 'C2' },
       { pitch: null, duration: 2 },
-      { pitch: 'C3', duration: 1 },
-      { pitch: 'E1', duration: 1 },
-      { pitch: null, duration: 1 },
-      { pitch: 'E2', duration: 1 },
-      { pitch: null, duration: 1 },
-      { pitch: 'E1', duration: 1 },
-      { pitch: 'E2', duration: 1 },
+      { pitch: 'C3' },
+      { pitch: 'E1' },
+      { pitch: null },
+      { pitch: 'E2' },
+      { pitch: null },
+      { pitch: 'E1' },
+      { pitch: 'E2' },
       { pitch: null, duration: 2 }
     ]
   })
