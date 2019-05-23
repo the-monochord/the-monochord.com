@@ -2,6 +2,7 @@ import EventEmitter from 'eventemitter3'
 import { isNil, repeat, reduce, concat } from 'ramda'
 import AudioFileManager from 'audio'
 import { rotateLeft, rotateRight } from './ramda'
+import { roundToNDecimals } from './number'
 
 const instruments = {}
 
@@ -32,7 +33,7 @@ const setSequence = (Tone, { sequence, instrument, repetition = 1 }) => {
   }, 0)(notes)
 }
 
-const scheduleSong = (Tone, Transport) => {
+const scheduleSong = (Tone, Transport, loop = false) => {
   setInstrument('guitar1', new Tone.Synth().chain(new Tone.Panner(-0.4), new Tone.Gain(0.5), Tone.Master))
   setInstrument('guitar2', new Tone.Synth().chain(new Tone.Panner(-0.1), new Tone.Gain(0.5), Tone.Master))
   setInstrument('guitar3', new Tone.Synth().chain(new Tone.Panner(0.1), new Tone.Gain(0.5), Tone.Master))
@@ -58,10 +59,7 @@ const scheduleSong = (Tone, Transport) => {
     )
   )
 
-  Transport.loopEnd = '3m'
-  Transport.loop = true
-  Transport.bpm.value = 192
-  Transport.timeSignature = [3, 2]
+  Transport.loop = loop
 
   const sequence = ['D5', 'G4', null, ['B4', 2], 'F#4', 'B3', null, 'E4', 'A4', 'F#4', null]
 
@@ -147,7 +145,10 @@ class Audio extends EventEmitter {
   constructor() {
     super()
     this._ = {
-      Tone: null
+      Tone: null,
+      bpm: 192,
+      timeSignature: [3, 2],
+      loopEnd: '2m'
     }
   }
   isSupported() {
@@ -159,13 +160,12 @@ class Audio extends EventEmitter {
     const Tone = module.default
     this._.Tone = Tone
     this.emit('ready')
-
-    scheduleSong(Tone, Tone.Transport)
-    // this.renderToWav(10)
   }
 
   play() {
     const { Tone } = this._
+    this.setTempo()
+    scheduleSong(Tone, Tone.Transport, true)
     Tone.Transport.start()
   }
 
@@ -174,12 +174,24 @@ class Audio extends EventEmitter {
     Tone.Transport.pause()
   }
 
-  renderToWav(recordTimeInSeconds, filename = `monochord-demo.wav`) {
+  setTempo(Transport = this._.Tone.Transport) {
+    const { bpm, timeSignature, loopEnd } = this._
+    Transport.bpm.value = bpm
+    Transport.timeSignature = timeSignature
+    Transport.loopEnd = loopEnd
+  }
+
+  renderToWav(filename) {
     const { Tone } = this._
-    Tone.Offline(Transport => {
-      scheduleSong(Tone, Transport)
-      Transport.start()
-    }, recordTimeInSeconds).then(buffer => {
+
+    this.setTempo()
+    const durationInSeconds = roundToNDecimals(3, Tone.Transport.loopEnd)
+
+    Tone.Offline(OfflineTransport => {
+      this.setTempo(OfflineTransport)
+      scheduleSong(Tone, OfflineTransport, false)
+      OfflineTransport.start()
+    }, durationInSeconds).then(buffer => {
       AudioFileManager(buffer.get()).save(filename)
     })
   }

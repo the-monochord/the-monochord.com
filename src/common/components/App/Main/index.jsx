@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { withTranslation } from 'react-i18next'
 import { withRouter } from 'react-router-dom'
 import { compose, isNil, find, propEq } from 'ramda'
 import { Unless } from 'react-if'
 import shortid from 'shortid'
+import moment from 'moment'
 import isomorphicConnect from '../../../helpers/isomorphicConnect'
 import { actions as draftActions } from '../../../reducers/drafts'
 import { actions as stateActions } from '../../../reducers/state'
 import Button from '../Button'
+import AudioContext from '../../../contexts/AudioContext'
 import Project from './Project'
 
 const enhance = compose(
@@ -44,6 +46,8 @@ const Main = props => {
     isAudioEnabled
   } = props
 
+  const audio = useContext(AudioContext)
+
   return (
     <div className={'Main'}>
       {t('Main app')}
@@ -79,6 +83,13 @@ const Main = props => {
           } else {
             playDraft()
           }
+        }}
+      />
+      <Button
+        disabled={!isAudioEnabled}
+        label={'save as wav'}
+        onClick={() => {
+          audio.renderToWav(`${activeDraft.title || 'monochord-demo'}-${moment().format('YYYY-M-D-H-m-s')}.wav`)
         }}
       />
       <hr />

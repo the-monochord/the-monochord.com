@@ -18,7 +18,10 @@ import {
 
 import { stringifyIfNeeded } from './string'
 
-const roundTo2Decimals = memoizeWith(toString, number => Math.round(number * 100) / 100)
+const roundToNDecimals = memoizeWith(
+  toString,
+  curry((decimals, number) => Math.round(number * 10 ** decimals) / 10 ** decimals)
+)
 
 const minAll = reduce(min, Infinity)
 
@@ -37,4 +40,4 @@ const hasFraction = compose(
   stringifyIfNeeded
 )
 
-export { roundTo2Decimals, minAll, maxAll, isOdd, clampToPositiveInt, toFixed, hasFraction }
+export { roundToNDecimals, minAll, maxAll, isOdd, clampToPositiveInt, toFixed, hasFraction }
