@@ -10,21 +10,13 @@ const setSequence = (Transport, { sequence, instrument, repetition = 1 }) => {
   const notes = repetition > 1 ? reduce(concat, [], repeat(sequence, repetition)) : sequence
 
   reduce((counter, note) => {
-    if (Array.isArray(note)) {
-      if (!isNil(note[0])) {
-        Transport.schedule(
-          time => instruments[instrument].triggerAttackRelease(note[0], `${Math.round(16 / note[1])}n`, time),
-          `0:0:${counter * 2}`
-        )
-      }
-    } else {
-      if (!isNil(note)) {
-        Transport.schedule(
-          time => instruments[instrument].triggerAttackRelease(note, '16n', time),
-          `0:0:${counter * 2}`
-        )
-      }
+    if (!isNil(note[0])) {
+      Transport.schedule(
+        time => instruments[instrument].triggerAttackRelease(note[0], `${Math.round(16 / note[1])}n`, time),
+        `0:0:${counter * 2}`
+      )
     }
+
     return counter + (Array.isArray(note) ? note[1] : 1)
   }, 0)(notes)
 }
@@ -53,7 +45,19 @@ const loadInstruments = Tone => {
 const scheduleSong = (Transport, loop = false) => {
   Transport.loop = loop
 
-  const sequence = ['D5', 'G4', null, ['B4', 2], 'F#4', 'B3', null, 'E4', 'A4', 'F#4', null]
+  const sequence = [
+    ['D5', 1],
+    ['G4', 1],
+    [null, 1],
+    ['B4', 2],
+    ['F#4', 1],
+    ['B3', 1],
+    [null, 1],
+    ['E4', 1],
+    ['A4', 1],
+    ['F#4', 1],
+    [null, 1]
+  ]
 
   setSequence(Transport, {
     instrument: 'guitar1',
@@ -82,52 +86,52 @@ const scheduleSong = (Transport, loop = false) => {
   setSequence(Transport, {
     instrument: 'bass1',
     sequence: [
-      'A1',
-      null,
-      'A2',
-      null,
-      'A1',
-      'A2',
+      ['A1', 1],
+      [null, 1],
+      ['A2', 1],
+      [null, 1],
+      ['A1', 1],
+      ['A2', 1],
       [null, 2],
-      'C2',
+      ['C2', 1],
       [null, 2],
-      'C3',
-      'C2',
-      null,
-      'C3',
-      null,
-      'E1',
-      'E2',
+      ['C3', 1],
+      ['C2', 1],
+      [null, 1],
+      ['C3', 1],
+      [null, 1],
+      ['E1', 1],
+      ['E2', 1],
       [null, 2],
-      'E1',
-      null,
-      'E2',
-      null
+      ['E1', 1],
+      [null, 1],
+      ['E2', 1],
+      [null, 1]
     ]
   })
 
   setSequence(Transport, {
     instrument: 'bass2',
     sequence: [
-      'A1',
+      ['A1', 1],
       [null, 2],
-      'A2',
-      'A1',
-      null,
-      'A2',
-      null,
-      'C2',
-      'C3',
+      ['A2', 1],
+      ['A1', 1],
+      [null, 1],
+      ['A2', 1],
+      [null, 1],
+      ['C2', 1],
+      ['C3', 1],
       [null, 2],
-      'C2',
+      ['C2', 1],
       [null, 2],
-      'C3',
-      'E1',
-      null,
-      'E2',
-      null,
-      'E1',
-      'E2',
+      ['C3', 1],
+      ['E1', 1],
+      [null, 1],
+      ['E2', 1],
+      [null, 1],
+      ['E1', 1],
+      ['E2', 1],
       [null, 2]
     ]
   })
