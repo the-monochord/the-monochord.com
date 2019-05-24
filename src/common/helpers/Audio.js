@@ -1,24 +1,29 @@
 import EventEmitter from 'eventemitter3'
-import { isNil, repeat, reduce, concat } from 'ramda'
+import { reduce, append, forEach, has } from 'ramda'
 import AudioFileManager from 'audio'
-import { rotateLeft, rotateRight } from './ramda'
+// import { rotateLeft, rotateRight } from './ramda'
 import { roundToNDecimals } from './number'
 
 const instruments = {}
+const sequences = {}
 
-const setSequence = (Transport, { sequence, instrument, repetition = 1 }) => {
-  const notes = repetition > 1 ? reduce(concat, [], repeat(sequence, repetition)) : sequence
-
-  reduce((counter, { pitch, duration = 1, startAt = `0:0:${counter * 2}` }) => {
-    if (!isNil(pitch)) {
-      Transport.schedule(
-        time => instruments[instrument].triggerAttackRelease(pitch, `${Math.round(16 / duration)}n`, time),
-        startAt
-      )
+const setSequence = (name, Transport, { sequence, instrument }) => {
+  if (has(name, sequences)) {
+    forEach(event => {
+      Transport.clear(event)
+    }, sequences[name].events)
+  } else {
+    sequences[name] = {
+      events: []
     }
+  }
 
-    return counter + duration
-  }, 0)(notes)
+  sequences[name].events = reduce((events, { pitch, duration = 1, startAt }) => {
+    const event = Transport.schedule(time => {
+      instruments[instrument].triggerAttackRelease(pitch, `${Math.round(16 / duration)}n`, time)
+    }, startAt)
+    return append(event, events)
+  }, [])(sequence)
 }
 
 const loadInstruments = Tone => {
@@ -46,93 +51,71 @@ const scheduleSong = (Transport, loop = false) => {
   Transport.loop = loop
 
   const sequence = [
-    { pitch: 'D5' },
-    { pitch: 'G4' },
-    { pitch: null },
-    { pitch: 'B4', duration: 2 },
-    { pitch: 'F#4' },
-    { pitch: 'B3' },
-    { pitch: null },
-    { pitch: 'E4' },
-    { pitch: 'A4' },
-    { pitch: 'F#4' },
-    { pitch: null }
+    { pitch: 'D5', startAt: `0:0:0` },
+    { pitch: 'G4', startAt: `0:0:2` },
+    { pitch: 'B4', duration: 2, startAt: `0:0:6` },
+    { pitch: 'F#4', startAt: `0:0:12` },
+    { pitch: 'B3', startAt: `0:0:14` },
+    { pitch: 'E4', startAt: `0:0:18` },
+    { pitch: 'A4', startAt: `0:0:20` },
+    { pitch: 'F#4', startAt: `0:0:22` }
   ]
 
-  setSequence(Transport, {
+  setSequence('guitar1', Transport, {
     instrument: 'guitar1',
-    sequence: sequence,
-    repetition: 2
+    sequence: sequence
   })
 
-  setSequence(Transport, {
+  /*
+  setSequence('guitar2', Transport, {
     instrument: 'guitar2',
-    sequence: rotateRight(2, sequence),
-    repetition: 2
+    sequence: rotateRight(2, sequence)
   })
 
-  setSequence(Transport, {
+  setSequence('guitar3', Transport, {
     instrument: 'guitar3',
-    sequence: rotateLeft(3, sequence),
-    repetition: 2
+    sequence: rotateLeft(3, sequence)
   })
 
-  setSequence(Transport, {
+  setSequence('guitar4', Transport, {
     instrument: 'guitar4',
-    sequence: rotateRight(5, sequence),
-    repetition: 2
+    sequence: rotateRight(5, sequence)
   })
+  */
 
-  setSequence(Transport, {
+  setSequence('bass1', Transport, {
     instrument: 'bass1',
     sequence: [
-      { pitch: 'A1' },
-      { pitch: null },
-      { pitch: 'A2' },
-      { pitch: null },
-      { pitch: 'A1' },
-      { pitch: 'A2' },
-      { pitch: null, duration: 2 },
-      { pitch: 'C2' },
-      { pitch: null, duration: 2 },
-      { pitch: 'C3' },
-      { pitch: 'C2' },
-      { pitch: null },
-      { pitch: 'C3' },
-      { pitch: null },
-      { pitch: 'E1' },
-      { pitch: 'E2' },
-      { pitch: null, duration: 2 },
-      { pitch: 'E1' },
-      { pitch: null },
-      { pitch: 'E2' },
-      { pitch: null }
+      { pitch: 'A1', startAt: `0:0:0` },
+      { pitch: 'A2', startAt: `0:0:4` },
+      { pitch: 'A1', startAt: `0:0:8` },
+      { pitch: 'A2', startAt: `0:0:10` },
+      { pitch: 'C2', startAt: `0:0:16` },
+      { pitch: 'C3', startAt: `0:0:22` },
+      { pitch: 'C2', startAt: `0:0:24` },
+      { pitch: 'C3', startAt: `0:0:28` },
+      { pitch: 'E1', startAt: `0:0:32` },
+      { pitch: 'E2', startAt: `0:0:34` },
+      { pitch: 'E1', startAt: `0:0:40` },
+      { pitch: 'E2', startAt: `0:0:44` }
     ]
   })
 
-  setSequence(Transport, {
+  setSequence('bass2', Transport, {
     instrument: 'bass2',
     sequence: [
-      { pitch: 'A1' },
-      { pitch: null, duration: 2 },
-      { pitch: 'A2' },
-      { pitch: 'A1' },
-      { pitch: null },
-      { pitch: 'A2' },
-      { pitch: null },
-      { pitch: 'C2' },
-      { pitch: 'C3' },
-      { pitch: null, duration: 2 },
-      { pitch: 'C2' },
-      { pitch: null, duration: 2 },
-      { pitch: 'C3' },
-      { pitch: 'E1' },
-      { pitch: null },
-      { pitch: 'E2' },
-      { pitch: null },
-      { pitch: 'E1' },
-      { pitch: 'E2' },
-      { pitch: null, duration: 2 }
+      { pitch: 'A1', startAt: `0:0:0` },
+      { pitch: 'A2', startAt: `0:0:6` },
+      { pitch: 'A1', startAt: `0:0:8` },
+      { pitch: 'A2', startAt: `0:0:12` },
+      { pitch: 'C2', startAt: `0:0:16` },
+      { pitch: 'C3', startAt: `0:0:18` },
+      { pitch: 'C2', startAt: `0:0:24` },
+      { pitch: 'C3', startAt: `0:0:30` },
+      { pitch: 'E1', startAt: `0:0:32` },
+      { pitch: 'E2', startAt: `0:0:36` },
+      { pitch: 'E1', startAt: `0:0:40` },
+      { pitch: 'E2', startAt: `0:0:42` }
     ]
   })
 }
