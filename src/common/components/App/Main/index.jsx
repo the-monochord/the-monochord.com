@@ -72,7 +72,7 @@ const Main = props => {
           </li>
         ))}
       </ul>
-      <Button onClick={() => createDraft({ trackId: shortid.generate(), channels: 2 })} label={'create new draft'} />
+      <Button onClick={() => createDraft({ trackId: shortid.generate(), name: '' })} label={'create new draft'} />
       <hr />
       <Button
         disabled={!isAudioEnabled}

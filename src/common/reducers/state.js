@@ -50,6 +50,11 @@ const { reducer, actions } = autodux({
         isPlaying: F
       })(state)
     },
+    stopDraft: (state, payload) => {
+      return evolve({
+        isPlaying: F
+      })(state)
+    },
     enableMidi: (state, payload) => {
       return evolve({
         isMidiEnabled: T

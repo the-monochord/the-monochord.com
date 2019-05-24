@@ -7,92 +7,14 @@ class Audio extends EventEmitter {
   constructor() {
     super()
 
-    const guitarSequence = [
-      { note: 'D5', dur: '16n', time: `0:0:0` },
-      { note: 'G4', dur: '16n', time: `0:0:2` },
-      { note: 'B4', dur: '8n', time: `0:0:6` },
-      { note: 'F#4', dur: '16n', time: `0:0:12` },
-      { note: 'B3', dur: '16n', time: `0:0:14` },
-      { note: 'E4', dur: '16n', time: `0:0:18` },
-      { note: 'A4', dur: '16n', time: `0:0:20` },
-      { note: 'F#4', dur: '16n', time: `0:0:22` }
-    ]
-
-    const bassSequence1 = [
-      { note: 'A1', dur: '16n', time: `0:0:0` },
-      { note: 'A2', dur: '16n', time: `0:0:4` },
-      { note: 'A1', dur: '16n', time: `0:0:8` },
-      { note: 'A2', dur: '16n', time: `0:0:10` },
-      { note: 'C2', dur: '16n', time: `0:0:16` },
-      { note: 'C3', dur: '16n', time: `0:0:22` },
-      { note: 'C2', dur: '16n', time: `0:0:24` },
-      { note: 'C3', dur: '16n', time: `0:0:28` },
-      { note: 'E1', dur: '16n', time: `0:0:32` },
-      { note: 'E2', dur: '16n', time: `0:0:34` },
-      { note: 'E1', dur: '16n', time: `0:0:40` },
-      { note: 'E2', dur: '16n', time: `0:0:44` }
-    ]
-
-    const bassSequence2 = [
-      { note: 'A1', dur: '16n', time: `0:0:0` },
-      { note: 'A2', dur: '16n', time: `0:0:6` },
-      { note: 'A1', dur: '16n', time: `0:0:8` },
-      { note: 'A2', dur: '16n', time: `0:0:12` },
-      { note: 'C2', dur: '16n', time: `0:0:16` },
-      { note: 'C3', dur: '16n', time: `0:0:18` },
-      { note: 'C2', dur: '16n', time: `0:0:24` },
-      { note: 'C3', dur: '16n', time: `0:0:30` },
-      { note: 'E1', dur: '16n', time: `0:0:32` },
-      { note: 'E2', dur: '16n', time: `0:0:36` },
-      { note: 'E1', dur: '16n', time: `0:0:40` },
-      { note: 'E2', dur: '16n', time: `0:0:42` }
-    ]
-
     this._ = {
       Tone: null,
       bpm: 192,
       timeSignature: [3, 2],
-      duration: '2m',
+      duration: '1m', // TODO: calculate this from sequences
       parts: {},
       instruments: {},
-      sequences: {
-        guitar1: {
-          instrument: 'guitar1',
-          events: guitarSequence,
-          props: { loop: 2, loopEnd: '1m' },
-          startTime: 0
-        },
-        guitar2: {
-          instrument: 'guitar2',
-          events: guitarSequence,
-          props: { loop: 2, loopEnd: '1m' },
-          startTime: [2, 12]
-        },
-        guitar3: {
-          instrument: 'guitar3',
-          events: guitarSequence,
-          props: { loop: 2, loopEnd: '1m' },
-          startTime: [-3, 12]
-        },
-        guitar4: {
-          instrument: 'guitar4',
-          events: guitarSequence,
-          props: { loop: 2, loopEnd: '1m' },
-          startTime: [5, 12]
-        },
-        bass1: {
-          instrument: 'bass1',
-          events: bassSequence1,
-          props: { loop: 1, loopEnd: '2m' },
-          startTime: 0
-        },
-        bass2: {
-          instrument: 'bass2',
-          events: bassSequence2,
-          props: { loop: 1, loopEnd: '2m' },
-          startTime: 0
-        }
-      }
+      sequences: []
     }
   }
   isSupported() {
@@ -107,7 +29,6 @@ class Audio extends EventEmitter {
 
     this.setTempo()
     this.loadInstruments()
-    this.scheduleSong(Tone.Transport, true)
   }
 
   play() {
@@ -118,6 +39,11 @@ class Audio extends EventEmitter {
   pause() {
     const { Tone } = this._
     Tone.Transport.pause()
+  }
+
+  stop() {
+    const { Tone } = this._
+    Tone.Transport.stop()
   }
 
   calculateOffset([offset, barSize]) {
@@ -156,8 +82,8 @@ class Audio extends EventEmitter {
     instruments.guitar3 = createGuitar({ pan: 0.1, gain: 0.5 })
     instruments.guitar4 = createGuitar({ pan: 0.4, gain: 0.5 })
 
-    instruments.bass1 = createBass({ pan: 0.7, gain: 0.8 })
-    instruments.bass2 = createBass({ pan: -0.7, gain: 0.8 })
+    instruments.bass1 = createBass({ pan: -0.7, gain: 0.8 })
+    instruments.bass2 = createBass({ pan: 0.7, gain: 0.8 })
   }
 
   setPart(name, instrument, events, props, startTime) {
@@ -172,7 +98,12 @@ class Audio extends EventEmitter {
     }, events)
 
     forEach(([key, value]) => {
-      part[key] = value
+      // TODO: this is a possible bug
+      if (key === 'loop' && value === 1) {
+        part.loop = false
+      } else {
+        part[key] = value
+      }
     }, toPairs(props))
 
     part.start(startTime)
@@ -189,7 +120,7 @@ class Audio extends EventEmitter {
       // Tone now points to the offline context
       this.setTempo(OfflineTransport)
       this.loadInstruments()
-      this.scheduleSong(OfflineTransport, false)
+      this.scheduleSong()
 
       OfflineTransport.start()
     }, durationInSeconds).then(buffer => {
@@ -198,15 +129,15 @@ class Audio extends EventEmitter {
       // Tone is now back to the normal context, need to reset settings
       this.setTempo()
       this.loadInstruments()
-      this.scheduleSong(Tone.Transport, true)
+      this.scheduleSong()
     })
   }
 
-  scheduleSong(Transport, loop = false) {
-    const { sequences } = this._
-    Transport.loop = loop
+  scheduleSong() {
+    const { sequences, Tone } = this._
+    Tone.loop = false
 
-    forEach(([name, { instrument, events, props, startTime }]) => {
+    forEach(({ name, instrument, events, props, startTime }) => {
       this.setPart(
         name,
         instrument,
@@ -214,7 +145,13 @@ class Audio extends EventEmitter {
         props,
         Array.isArray(startTime) ? this.calculateOffset(startTime) : startTime
       )
-    }, toPairs(sequences))
+    }, sequences)
+  }
+
+  setSequences(sequences) {
+    this._.sequences = sequences
+    this.setTempo()
+    this.scheduleSong()
   }
 }
 

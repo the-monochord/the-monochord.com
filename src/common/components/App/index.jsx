@@ -89,7 +89,7 @@ const App = props => {
       className={cn(s.App, `theme-${theme}`)}
       tabIndex={0}
       ref={AppRef}
-      onKeyPress={e => {
+      onKeyDown={e => {
         if (e.target === AppRef.current) {
           hotkeyPressed({
             key: e.key

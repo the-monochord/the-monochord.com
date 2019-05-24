@@ -11,19 +11,25 @@ const { reducer, actions } = autodux({
       return evolve({ projects: remove(projectIdx, 1) })(state)
     },
     createDraft: (state, payload) => {
-      const { trackId, channels } = payload
+      const { trackId, name } = payload
       return evolve({
         projects: compose(
           append(
             compose(
               evolve({
                 bars: append({
+                  // name: '',
                   trackId,
-                  notes: []
+                  notes: {
+                    // instrument: '',
+                    // events: [],
+                    // props: {},
+                    // startTime: 0
+                  }
                 }),
                 tracks: append({
                   id: trackId,
-                  channels
+                  name
                 })
               }),
               clone
@@ -43,14 +49,14 @@ const { reducer, actions } = autodux({
       })(state)
     },
     addTrack: (state, payload) => {
-      const { projectIdx, channels, trackId } = payload
+      const { projectIdx, name, trackId } = payload
       return evolve({
         projects: adjust(
           projectIdx,
           evolve({
             tracks: append({
               id: trackId,
-              channels
+              name
             })
           })
         )
@@ -80,8 +86,14 @@ const { reducer, actions } = autodux({
           projectIdx,
           evolve({
             bars: append({
+              // name: '',
               trackId,
-              notes: []
+              notes: {
+                // instrument: '',
+                // events: [],
+                // props: {},
+                // startTime: 0
+              }
             })
           })
         )

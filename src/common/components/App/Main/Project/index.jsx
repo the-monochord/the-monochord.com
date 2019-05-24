@@ -54,7 +54,7 @@ const Project = props => {
       ))}
       <br />
       <Button
-        onClick={() => addTrack({ projectIdx: activeDraftIndex, channels: 2, trackId: shortid.generate() })}
+        onClick={() => addTrack({ projectIdx: activeDraftIndex, name: '', trackId: shortid.generate() })}
         label={'add track'}
       />
     </div>

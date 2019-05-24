@@ -5,18 +5,33 @@ const hotkeyHandler = store => next => action => {
     return next(action)
   }
 
-  if (action.payload.key === ' ') {
-    const {
-      state: { isAudioEnabled, isPlaying }
-    } = store.getState()
+  switch (action.payload.key) {
+    case ' ':
+      {
+        const {
+          state: { isAudioEnabled, isPlaying }
+        } = store.getState()
 
-    if (isAudioEnabled) {
-      if (isPlaying) {
-        return next(stateActions.pauseDraft())
-      } else {
-        return next(stateActions.playDraft())
+        if (isAudioEnabled) {
+          if (isPlaying) {
+            return next(stateActions.pauseDraft())
+          } else {
+            return next(stateActions.playDraft())
+          }
+        }
       }
-    }
+      break
+    case 'Home':
+      {
+        const {
+          state: { isAudioEnabled }
+        } = store.getState()
+
+        if (isAudioEnabled) {
+          return next(stateActions.stopDraft())
+        }
+      }
+      break
   }
 
   return next({ type: 'noop' })
