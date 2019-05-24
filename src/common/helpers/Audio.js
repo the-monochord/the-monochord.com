@@ -18,9 +18,9 @@ const setSequence = (name, Transport, { sequence, instrument }) => {
     }
   }
 
-  sequences[name].events = reduce((events, { pitch, duration = 1, startAt }) => {
+  sequences[name].events = reduce((events, { note, dur = 1, startAt }) => {
     const event = Transport.schedule(time => {
-      instruments[instrument].triggerAttackRelease(pitch, `${Math.round(16 / duration)}n`, time)
+      instruments[instrument].triggerAttackRelease(note, `${Math.round(16 / dur)}n`, time)
     }, startAt)
     return append(event, events)
   }, [])(sequence)
@@ -47,75 +47,90 @@ const loadInstruments = Tone => {
   )
 }
 
-const scheduleSong = (Transport, loop = false) => {
+const calculateOffset = (Tone, offset, barSize) => {
+  const x = offset > 0 ? barSize - Math.abs(offset) : Math.abs(offset)
+  return -Tone.Time(`0:0:${x * 2}`).toSeconds()
+}
+
+const scheduleSong = (Tone, Transport, loop = false) => {
   Transport.loop = loop
 
   const sequence = [
-    { pitch: 'D5', startAt: `0:0:0` },
-    { pitch: 'G4', startAt: `0:0:2` },
-    { pitch: 'B4', duration: 2, startAt: `0:0:6` },
-    { pitch: 'F#4', startAt: `0:0:12` },
-    { pitch: 'B3', startAt: `0:0:14` },
-    { pitch: 'E4', startAt: `0:0:18` },
-    { pitch: 'A4', startAt: `0:0:20` },
-    { pitch: 'F#4', startAt: `0:0:22` }
+    { note: 'D5', dur: '16n', time: `0:0:0` },
+    { note: 'G4', dur: '16n', time: `0:0:2` },
+    { note: 'B4', dur: '8n', time: `0:0:6` },
+    { note: 'F#4', dur: '16n', time: `0:0:12` },
+    { note: 'B3', dur: '16n', time: `0:0:14` },
+    { note: 'E4', dur: '16n', time: `0:0:18` },
+    { note: 'A4', dur: '16n', time: `0:0:20` },
+    { note: 'F#4', dur: '16n', time: `0:0:22` }
   ]
 
-  setSequence('guitar1', Transport, {
-    instrument: 'guitar1',
-    sequence: sequence
-  })
+  const guitar1 = new Tone.Part((time, event) => {
+    instruments.guitar1.triggerAttackRelease(event.note, event.dur, time)
+  }, sequence)
 
-  /*
-  setSequence('guitar2', Transport, {
-    instrument: 'guitar2',
-    sequence: rotateRight(2, sequence)
-  })
+  guitar1.loop = 2
+  guitar1.loopEnd = '1m'
+  guitar1.start(0)
 
-  setSequence('guitar3', Transport, {
-    instrument: 'guitar3',
-    sequence: rotateLeft(3, sequence)
-  })
+  const guitar2 = new Tone.Part((time, event) => {
+    instruments.guitar2.triggerAttackRelease(event.note, event.dur, time)
+  }, sequence)
 
-  setSequence('guitar4', Transport, {
-    instrument: 'guitar4',
-    sequence: rotateRight(5, sequence)
-  })
-  */
+  guitar2.loop = 2
+  guitar2.loopEnd = '1m'
+  guitar2.start(calculateOffset(Tone, 2, 12)) // rotate right 2
+
+  const guitar3 = new Tone.Part((time, event) => {
+    instruments.guitar3.triggerAttackRelease(event.note, event.dur, time)
+  }, sequence)
+
+  guitar3.loop = 2
+  guitar3.loopEnd = '1m'
+  guitar3.start(calculateOffset(Tone, -3, 12)) // rotate left 3
+
+  const guitar4 = new Tone.Part((time, event) => {
+    instruments.guitar4.triggerAttackRelease(event.note, event.dur, time)
+  }, sequence)
+
+  guitar4.loop = 2
+  guitar4.loopEnd = '1m'
+  guitar4.start(calculateOffset(Tone, 5, 12)) // rotate right 5
 
   setSequence('bass1', Transport, {
     instrument: 'bass1',
     sequence: [
-      { pitch: 'A1', startAt: `0:0:0` },
-      { pitch: 'A2', startAt: `0:0:4` },
-      { pitch: 'A1', startAt: `0:0:8` },
-      { pitch: 'A2', startAt: `0:0:10` },
-      { pitch: 'C2', startAt: `0:0:16` },
-      { pitch: 'C3', startAt: `0:0:22` },
-      { pitch: 'C2', startAt: `0:0:24` },
-      { pitch: 'C3', startAt: `0:0:28` },
-      { pitch: 'E1', startAt: `0:0:32` },
-      { pitch: 'E2', startAt: `0:0:34` },
-      { pitch: 'E1', startAt: `0:0:40` },
-      { pitch: 'E2', startAt: `0:0:44` }
+      { note: 'A1', startAt: `0:0:0` },
+      { note: 'A2', startAt: `0:0:4` },
+      { note: 'A1', startAt: `0:0:8` },
+      { note: 'A2', startAt: `0:0:10` },
+      { note: 'C2', startAt: `0:0:16` },
+      { note: 'C3', startAt: `0:0:22` },
+      { note: 'C2', startAt: `0:0:24` },
+      { note: 'C3', startAt: `0:0:28` },
+      { note: 'E1', startAt: `0:0:32` },
+      { note: 'E2', startAt: `0:0:34` },
+      { note: 'E1', startAt: `0:0:40` },
+      { note: 'E2', startAt: `0:0:44` }
     ]
   })
 
   setSequence('bass2', Transport, {
     instrument: 'bass2',
     sequence: [
-      { pitch: 'A1', startAt: `0:0:0` },
-      { pitch: 'A2', startAt: `0:0:6` },
-      { pitch: 'A1', startAt: `0:0:8` },
-      { pitch: 'A2', startAt: `0:0:12` },
-      { pitch: 'C2', startAt: `0:0:16` },
-      { pitch: 'C3', startAt: `0:0:18` },
-      { pitch: 'C2', startAt: `0:0:24` },
-      { pitch: 'C3', startAt: `0:0:30` },
-      { pitch: 'E1', startAt: `0:0:32` },
-      { pitch: 'E2', startAt: `0:0:36` },
-      { pitch: 'E1', startAt: `0:0:40` },
-      { pitch: 'E2', startAt: `0:0:42` }
+      { note: 'A1', startAt: `0:0:0` },
+      { note: 'A2', startAt: `0:0:6` },
+      { note: 'A1', startAt: `0:0:8` },
+      { note: 'A2', startAt: `0:0:12` },
+      { note: 'C2', startAt: `0:0:16` },
+      { note: 'C3', startAt: `0:0:18` },
+      { note: 'C2', startAt: `0:0:24` },
+      { note: 'C3', startAt: `0:0:30` },
+      { note: 'E1', startAt: `0:0:32` },
+      { note: 'E2', startAt: `0:0:36` },
+      { note: 'E1', startAt: `0:0:40` },
+      { note: 'E2', startAt: `0:0:42` }
     ]
   })
 }
@@ -127,7 +142,7 @@ class Audio extends EventEmitter {
       Tone: null,
       bpm: 192,
       timeSignature: [3, 2],
-      loopEnd: '2m'
+      duration: '2m'
     }
   }
   isSupported() {
@@ -142,7 +157,7 @@ class Audio extends EventEmitter {
 
     this.setTempo()
     loadInstruments(this._.Tone)
-    scheduleSong(Tone.Transport, true)
+    scheduleSong(Tone, Tone.Transport, true)
   }
 
   play() {
@@ -156,10 +171,10 @@ class Audio extends EventEmitter {
   }
 
   setTempo(Transport = this._.Tone.Transport) {
-    const { bpm, timeSignature, loopEnd } = this._
+    const { bpm, timeSignature, duration } = this._
     Transport.bpm.value = bpm
     Transport.timeSignature = timeSignature
-    Transport.loopEnd = loopEnd
+    Transport.loopEnd = duration
   }
 
   renderToWav(filename) {
@@ -171,7 +186,7 @@ class Audio extends EventEmitter {
       // Tone now points to the offline context
       this.setTempo(OfflineTransport)
       loadInstruments(this._.Tone)
-      scheduleSong(OfflineTransport, false)
+      scheduleSong(Tone, OfflineTransport, false)
 
       OfflineTransport.start()
     }, durationInSeconds).then(buffer => {
@@ -180,7 +195,7 @@ class Audio extends EventEmitter {
       // Tone is now back to the normal context, need to reset settings
       this.setTempo()
       loadInstruments(this._.Tone)
-      scheduleSong(Tone.Transport, true)
+      scheduleSong(Tone, Tone.Transport, true)
     })
   }
 }
