@@ -3,11 +3,6 @@ import AudioFileManager from 'audio'
 import { forEach, toPairs } from 'ramda'
 import { roundToNDecimals } from './number'
 
-const calculateOffset = (Tone, offset, barSize) => {
-  const x = offset > 0 ? barSize - Math.abs(offset) : Math.abs(offset)
-  return -Tone.Time(`0:0:${x * 2}`).toSeconds()
-}
-
 class Audio extends EventEmitter {
   constructor() {
     super()
@@ -45,6 +40,12 @@ class Audio extends EventEmitter {
     Tone.Transport.pause()
   }
 
+  calculateOffset(offset, barSize) {
+    const { Tone } = this._
+    const x = offset > 0 ? barSize - Math.abs(offset) : Math.abs(offset)
+    return -Tone.Time(`0:0:${x * 2}`).toSeconds()
+  }
+
   setTempo(Transport = this._.Tone.Transport) {
     const { bpm, timeSignature, duration } = this._
     Transport.bpm.value = bpm
@@ -54,31 +55,36 @@ class Audio extends EventEmitter {
 
   loadInstruments() {
     const { instruments, Tone } = this._
-    instruments.guitar1 = new Tone.Synth().chain(new Tone.Panner(-0.4), new Tone.Gain(0.5), Tone.Master)
-    instruments.guitar2 = new Tone.Synth().chain(new Tone.Panner(-0.1), new Tone.Gain(0.5), Tone.Master)
-    instruments.guitar3 = new Tone.Synth().chain(new Tone.Panner(0.1), new Tone.Gain(0.5), Tone.Master)
-    instruments.guitar4 = new Tone.Synth().chain(new Tone.Panner(0.4), new Tone.Gain(0.5), Tone.Master)
 
-    instruments.bass1 = new Tone.Synth({ oscillator: { type: 'square' } }).chain(
-      new Tone.Filter(700, 'lowpass'),
-      new Tone.Panner(0.7),
-      new Tone.Gain(0.8),
-      Tone.Master
-    )
+    const createGuitar = props => {
+      const { pan, gain } = props
+      return new Tone.Synth().chain(new Tone.Panner(pan), new Tone.Gain(gain), Tone.Master)
+    }
 
-    instruments.bass2 = new Tone.Synth({ oscillator: { type: 'square' } }).chain(
-      new Tone.Filter(700, 'lowpass'),
-      new Tone.Panner(-0.7),
-      new Tone.Gain(0.8),
-      Tone.Master
-    )
+    const createBass = props => {
+      const { pan, gain } = props
+      return new Tone.Synth({ oscillator: { type: 'square' } }).chain(
+        new Tone.Filter(700, 'lowpass'),
+        new Tone.Panner(pan),
+        new Tone.Gain(gain),
+        Tone.Master
+      )
+    }
+
+    instruments.guitar1 = createGuitar({ pan: -0.4, gain: 0.5 })
+    instruments.guitar2 = createGuitar({ pan: -0.1, gain: 0.5 })
+    instruments.guitar3 = createGuitar({ pan: 0.1, gain: 0.5 })
+    instruments.guitar4 = createGuitar({ pan: 0.4, gain: 0.5 })
+
+    instruments.bass1 = createBass({ pan: 0.7, gain: 0.8 })
+    instruments.bass2 = createBass({ pan: -0.7, gain: 0.8 })
   }
 
   setSequence(name, instrument, events, props, startTime) {
     const { sequences, Tone, instruments } = this._
 
     if (sequences[name]) {
-      // clear
+      sequences[name].dispose()
     }
 
     const sequence = new Tone.Part((time, event) => {
@@ -117,7 +123,6 @@ class Audio extends EventEmitter {
   }
 
   scheduleSong(Transport, loop = false) {
-    const { Tone } = this._
     Transport.loop = loop
 
     const guitarSequence = [
@@ -162,9 +167,9 @@ class Audio extends EventEmitter {
     ]
 
     this.setSequence('guitar1', 'guitar1', guitarSequence, { loop: 2, loopEnd: '1m' }, 0)
-    this.setSequence('guitar2', 'guitar2', guitarSequence, { loop: 2, loopEnd: '1m' }, calculateOffset(Tone, 2, 12))
-    this.setSequence('guitar3', 'guitar3', guitarSequence, { loop: 2, loopEnd: '1m' }, calculateOffset(Tone, -3, 12))
-    this.setSequence('guitar4', 'guitar4', guitarSequence, { loop: 2, loopEnd: '1m' }, calculateOffset(Tone, 5, 12))
+    this.setSequence('guitar2', 'guitar2', guitarSequence, { loop: 2, loopEnd: '1m' }, this.calculateOffset(2, 12))
+    this.setSequence('guitar3', 'guitar3', guitarSequence, { loop: 2, loopEnd: '1m' }, this.calculateOffset(-3, 12))
+    this.setSequence('guitar4', 'guitar4', guitarSequence, { loop: 2, loopEnd: '1m' }, this.calculateOffset(5, 12))
     this.setSequence('bass1', 'bass1', bassSequence1, { loop: 1, loopEnd: '2m' }, 0)
     this.setSequence('bass2', 'bass2', bassSequence2, { loop: 1, loopEnd: '2m' }, 0)
   }
