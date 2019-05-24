@@ -1,10 +1,10 @@
 import EventEmitter from 'eventemitter3'
-import { reduce, append, forEach, has } from 'ramda'
+// import { reduce, append, forEach, has } from 'ramda'
 import AudioFileManager from 'audio'
-// import { rotateLeft, rotateRight } from './ramda'
 import { roundToNDecimals } from './number'
 
 const instruments = {}
+/*
 const sequences = {}
 
 const setSequence = (name, Transport, { sequence, instrument }) => {
@@ -25,6 +25,7 @@ const setSequence = (name, Transport, { sequence, instrument }) => {
     return append(event, events)
   }, [])(sequence)
 }
+*/
 
 const loadInstruments = Tone => {
   instruments.guitar1 = new Tone.Synth().chain(new Tone.Panner(-0.4), new Tone.Gain(0.5), Tone.Master)
@@ -55,7 +56,7 @@ const calculateOffset = (Tone, offset, barSize) => {
 const scheduleSong = (Tone, Transport, loop = false) => {
   Transport.loop = loop
 
-  const sequence = [
+  const guitarSequence = [
     { note: 'D5', dur: '16n', time: `0:0:0` },
     { note: 'G4', dur: '16n', time: `0:0:2` },
     { note: 'B4', dur: '8n', time: `0:0:6` },
@@ -68,7 +69,7 @@ const scheduleSong = (Tone, Transport, loop = false) => {
 
   const guitar1 = new Tone.Part((time, event) => {
     instruments.guitar1.triggerAttackRelease(event.note, event.dur, time)
-  }, sequence)
+  }, guitarSequence)
 
   guitar1.loop = 2
   guitar1.loopEnd = '1m'
@@ -76,7 +77,7 @@ const scheduleSong = (Tone, Transport, loop = false) => {
 
   const guitar2 = new Tone.Part((time, event) => {
     instruments.guitar2.triggerAttackRelease(event.note, event.dur, time)
-  }, sequence)
+  }, guitarSequence)
 
   guitar2.loop = 2
   guitar2.loopEnd = '1m'
@@ -84,7 +85,7 @@ const scheduleSong = (Tone, Transport, loop = false) => {
 
   const guitar3 = new Tone.Part((time, event) => {
     instruments.guitar3.triggerAttackRelease(event.note, event.dur, time)
-  }, sequence)
+  }, guitarSequence)
 
   guitar3.loop = 2
   guitar3.loopEnd = '1m'
@@ -92,47 +93,57 @@ const scheduleSong = (Tone, Transport, loop = false) => {
 
   const guitar4 = new Tone.Part((time, event) => {
     instruments.guitar4.triggerAttackRelease(event.note, event.dur, time)
-  }, sequence)
+  }, guitarSequence)
 
   guitar4.loop = 2
   guitar4.loopEnd = '1m'
   guitar4.start(calculateOffset(Tone, 5, 12)) // rotate right 5
 
-  setSequence('bass1', Transport, {
-    instrument: 'bass1',
-    sequence: [
-      { note: 'A1', startAt: `0:0:0` },
-      { note: 'A2', startAt: `0:0:4` },
-      { note: 'A1', startAt: `0:0:8` },
-      { note: 'A2', startAt: `0:0:10` },
-      { note: 'C2', startAt: `0:0:16` },
-      { note: 'C3', startAt: `0:0:22` },
-      { note: 'C2', startAt: `0:0:24` },
-      { note: 'C3', startAt: `0:0:28` },
-      { note: 'E1', startAt: `0:0:32` },
-      { note: 'E2', startAt: `0:0:34` },
-      { note: 'E1', startAt: `0:0:40` },
-      { note: 'E2', startAt: `0:0:44` }
-    ]
-  })
+  const bassSequence1 = [
+    { note: 'A1', dur: '16n', time: `0:0:0` },
+    { note: 'A2', dur: '16n', time: `0:0:4` },
+    { note: 'A1', dur: '16n', time: `0:0:8` },
+    { note: 'A2', dur: '16n', time: `0:0:10` },
+    { note: 'C2', dur: '16n', time: `0:0:16` },
+    { note: 'C3', dur: '16n', time: `0:0:22` },
+    { note: 'C2', dur: '16n', time: `0:0:24` },
+    { note: 'C3', dur: '16n', time: `0:0:28` },
+    { note: 'E1', dur: '16n', time: `0:0:32` },
+    { note: 'E2', dur: '16n', time: `0:0:34` },
+    { note: 'E1', dur: '16n', time: `0:0:40` },
+    { note: 'E2', dur: '16n', time: `0:0:44` }
+  ]
 
-  setSequence('bass2', Transport, {
-    instrument: 'bass2',
-    sequence: [
-      { note: 'A1', startAt: `0:0:0` },
-      { note: 'A2', startAt: `0:0:6` },
-      { note: 'A1', startAt: `0:0:8` },
-      { note: 'A2', startAt: `0:0:12` },
-      { note: 'C2', startAt: `0:0:16` },
-      { note: 'C3', startAt: `0:0:18` },
-      { note: 'C2', startAt: `0:0:24` },
-      { note: 'C3', startAt: `0:0:30` },
-      { note: 'E1', startAt: `0:0:32` },
-      { note: 'E2', startAt: `0:0:36` },
-      { note: 'E1', startAt: `0:0:40` },
-      { note: 'E2', startAt: `0:0:42` }
-    ]
-  })
+  const bass1 = new Tone.Part((time, event) => {
+    instruments.bass1.triggerAttackRelease(event.note, event.dur, time)
+  }, bassSequence1)
+
+  bass1.loop = 1
+  bass1.loopEnd = '2m'
+  bass1.start(0)
+
+  const bassSequence2 = [
+    { note: 'A1', dur: '16n', time: `0:0:0` },
+    { note: 'A2', dur: '16n', time: `0:0:6` },
+    { note: 'A1', dur: '16n', time: `0:0:8` },
+    { note: 'A2', dur: '16n', time: `0:0:12` },
+    { note: 'C2', dur: '16n', time: `0:0:16` },
+    { note: 'C3', dur: '16n', time: `0:0:18` },
+    { note: 'C2', dur: '16n', time: `0:0:24` },
+    { note: 'C3', dur: '16n', time: `0:0:30` },
+    { note: 'E1', dur: '16n', time: `0:0:32` },
+    { note: 'E2', dur: '16n', time: `0:0:36` },
+    { note: 'E1', dur: '16n', time: `0:0:40` },
+    { note: 'E2', dur: '16n', time: `0:0:42` }
+  ]
+
+  const bass2 = new Tone.Part((time, event) => {
+    instruments.bass2.triggerAttackRelease(event.note, event.dur, time)
+  }, bassSequence2)
+
+  bass2.loop = 1
+  bass2.loopEnd = '2m'
+  bass2.start(0)
 }
 
 class Audio extends EventEmitter {
