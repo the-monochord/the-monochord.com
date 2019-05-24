@@ -11,8 +11,9 @@ class Audio extends EventEmitter {
       bpm: 192,
       timeSignature: [3, 2],
       duration: '2m',
-      sequences: {},
-      instruments: {}
+      parts: {},
+      instruments: {},
+      sequences: {}
     }
   }
   isSupported() {
@@ -80,24 +81,24 @@ class Audio extends EventEmitter {
     instruments.bass2 = createBass({ pan: -0.7, gain: 0.8 })
   }
 
-  setSequence(name, instrument, events, props, startTime) {
-    const { sequences, Tone, instruments } = this._
+  setPart(name, instrument, events, props, startTime) {
+    const { parts, Tone, instruments } = this._
 
-    if (sequences[name]) {
-      sequences[name].dispose()
+    if (parts[name]) {
+      parts[name].dispose()
     }
 
-    const sequence = new Tone.Part((time, event) => {
+    const part = new Tone.Part((time, event) => {
       instruments[instrument].triggerAttackRelease(event.note, event.dur, time)
     }, events)
 
     forEach(([key, value]) => {
-      sequence[key] = value
+      part[key] = value
     }, toPairs(props))
 
-    sequence.start(startTime)
+    part.start(startTime)
 
-    sequences[name] = sequence
+    parts[name] = part
   }
 
   renderToWav(filename) {
@@ -123,6 +124,7 @@ class Audio extends EventEmitter {
   }
 
   scheduleSong(Transport, loop = false) {
+    // const { sequences } = this._
     Transport.loop = loop
 
     const guitarSequence = [
@@ -166,12 +168,48 @@ class Audio extends EventEmitter {
       { note: 'E2', dur: '16n', time: `0:0:42` }
     ]
 
-    this.setSequence('guitar1', 'guitar1', guitarSequence, { loop: 2, loopEnd: '1m' }, 0)
-    this.setSequence('guitar2', 'guitar2', guitarSequence, { loop: 2, loopEnd: '1m' }, this.calculateOffset(2, 12))
-    this.setSequence('guitar3', 'guitar3', guitarSequence, { loop: 2, loopEnd: '1m' }, this.calculateOffset(-3, 12))
-    this.setSequence('guitar4', 'guitar4', guitarSequence, { loop: 2, loopEnd: '1m' }, this.calculateOffset(5, 12))
-    this.setSequence('bass1', 'bass1', bassSequence1, { loop: 1, loopEnd: '2m' }, 0)
-    this.setSequence('bass2', 'bass2', bassSequence2, { loop: 1, loopEnd: '2m' }, 0)
+    const sequences = {
+      guitar1: {
+        instrument: 'guitar1',
+        events: guitarSequence,
+        props: { loop: 2, loopEnd: '1m' },
+        startTime: 0
+      },
+      guitar2: {
+        instrument: 'guitar2',
+        events: guitarSequence,
+        props: { loop: 2, loopEnd: '1m' },
+        startTime: this.calculateOffset(2, 12)
+      },
+      guitar3: {
+        instrument: 'guitar3',
+        events: guitarSequence,
+        props: { loop: 2, loopEnd: '1m' },
+        startTime: this.calculateOffset(-3, 12)
+      },
+      guitar4: {
+        instrument: 'guitar4',
+        events: guitarSequence,
+        props: { loop: 2, loopEnd: '1m' },
+        startTime: this.calculateOffset(5, 12)
+      },
+      bass1: {
+        instrument: 'bass1',
+        events: bassSequence1,
+        props: { loop: 1, loopEnd: '2m' },
+        startTime: 0
+      },
+      bass2: {
+        instrument: 'bass2',
+        events: bassSequence2,
+        props: { loop: 1, loopEnd: '2m' },
+        startTime: 0
+      }
+    }
+
+    forEach(([name, { instrument, events, props, startTime }]) => {
+      this.setPart(name, instrument, events, props, startTime)
+    }, toPairs(sequences))
   }
 }
 
