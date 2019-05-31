@@ -81,7 +81,7 @@ const common = {
 
 const clientConfig = {
   entry: {
-    monochord: ['@babel/polyfill', './src/client/index.jsx']
+    monochord: ['@babel/polyfill', 'cancelandholdattime-polyfill', './src/client/index.jsx']
   },
   output: {
     path: path.resolve(__dirname, 'static-cdn'),
