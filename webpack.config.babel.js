@@ -31,8 +31,9 @@ const common = {
           {
             loader: 'css-loader',
             options: {
-              modules: true,
-              localIdentName: '[local]_[hash:base64:5]'
+              modules: {
+                localIdentName: '[local]_[hash:base64:5]'
+              }
             }
           },
           {
@@ -81,7 +82,7 @@ const common = {
 
 const clientConfig = {
   entry: {
-    monochord: ['@babel/polyfill', 'cancelandholdattime-polyfill', './src/client/index.jsx']
+    monochord: ['regenerator-runtime/runtime', 'cancelandholdattime-polyfill', './src/client/index.jsx']
   },
   output: {
     path: path.resolve(__dirname, 'static-cdn'),
@@ -115,7 +116,7 @@ const serverConfig = {
   target: 'node',
   externals: [nodeExternals()],
   entry: {
-    server: ['@babel/polyfill', './src/server/index.js']
+    server: ['regenerator-runtime/runtime', './src/server/index.js']
   },
   output: {
     path: path.resolve(__dirname, 'app'),
