@@ -24,7 +24,7 @@ const audioLinker = store => next => action => {
 
       if (!isNil(activeProject)) {
         audio.stop()
-        audio.setSequences(activeProject.bars)
+        // audio.setSequences(activeProject.bars)
       }
       break
   }
