@@ -6,6 +6,8 @@ import shortid from 'shortid'
 import isomorphicConnect from '../../../../helpers/isomorphicConnect'
 import { actions as draftActions } from '../../../../reducers/drafts'
 import Button from '../../Button'
+import TextField from '../../TextField'
+import DebounceOnChange from '../../DebounceOnChange'
 import Track from './Track'
 
 const enhance = compose(
@@ -21,24 +23,23 @@ const enhance = compose(
   withTranslation(['Project'])
 )
 
+const DebouncedTextField = DebounceOnChange(300, TextField)
+
 const Project = props => {
   const { activeDraftIndex, activeDraft, setTitle, addTrack, removeTrack, addBar, removeBar, moveBar } = props
   const { tracks = [], bars = [], title = '' } = activeDraft
   return (
     <div className={'Project'}>
-      <div>
-        <input
-          type="text"
-          placeholder="Untitled project"
-          value={title}
-          onChange={e =>
-            setTitle({
-              projectIdx: activeDraftIndex,
-              title: e.target.value
-            })
-          }
-        />
-      </div>
+      <DebouncedTextField
+        placeholder="Untitled project"
+        value={title}
+        onChange={value =>
+          setTitle({
+            projectIdx: activeDraftIndex,
+            title: value
+          })
+        }
+      />
       {tracks.map(track => (
         <Fragment key={track.id}>
           <Track
