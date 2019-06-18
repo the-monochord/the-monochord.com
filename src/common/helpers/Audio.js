@@ -28,15 +28,15 @@ class Audio extends EventEmitter {
     gain.gain.value = 0
 
     const am = ctx.createOscillator()
-    am.frequency.value = 547
+    am.frequency.value = 117
     am.type = 'sine'
 
     const amGain = ctx.createGain()
     amGain.gain.value = 0
 
     const amLfo = ctx.createOscillator()
-    amLfo.frequency.value = 1
-    amLfo.type = 'triangle'
+    amLfo.frequency.value = 30
+    amLfo.type = 'sine'
 
     const amLfoGain = ctx.createGain()
     amLfoGain.gain.value = 0
@@ -56,29 +56,40 @@ class Audio extends EventEmitter {
 
     this._.ctx = ctx
     this._.gain = gain
+    this._.am = am
     this._.amGain = amGain
+    this._.amLfo = amLfo
     this._.amLfoGain = amLfoGain
 
     this.emit('ready')
   }
 
   play() {
-    const { gain, ctx, amGain, amLfoGain } = this._
+    const { gain, ctx, am, amGain, amLfo, amLfoGain } = this._
     gain.gain.cancelAndHoldAtTime(ctx.currentTime)
-    gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 1)
+    gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1)
+    am.frequency.cancelAndHoldAtTime(ctx.currentTime)
+    am.frequency.exponentialRampToValueAtTime(421, ctx.currentTime + 1.5)
     amGain.gain.cancelAndHoldAtTime(ctx.currentTime)
-    amGain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 1)
-    amLfoGain.gain.cancelAndHoldAtTime(ctx.currentTime)
-    amLfoGain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 1)
+    amGain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 1)
+    amLfo.frequency.cancelAndHoldAtTime(ctx.currentTime)
+    amLfo.frequency.exponentialRampToValueAtTime(5, ctx.currentTime + 1)
+    amLfo.frequency.linearRampToValueAtTime(0.1, ctx.currentTime + 4)
+    amLfoGain.gain.cancelAndHoldAtTime(ctx.currentTime + 1)
+    amLfoGain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 1.5)
   }
   pause() {
-    const { gain, ctx, amGain, amLfoGain } = this._
+    const { gain, ctx, am, amGain, amLfo, amLfoGain } = this._
     gain.gain.cancelAndHoldAtTime(ctx.currentTime)
     gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1)
+    am.frequency.cancelAndHoldAtTime(ctx.currentTime)
+    am.frequency.linearRampToValueAtTime(117, ctx.currentTime + 1)
     amGain.gain.cancelAndHoldAtTime(ctx.currentTime)
     amGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1)
+    amLfo.frequency.cancelAndHoldAtTime(ctx.currentTime)
+    amLfo.frequency.linearRampToValueAtTime(30, ctx.currentTime + 0.5)
     amLfoGain.gain.cancelAndHoldAtTime(ctx.currentTime)
-    amLfoGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1)
+    amLfoGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5)
   }
   stop() {}
 
