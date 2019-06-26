@@ -18,7 +18,12 @@ class Audio extends EventEmitter {
   async init() {
     const ctx = new AudioContext()
 
-    // --------------
+    this._.ctx = ctx
+
+    this.emit('ready')
+
+    /*
+    // AM/FM example
 
     const oscillator = ctx.createOscillator()
     oscillator.frequency.value = 400
@@ -54,17 +59,66 @@ class Audio extends EventEmitter {
 
     // --------------
 
-    this._.ctx = ctx
     this._.gain = gain
     this._.am = am
     this._.amGain = amGain
     this._.amLfo = amLfo
     this._.amLfoGain = amLfoGain
+    */
 
-    this.emit('ready')
+    const createWave = phaseOffset => {
+      const real = new Float32Array(2)
+      const imag = new Float32Array(2)
+      const shift = 2 * Math.PI * phaseOffset
+
+      real[0] = 0
+      real[1] = 0 * Math.cos(shift) - 1 * Math.sin(shift)
+      imag[0] = 0
+      imag[1] = 0 * Math.sin(shift) + 1 * Math.cos(shift)
+
+      return ctx.createPeriodicWave(real, imag)
+    }
+
+    this._.createWave = createWave
+
+    const wave1 = createWave(0.1)
+
+    const oscillator1 = ctx.createOscillator()
+    oscillator1.frequency.value = 400
+    oscillator1.setPeriodicWave(wave1)
+
+    const gain1 = ctx.createGain()
+    gain1.gain.value = 0
+
+    oscillator1.connect(gain1)
+    gain1.connect(ctx.destination)
+    oscillator1.start()
+
+    this._.gain1 = gain1
+
+    // ---------------
+
+    const wave2 = createWave(0)
+
+    const oscillator2 = ctx.createOscillator()
+    oscillator2.frequency.value = 400
+    oscillator2.setPeriodicWave(wave2)
+
+    const gain2 = ctx.createGain()
+    gain2.gain.value = 0
+
+    oscillator2.connect(gain2)
+    gain2.connect(ctx.destination)
+    oscillator2.start()
+
+    this._.gain2 = gain2
+    this._.oscillator2 = oscillator2
   }
 
   play() {
+    /*
+    // AM/FM example
+
     const { gain, ctx, am, amGain, amLfo, amLfoGain } = this._
     gain.gain.cancelAndHoldAtTime(ctx.currentTime)
     gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1)
@@ -77,8 +131,26 @@ class Audio extends EventEmitter {
     amLfo.frequency.linearRampToValueAtTime(0.1, ctx.currentTime + 4)
     amLfoGain.gain.cancelAndHoldAtTime(ctx.currentTime + 1)
     amLfoGain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 1.5)
+    */
+
+    const { gain1, gain2, ctx, createWave, oscillator2 } = this._
+    gain1.gain.cancelAndHoldAtTime(ctx.currentTime)
+    gain1.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1)
+    gain2.gain.cancelAndHoldAtTime(ctx.currentTime)
+    gain2.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1)
+
+    clearInterval(this._.interval)
+    let offset = 0
+    this._.interval = setInterval(() => {
+      offset = Math.round((offset + 0.05) * 100) / 100
+      const wave = createWave(offset)
+      oscillator2.setPeriodicWave(wave)
+    }, 50)
   }
   pause() {
+    /*
+    // AM/FM example
+
     const { gain, ctx, am, amGain, amLfo, amLfoGain } = this._
     gain.gain.cancelAndHoldAtTime(ctx.currentTime)
     gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1)
@@ -90,6 +162,15 @@ class Audio extends EventEmitter {
     amLfo.frequency.linearRampToValueAtTime(30, ctx.currentTime + 0.5)
     amLfoGain.gain.cancelAndHoldAtTime(ctx.currentTime)
     amLfoGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5)
+    */
+
+    const { gain1, gain2, ctx } = this._
+    gain1.gain.cancelAndHoldAtTime(ctx.currentTime)
+    gain1.gain.linearRampToValueAtTime(0, ctx.currentTime + 1)
+    gain2.gain.cancelAndHoldAtTime(ctx.currentTime)
+    gain2.gain.linearRampToValueAtTime(0, ctx.currentTime + 1)
+
+    clearInterval(this._.interval)
   }
   stop() {}
 
