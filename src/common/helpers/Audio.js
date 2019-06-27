@@ -1,7 +1,25 @@
-/* global AudioContext */
+/* global OfflineAudioContext */
 
 import EventEmitter from 'eventemitter3'
-// import AudioFileManager from 'audio'
+import AudioFileManager from 'audio'
+import { memoizeWith, modulo } from 'ramda'
+import { roundToNDecimals } from './number'
+
+const createWave = memoizeWith(
+  phaseOffset => roundToNDecimals(2, modulo(phaseOffset, 1)),
+  (phaseOffset, ctx) => {
+    const real = new Float32Array(2)
+    const imag = new Float32Array(2)
+    const shift = 2 * Math.PI * roundToNDecimals(2, modulo(phaseOffset, 1))
+
+    real[0] = 1
+    real[1] = 0 * Math.cos(shift) - 1 * Math.sin(shift)
+    imag[0] = 0
+    imag[1] = 0 * Math.sin(shift) + 1 * Math.cos(shift)
+
+    return ctx.createPeriodicWave(real, imag, { disableNormalization: true })
+  }
+)
 
 class Audio extends EventEmitter {
   constructor() {
@@ -16,7 +34,7 @@ class Audio extends EventEmitter {
   }
 
   async init() {
-    const ctx = new AudioContext()
+    const ctx = new OfflineAudioContext(1, 44100 * 2, 44100)
 
     this._.ctx = ctx
 
@@ -66,22 +84,9 @@ class Audio extends EventEmitter {
     this._.amLfoGain = amLfoGain
     */
 
-    const createWave = phaseOffset => {
-      const real = new Float32Array(2)
-      const imag = new Float32Array(2)
-      const shift = 2 * Math.PI * phaseOffset
-
-      real[0] = 0
-      real[1] = 0 * Math.cos(shift) - 1 * Math.sin(shift)
-      imag[0] = 0
-      imag[1] = 0 * Math.sin(shift) + 1 * Math.cos(shift)
-
-      return ctx.createPeriodicWave(real, imag)
-    }
-
     this._.createWave = createWave
 
-    const wave1 = createWave(0.1)
+    const wave1 = createWave(0, ctx)
 
     const oscillator1 = ctx.createOscillator()
     oscillator1.frequency.value = 400
@@ -98,7 +103,7 @@ class Audio extends EventEmitter {
 
     // ---------------
 
-    const wave2 = createWave(0)
+    const wave2 = createWave(0, ctx)
 
     const oscillator2 = ctx.createOscillator()
     oscillator2.frequency.value = 400
@@ -109,7 +114,7 @@ class Audio extends EventEmitter {
 
     oscillator2.connect(gain2)
     gain2.connect(ctx.destination)
-    oscillator2.start()
+    // oscillator2.start()
 
     this._.gain2 = gain2
     this._.oscillator2 = oscillator2
@@ -134,6 +139,17 @@ class Audio extends EventEmitter {
     */
 
     const { gain1, gain2, ctx, createWave, oscillator2 } = this._
+
+    ctx
+      .startRendering()
+      .then(buffer => {
+        console.log('------------', buffer)
+        AudioFileManager(buffer).save('phase-shift-demo.wav')
+      })
+      .catch(e => {
+        console.error(e)
+      })
+
     gain1.gain.cancelAndHoldAtTime(ctx.currentTime)
     gain1.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1)
     gain2.gain.cancelAndHoldAtTime(ctx.currentTime)
@@ -142,8 +158,8 @@ class Audio extends EventEmitter {
     clearInterval(this._.interval)
     let offset = 0
     this._.interval = setInterval(() => {
-      offset = Math.round((offset + 0.05) * 100) / 100
-      const wave = createWave(offset)
+      offset = roundToNDecimals(2, offset + 0.05)
+      const wave = createWave(offset, ctx)
       oscillator2.setPeriodicWave(wave)
     }, 50)
   }

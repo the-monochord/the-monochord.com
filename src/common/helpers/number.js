@@ -1,27 +1,8 @@
-import {
-  memoizeWith,
-  reduce,
-  min,
-  max,
-  modulo,
-  __,
-  when,
-  either,
-  complement,
-  lt,
-  always,
-  toString,
-  curry,
-  test,
-  compose
-} from 'ramda'
+import { reduce, min, max, modulo, __, when, either, complement, lt, always, curry, test, compose } from 'ramda'
 
 import { stringifyIfNeeded } from './string'
 
-const roundToNDecimals = memoizeWith(
-  toString,
-  curry((decimals, number) => Math.round(number * 10 ** decimals) / 10 ** decimals)
-)
+const roundToNDecimals = curry((decimals, number) => Math.round(number * 10 ** decimals) / 10 ** decimals)
 
 const minAll = reduce(min, Infinity)
 
