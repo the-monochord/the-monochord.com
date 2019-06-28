@@ -39,6 +39,40 @@ class Audio extends EventEmitter {
     this._.ctx = ctx
 
     this.emit('ready')
+    ;(() => {
+      const ctx = new OfflineAudioContext(1, 44100 * 2, 44100)
+
+      const OFFSET = 0.7
+      const PHASE = 0.35
+
+      const wave = createWave(PHASE, ctx)
+
+      const oscillator = ctx.createOscillator()
+      oscillator.frequency.value = 400
+      oscillator.setPeriodicWave(wave)
+
+      const offset = ctx.createConstantSource()
+      offset.offset.value = OFFSET
+
+      oscillator.connect(ctx.destination)
+      offset.connect(ctx.destination)
+
+      ctx
+        .startRendering()
+        .then(buffer => {
+          // https://github.com/audiojs/audio
+          AudioFileManager(buffer).save('demo.wav')
+        })
+        .catch(e => {
+          console.error(e)
+        })
+
+      oscillator.start()
+      offset.start()
+
+      oscillator.stop(ctx.currentTime + 1)
+      offset.stop(ctx.currentTime + 1)
+    })()
 
     /*
     // AM/FM example
@@ -86,22 +120,35 @@ class Audio extends EventEmitter {
 
     this._.createWave = createWave
 
-    const wave1 = createWave(0, ctx)
+    const wave1 = createWave(0.5, ctx)
 
     const oscillator1 = ctx.createOscillator()
     oscillator1.frequency.value = 400
     oscillator1.setPeriodicWave(wave1)
 
+    const offset = ctx.createConstantSource()
+    offset.offset.value = 0.72
+    offset.start()
+
+    /*
     const gain1 = ctx.createGain()
     gain1.gain.value = 0
 
-    oscillator1.connect(gain1)
+    // oscillator1.connect(gain1)
     gain1.connect(ctx.destination)
-    oscillator1.start()
+    // oscillator1.start()
 
     this._.gain1 = gain1
+    */
+
+    // wave1.connect(ctx.destination)
+    offset.connect(ctx.destination)
+    oscillator1.connect(ctx.destination)
+
+    this._.oscillator1 = oscillator1
 
     // ---------------
+    /*
 
     const wave2 = createWave(0, ctx)
 
@@ -118,6 +165,7 @@ class Audio extends EventEmitter {
 
     this._.gain2 = gain2
     this._.oscillator2 = oscillator2
+    */
   }
 
   play() {
@@ -138,9 +186,7 @@ class Audio extends EventEmitter {
     amLfoGain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 1.5)
     */
 
-    const { gain1, gain2, ctx, createWave, oscillator2 } = this._
-
-    ctx
+    this._.ctx
       .startRendering()
       .then(buffer => {
         console.log('------------', buffer)
@@ -149,6 +195,12 @@ class Audio extends EventEmitter {
       .catch(e => {
         console.error(e)
       })
+
+    this._.oscillator1.start()
+    this._.oscillator1.stop(this._.ctx.currentTime + 1)
+
+    /*
+    const { gain1, gain2, ctx, createWave, oscillator2 } = this._
 
     gain1.gain.cancelAndHoldAtTime(ctx.currentTime)
     gain1.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1)
@@ -162,6 +214,7 @@ class Audio extends EventEmitter {
       const wave = createWave(offset, ctx)
       oscillator2.setPeriodicWave(wave)
     }, 50)
+    */
   }
   pause() {
     /*
@@ -179,7 +232,7 @@ class Audio extends EventEmitter {
     amLfoGain.gain.cancelAndHoldAtTime(ctx.currentTime)
     amLfoGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5)
     */
-
+    /*
     const { gain1, gain2, ctx } = this._
     gain1.gain.cancelAndHoldAtTime(ctx.currentTime)
     gain1.gain.linearRampToValueAtTime(0, ctx.currentTime + 1)
@@ -187,6 +240,7 @@ class Audio extends EventEmitter {
     gain2.gain.linearRampToValueAtTime(0, ctx.currentTime + 1)
 
     clearInterval(this._.interval)
+    */
   }
   stop() {}
 
