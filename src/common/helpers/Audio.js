@@ -94,7 +94,7 @@ class Audio extends EventEmitter {
   }
 
   isSupported() {
-    return !!window.hasOwnProperty('AudioContext')
+    return window.hasOwnProperty('AudioContext')
   }
 
   async init() {
