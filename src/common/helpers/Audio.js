@@ -1,7 +1,10 @@
-/* global OfflineAudioContext */
+/* global AudioContext */
 
 import EventEmitter from 'eventemitter3'
-import AudioFileManager from 'audio'
+import { parseTuning, retune, toHertz, fromScientificNotation } from 'absolute-cent'
+import { compose, forEach, values, reduce, isNil, is } from 'ramda'
+// import AudioFileManager from 'audio'
+/*
 import { memoizeWith, modulo } from 'ramda'
 import { roundToNDecimals } from './number'
 
@@ -20,59 +23,107 @@ const createWave = memoizeWith(
     return ctx.createPeriodicWave(real, imag, { disableNormalization: true })
   }
 )
+*/
+
+// ---------------------------
+
+const generateNEdo = n => {
+  const pitches = []
+
+  for (let i = 0; i <= 1200; i += 1200 / n) {
+    pitches.push(i)
+  }
+
+  return pitches
+}
+
+const tuningData = parseTuning({
+  anchor: [0, 'C4'],
+  pitches: generateNEdo(19)
+})
+
+// ---------------------------
 
 class Audio extends EventEmitter {
   constructor() {
     super()
 
     this._ = {
-      sequences: []
+      instruments: {},
+      events: []
     }
+
+    const addNote = (instrument, note, time) => {
+      const tempo = 0.15
+      const noteLength = 0.1
+      const [pitch, length] = is(String, note) ? [note, 1] : note
+      this._.events.push({
+        event: 'note on',
+        target: instrument,
+        pitch: fromScientificNotation(pitch),
+        time: time * tempo,
+        velocity: 0.1
+      })
+      this._.events.push({
+        event: 'note off',
+        target: instrument,
+        pitch: fromScientificNotation(pitch),
+        time: time * tempo + noteLength * length
+      })
+    }
+
+    const addSequence = (instrument, notes) => {
+      reduce(
+        (cntr, note) => {
+          if (isNil(note)) {
+            return cntr + 1
+          } else {
+            addNote(instrument, note, cntr)
+            return cntr + is(String, note) ? 1 : note[1]
+          }
+        },
+        0,
+        notes
+      )
+    }
+
+    addSequence('guitar #1', ['D5', 'G4', null, ['B4', 2], 'F#4', 'B3', null, 'E4', 'A4', 'F#4', null])
+    addSequence('guitar #2', ['F#4', null, 'D5', 'G4', null, ['B4', 2], 'F#4', 'B3', null, 'E4', 'A4'])
+    addSequence('guitar #3', [['B4', 2], 'F#4', 'B3', null, 'E4', 'A4', 'F#4', null, 'D5', 'G4', null])
+    addSequence('guitar #4', [null, 'E4', 'A4', 'F#4', null, 'D5', 'G4', null, ['B4', 2], 'F#4', 'B3'])
   }
+
   isSupported() {
     return !!window.hasOwnProperty('AudioContext')
   }
 
   async init() {
-    const ctx = new OfflineAudioContext(1, 44100 * 2, 44100)
+    const ctx = new AudioContext()
 
     this._.ctx = ctx
 
     this.emit('ready')
-    ;(() => {
-      const ctx = new OfflineAudioContext(1, 44100 * 2, 44100)
 
-      const OFFSET = 0.7
-      const PHASE = 0.35
-
-      const wave = createWave(PHASE, ctx)
+    const addInstrument = name => {
+      const gain = ctx.createGain()
+      gain.gain.value = 0
+      gain.connect(ctx.destination)
 
       const oscillator = ctx.createOscillator()
-      oscillator.frequency.value = 400
-      oscillator.setPeriodicWave(wave)
-
-      const offset = ctx.createConstantSource()
-      offset.offset.value = OFFSET
-
-      oscillator.connect(ctx.destination)
-      offset.connect(ctx.destination)
-
-      ctx
-        .startRendering()
-        .then(buffer => {
-          // https://github.com/audiojs/audio
-          AudioFileManager(buffer).save('demo.wav')
-        })
-        .catch(e => {
-          console.error(e)
-        })
-
+      oscillator.connect(gain)
+      oscillator.type = 'triangle'
       oscillator.start()
-      offset.start()
 
-      oscillator.stop(ctx.currentTime + 1)
-      offset.stop(ctx.currentTime + 1)
-    })()
+      this._.instruments[name] = {
+        gain,
+        oscillator
+      }
+    }
+
+    addInstrument('guitar #1')
+    addInstrument('guitar #2')
+    addInstrument('guitar #3')
+    addInstrument('guitar #4')
 
     /*
     // AM/FM example
@@ -118,18 +169,6 @@ class Audio extends EventEmitter {
     this._.amLfoGain = amLfoGain
     */
 
-    this._.createWave = createWave
-
-    const wave1 = createWave(0.5, ctx)
-
-    const oscillator1 = ctx.createOscillator()
-    oscillator1.frequency.value = 400
-    oscillator1.setPeriodicWave(wave1)
-
-    const offset = ctx.createConstantSource()
-    offset.offset.value = 0.72
-    offset.start()
-
     /*
     const gain1 = ctx.createGain()
     gain1.gain.value = 0
@@ -140,12 +179,6 @@ class Audio extends EventEmitter {
 
     this._.gain1 = gain1
     */
-
-    // wave1.connect(ctx.destination)
-    offset.connect(ctx.destination)
-    oscillator1.connect(ctx.destination)
-
-    this._.oscillator1 = oscillator1
 
     // ---------------
     /*
@@ -185,20 +218,6 @@ class Audio extends EventEmitter {
     amLfoGain.gain.cancelAndHoldAtTime(ctx.currentTime + 1)
     amLfoGain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 1.5)
     */
-
-    this._.ctx
-      .startRendering()
-      .then(buffer => {
-        console.log('------------', buffer)
-        AudioFileManager(buffer).save('phase-shift-demo.wav')
-      })
-      .catch(e => {
-        console.error(e)
-      })
-
-    this._.oscillator1.start()
-    this._.oscillator1.stop(this._.ctx.currentTime + 1)
-
     /*
     const { gain1, gain2, ctx, createWave, oscillator2 } = this._
 
@@ -215,7 +234,38 @@ class Audio extends EventEmitter {
       oscillator2.setPeriodicWave(wave)
     }, 50)
     */
+
+    const { ctx, instruments, events } = this._
+
+    const attack = 0.01
+    const release = 0.03
+
+    const sequenceLength = 12 * 0.15
+    const sequenceRepeats = 3
+    const startOffset = 0.5
+
+    const startFrom = ctx.currentTime + startOffset
+
+    for (let i = 0; i < sequenceRepeats; i++) {
+      forEach(({ event, target, velocity, pitch, time }) => {
+        const repeatOffset = sequenceLength * i
+        const t = startFrom + time + repeatOffset
+        switch (event) {
+          case 'note on':
+            instruments[target].gain.gain.cancelScheduledValues(t)
+            instruments[target].gain.gain.setValueAtTime(0, t)
+            instruments[target].gain.gain.linearRampToValueAtTime(velocity, t + attack)
+            instruments[target].oscillator.frequency.setValueAtTime(toHertz(retune(pitch, tuningData)), t)
+            break
+          case 'note off':
+            instruments[target].gain.gain.cancelAndHoldAtTime(t)
+            instruments[target].gain.gain.linearRampToValueAtTime(0, t + release)
+            break
+        }
+      })(events)
+    }
   }
+
   pause() {
     /*
     // AM/FM example
@@ -241,7 +291,21 @@ class Audio extends EventEmitter {
 
     clearInterval(this._.interval)
     */
+
+    const { instruments, ctx } = this._
+
+    const now = ctx.currentTime
+
+    compose(
+      forEach(({ gain, oscillator }) => {
+        gain.gain.cancelScheduledValues(now)
+        gain.gain.setValueAtTime(0, now)
+        oscillator.frequency.cancelScheduledValues(now)
+      }),
+      values
+    )(instruments)
   }
+
   stop() {}
 
   renderToWav(filename) {
