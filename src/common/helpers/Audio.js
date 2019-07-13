@@ -79,7 +79,7 @@ class Audio extends EventEmitter {
             return cntr + 1
           } else {
             addNote(instrument, note, cntr)
-            return cntr + is(String, note) ? 1 : note[1]
+            return cntr + (is(String, note) ? 1 : note[1])
           }
         },
         0,
