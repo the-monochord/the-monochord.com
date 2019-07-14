@@ -2,7 +2,7 @@
 
 import EventEmitter from 'eventemitter3'
 import { parseTuning, retune, toHertz, fromScientificNotation } from 'absolute-cent'
-import { compose, forEach, values, reduce, isNil, is } from 'ramda'
+import { forEach, reduce, isNil, is, compose, values } from 'ramda'
 // import AudioFileManager from 'audio'
 /*
 import { memoizeWith, modulo } from 'ramda'
@@ -39,8 +39,76 @@ const generateNEdo = n => {
 
 const tuningData = parseTuning({
   anchor: [0, 'C4'],
-  pitches: generateNEdo(19)
+  pitches: generateNEdo(5)
 })
+
+class Instrument {
+  constructor(ctx) {
+    const gain = ctx.createGain()
+    gain.gain.value = 0
+    gain.connect(ctx.destination)
+
+    const oscillator = ctx.createOscillator()
+    oscillator.connect(gain)
+    oscillator.type = 'triangle'
+    oscillator.start()
+
+    this._ = {
+      ctx,
+      nodes: {
+        gain,
+        oscillator
+      },
+      events: []
+    }
+  }
+
+  schedule(eventData) {
+    this._.events.push(eventData)
+  }
+
+  play() {
+    const { ctx, nodes, events } = this._
+
+    const attack = 0.01
+    const release = 0.03
+
+    const sequenceLength = 12 * 0.15
+    const sequenceRepeats = 3
+    const startOffset = 0.5
+
+    const startFrom = ctx.currentTime + startOffset
+
+    for (let i = 0; i < sequenceRepeats; i++) {
+      forEach(({ event, velocity, pitch, time }) => {
+        const repeatOffset = sequenceLength * i
+        const t = startFrom + time + repeatOffset
+        switch (event) {
+          case 'note on':
+            nodes.gain.gain.cancelScheduledValues(t)
+            nodes.gain.gain.setValueAtTime(0, t)
+            nodes.gain.gain.linearRampToValueAtTime(velocity, t + attack)
+            nodes.oscillator.frequency.setValueAtTime(toHertz(retune(pitch, tuningData)), t)
+            break
+          case 'note off':
+            nodes.gain.gain.cancelAndHoldAtTime(t)
+            nodes.gain.gain.linearRampToValueAtTime(0, t + release)
+            break
+        }
+      })(events)
+    }
+  }
+
+  pause() {
+    const { nodes, ctx } = this._
+
+    const now = ctx.currentTime
+
+    nodes.gain.gain.cancelScheduledValues(now)
+    nodes.gain.gain.setValueAtTime(0, now)
+    nodes.oscillator.frequency.cancelScheduledValues(now)
+  }
+}
 
 // ---------------------------
 
@@ -49,24 +117,41 @@ class Audio extends EventEmitter {
     super()
 
     this._ = {
-      instruments: {},
-      events: []
+      instruments: {}
     }
+  }
+
+  isSupported() {
+    return window.hasOwnProperty('AudioContext')
+  }
+
+  async init() {
+    const ctx = new AudioContext()
+
+    this._.ctx = ctx
+
+    this.emit('ready')
+
+    // --------------------------------
+
+    this._.instruments['guitar #1'] = new Instrument(ctx)
+    this._.instruments['guitar #2'] = new Instrument(ctx)
+    this._.instruments['guitar #3'] = new Instrument(ctx)
+    this._.instruments['guitar #4'] = new Instrument(ctx)
 
     const addNote = (instrument, note, time) => {
       const tempo = 0.15
       const noteLength = 0.1
       const [pitch, length] = is(String, note) ? [note, 1] : note
-      this._.events.push({
+
+      instrument.schedule({
         event: 'note on',
-        target: instrument,
         pitch: fromScientificNotation(pitch),
         time: time * tempo,
         velocity: 0.1
       })
-      this._.events.push({
+      instrument.schedule({
         event: 'note off',
-        target: instrument,
         pitch: fromScientificNotation(pitch),
         time: time * tempo + noteLength * length
       })
@@ -87,43 +172,58 @@ class Audio extends EventEmitter {
       )
     }
 
-    addSequence('guitar #1', ['D5', 'G4', null, ['B4', 2], 'F#4', 'B3', null, 'E4', 'A4', 'F#4', null])
-    addSequence('guitar #2', ['F#4', null, 'D5', 'G4', null, ['B4', 2], 'F#4', 'B3', null, 'E4', 'A4'])
-    addSequence('guitar #3', [['B4', 2], 'F#4', 'B3', null, 'E4', 'A4', 'F#4', null, 'D5', 'G4', null])
-    addSequence('guitar #4', [null, 'E4', 'A4', 'F#4', null, 'D5', 'G4', null, ['B4', 2], 'F#4', 'B3'])
-  }
-
-  isSupported() {
-    return window.hasOwnProperty('AudioContext')
-  }
-
-  async init() {
-    const ctx = new AudioContext()
-
-    this._.ctx = ctx
-
-    this.emit('ready')
-
-    const addInstrument = name => {
-      const gain = ctx.createGain()
-      gain.gain.value = 0
-      gain.connect(ctx.destination)
-
-      const oscillator = ctx.createOscillator()
-      oscillator.connect(gain)
-      oscillator.type = 'triangle'
-      oscillator.start()
-
-      this._.instruments[name] = {
-        gain,
-        oscillator
-      }
-    }
-
-    addInstrument('guitar #1')
-    addInstrument('guitar #2')
-    addInstrument('guitar #3')
-    addInstrument('guitar #4')
+    addSequence(this._.instruments['guitar #1'], [
+      'D5',
+      'G4',
+      null,
+      ['B4', 2],
+      'F#4',
+      'B3',
+      null,
+      'E4',
+      'A4',
+      'F#4',
+      null
+    ])
+    addSequence(this._.instruments['guitar #2'], [
+      'F#4',
+      null,
+      'D5',
+      'G4',
+      null,
+      ['B4', 2],
+      'F#4',
+      'B3',
+      null,
+      'E4',
+      'A4'
+    ])
+    addSequence(this._.instruments['guitar #3'], [
+      ['B4', 2],
+      'F#4',
+      'B3',
+      null,
+      'E4',
+      'A4',
+      'F#4',
+      null,
+      'D5',
+      'G4',
+      null
+    ])
+    addSequence(this._.instruments['guitar #4'], [
+      null,
+      'E4',
+      'A4',
+      'F#4',
+      null,
+      'D5',
+      'G4',
+      null,
+      ['B4', 2],
+      'F#4',
+      'B3'
+    ])
 
     /*
     // AM/FM example
@@ -235,35 +335,14 @@ class Audio extends EventEmitter {
     }, 50)
     */
 
-    const { ctx, instruments, events } = this._
+    const { instruments } = this._
 
-    const attack = 0.01
-    const release = 0.03
-
-    const sequenceLength = 12 * 0.15
-    const sequenceRepeats = 3
-    const startOffset = 0.5
-
-    const startFrom = ctx.currentTime + startOffset
-
-    for (let i = 0; i < sequenceRepeats; i++) {
-      forEach(({ event, target, velocity, pitch, time }) => {
-        const repeatOffset = sequenceLength * i
-        const t = startFrom + time + repeatOffset
-        switch (event) {
-          case 'note on':
-            instruments[target].gain.gain.cancelScheduledValues(t)
-            instruments[target].gain.gain.setValueAtTime(0, t)
-            instruments[target].gain.gain.linearRampToValueAtTime(velocity, t + attack)
-            instruments[target].oscillator.frequency.setValueAtTime(toHertz(retune(pitch, tuningData)), t)
-            break
-          case 'note off':
-            instruments[target].gain.gain.cancelAndHoldAtTime(t)
-            instruments[target].gain.gain.linearRampToValueAtTime(0, t + release)
-            break
-        }
-      })(events)
-    }
+    compose(
+      forEach(instrument => {
+        instrument.play()
+      }),
+      values
+    )(instruments)
   }
 
   pause() {
@@ -292,15 +371,10 @@ class Audio extends EventEmitter {
     clearInterval(this._.interval)
     */
 
-    const { instruments, ctx } = this._
-
-    const now = ctx.currentTime
-
+    const { instruments } = this._
     compose(
-      forEach(({ gain, oscillator }) => {
-        gain.gain.cancelScheduledValues(now)
-        gain.gain.setValueAtTime(0, now)
-        oscillator.frequency.cancelScheduledValues(now)
+      forEach(instrument => {
+        instrument.pause()
       }),
       values
     )(instruments)
