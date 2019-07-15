@@ -2,30 +2,8 @@
 
 import EventEmitter from 'eventemitter3'
 import { parseTuning, retune, toHertz, fromScientificNotation } from 'absolute-cent'
-import { forEach, reduce, isNil, is, compose, values } from 'ramda'
+import { forEach, reduce, isNil, is, compose, values, propOr } from 'ramda'
 // import AudioFileManager from 'audio'
-/*
-import { memoizeWith, modulo } from 'ramda'
-import { roundToNDecimals } from './number'
-
-const createWave = memoizeWith(
-  phaseOffset => roundToNDecimals(2, modulo(phaseOffset, 1)),
-  (phaseOffset, ctx) => {
-    const real = new Float32Array(2)
-    const imag = new Float32Array(2)
-    const shift = 2 * Math.PI * roundToNDecimals(2, modulo(phaseOffset, 1))
-
-    real[0] = 1
-    real[1] = 0 * Math.cos(shift) - 1 * Math.sin(shift)
-    imag[0] = 0
-    imag[1] = 0 * Math.sin(shift) + 1 * Math.cos(shift)
-
-    return ctx.createPeriodicWave(real, imag, { disableNormalization: true })
-  }
-)
-*/
-
-// ---------------------------
 
 const generateNEdo = n => {
   const pitches = []
@@ -39,18 +17,18 @@ const generateNEdo = n => {
 
 const tuningData = parseTuning({
   anchor: [0, 'C4'],
-  pitches: generateNEdo(5)
+  pitches: generateNEdo(12)
 })
 
 class Instrument {
-  constructor(ctx) {
+  constructor(ctx, options = {}) {
     const gain = ctx.createGain()
     gain.gain.value = 0
     gain.connect(ctx.destination)
 
     const oscillator = ctx.createOscillator()
     oscillator.connect(gain)
-    oscillator.type = 'triangle'
+    oscillator.type = propOr('triangle', 'waveType', options)
     oscillator.start()
 
     this._ = {
@@ -59,8 +37,15 @@ class Instrument {
         gain,
         oscillator
       },
-      events: []
+      events: [],
+      meta: {
+        loopSize: 0
+      }
     }
+  }
+
+  setLoopSize(loopSize) {
+    this._.meta.loopSize = loopSize
   }
 
   schedule(eventData) {
@@ -68,13 +53,13 @@ class Instrument {
   }
 
   play() {
-    const { ctx, nodes, events } = this._
+    const { ctx, nodes, events, meta } = this._
 
     const attack = 0.01
     const release = 0.03
 
-    const sequenceLength = 12 * 0.15
-    const sequenceRepeats = 3
+    const sequenceLength = meta.loopSize * 0.15
+    const sequenceRepeats = meta.loopSize === 12 ? 6 : 3
     const startOffset = 0.5
 
     const startFrom = ctx.currentTime + startOffset
@@ -139,6 +124,9 @@ class Audio extends EventEmitter {
     this._.instruments['guitar #3'] = new Instrument(ctx)
     this._.instruments['guitar #4'] = new Instrument(ctx)
 
+    this._.instruments['bass #1'] = new Instrument(ctx, { waveType: 'sawtooth' })
+    this._.instruments['bass #2'] = new Instrument(ctx, { waveType: 'square' })
+
     const addNote = (instrument, note, time) => {
       const tempo = 0.15
       const noteLength = 0.1
@@ -148,7 +136,7 @@ class Audio extends EventEmitter {
         event: 'note on',
         pitch: fromScientificNotation(pitch),
         time: time * tempo,
-        velocity: 0.1
+        velocity: 0.3
       })
       instrument.schedule({
         event: 'note off',
@@ -157,7 +145,8 @@ class Audio extends EventEmitter {
       })
     }
 
-    const addSequence = (instrument, notes) => {
+    const addSequence = (instrument, loopSize, notes) => {
+      instrument.setLoopSize(loopSize)
       reduce(
         (cntr, note) => {
           if (isNil(note)) {
@@ -172,7 +161,7 @@ class Audio extends EventEmitter {
       )
     }
 
-    addSequence(this._.instruments['guitar #1'], [
+    addSequence(this._.instruments['guitar #1'], 12, [
       'D5',
       'G4',
       null,
@@ -185,7 +174,7 @@ class Audio extends EventEmitter {
       'F#4',
       null
     ])
-    addSequence(this._.instruments['guitar #2'], [
+    addSequence(this._.instruments['guitar #2'], 12, [
       'F#4',
       null,
       'D5',
@@ -198,7 +187,7 @@ class Audio extends EventEmitter {
       'E4',
       'A4'
     ])
-    addSequence(this._.instruments['guitar #3'], [
+    addSequence(this._.instruments['guitar #3'], 12, [
       ['B4', 2],
       'F#4',
       'B3',
@@ -211,7 +200,7 @@ class Audio extends EventEmitter {
       'G4',
       null
     ])
-    addSequence(this._.instruments['guitar #4'], [
+    addSequence(this._.instruments['guitar #4'], 12, [
       null,
       'E4',
       'A4',
@@ -223,6 +212,59 @@ class Audio extends EventEmitter {
       ['B4', 2],
       'F#4',
       'B3'
+    ])
+
+    addSequence(this._.instruments['bass #1'], 24, [
+      'A1',
+      null,
+      'A2',
+      null,
+      'A1',
+      'A2',
+      null,
+      null,
+      'C2',
+      null,
+      null,
+      'C3',
+      'C2',
+      null,
+      'C3',
+      null,
+      'E1',
+      'E2',
+      null,
+      null,
+      'E1',
+      null,
+      'E2',
+      null
+    ])
+    addSequence(this._.instruments['bass #2'], 24, [
+      'A1',
+      null,
+      null,
+      'A2',
+      'A1',
+      null,
+      'A2',
+      null,
+      'C2',
+      'C3',
+      null,
+      null,
+      'C2',
+      null,
+      null,
+      'C3',
+      'E1',
+      null,
+      'E2',
+      null,
+      'E1',
+      'E2',
+      null,
+      null
     ])
 
     /*
