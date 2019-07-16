@@ -2,7 +2,7 @@
 
 import EventEmitter from 'eventemitter3'
 import { parseTuning, retune, toHertz, fromScientificNotation } from 'absolute-cent'
-import { forEach, reduce, isNil, is, compose, values, propOr } from 'ramda'
+import { forEach, reduce, isNil, is, compose, values, propOr, pathOr } from 'ramda'
 // import AudioFileManager from 'audio'
 
 const generateNEdo = n => {
@@ -22,9 +22,17 @@ const tuningData = parseTuning({
 
 class Instrument {
   constructor(ctx, options = {}) {
+    const filter = ctx.createBiquadFilter()
+    filter.type = 'lowpass'
+    filter.frequency.value = pathOr(20000, ['filter', 'lowpass'], options)
+
+    const panner = ctx.createStereoPanner()
+    panner.connect(ctx.destination)
+    panner.pan.value = propOr(0, 'pan', options)
+
     const gain = ctx.createGain()
     gain.gain.value = 0
-    gain.connect(ctx.destination)
+    gain.connect(panner)
 
     const oscillator = ctx.createOscillator()
     oscillator.connect(gain)
@@ -35,11 +43,13 @@ class Instrument {
       ctx,
       nodes: {
         gain,
-        oscillator
+        oscillator,
+        panner
       },
       events: [],
       meta: {
-        loopSize: 0
+        loopSize: 0,
+        volume: propOr(1, 'volume', options)
       }
     }
   }
@@ -52,17 +62,17 @@ class Instrument {
     this._.events.push(eventData)
   }
 
-  play() {
-    const { ctx, nodes, events, meta } = this._
+  play(startTime) {
+    const { nodes, events, meta } = this._
 
     const attack = 0.01
-    const release = 0.03
+    const release = 0.02
 
     const sequenceLength = meta.loopSize * 0.15
     const sequenceRepeats = meta.loopSize === 12 ? 6 : 3
     const startOffset = 0.5
 
-    const startFrom = ctx.currentTime + startOffset
+    const startFrom = startTime + startOffset
 
     for (let i = 0; i < sequenceRepeats; i++) {
       forEach(({ event, velocity, pitch, time }) => {
@@ -72,7 +82,7 @@ class Instrument {
           case 'note on':
             nodes.gain.gain.cancelScheduledValues(t)
             nodes.gain.gain.setValueAtTime(0, t)
-            nodes.gain.gain.linearRampToValueAtTime(velocity, t + attack)
+            nodes.gain.gain.linearRampToValueAtTime(meta.volume * velocity, t + attack)
             nodes.oscillator.frequency.setValueAtTime(toHertz(retune(pitch, tuningData)), t)
             break
           case 'note off':
@@ -111,6 +121,7 @@ class Audio extends EventEmitter {
   }
 
   async init() {
+    // const ctx = new OfflineAudioContext(2, 44100 * 6, 44100)
     const ctx = new AudioContext()
 
     this._.ctx = ctx
@@ -119,13 +130,23 @@ class Audio extends EventEmitter {
 
     // --------------------------------
 
-    this._.instruments['guitar #1'] = new Instrument(ctx)
-    this._.instruments['guitar #2'] = new Instrument(ctx)
-    this._.instruments['guitar #3'] = new Instrument(ctx)
-    this._.instruments['guitar #4'] = new Instrument(ctx)
+    this._.instruments['guitar #1'] = new Instrument(ctx, { waveType: 'square', pan: -0.4, volume: 0.5 })
+    this._.instruments['guitar #2'] = new Instrument(ctx, { waveType: 'square', pan: -0.1, volume: 0.5 })
+    this._.instruments['guitar #3'] = new Instrument(ctx, { waveType: 'square', pan: 0.1, volume: 0.5 })
+    this._.instruments['guitar #4'] = new Instrument(ctx, { waveType: 'square', pan: 0.4, volume: 0.5 })
 
-    this._.instruments['bass #1'] = new Instrument(ctx, { waveType: 'sawtooth' })
-    this._.instruments['bass #2'] = new Instrument(ctx, { waveType: 'square' })
+    this._.instruments['bass #1'] = new Instrument(ctx, {
+      waveType: 'square',
+      pan: -0.7,
+      filter: { lowpass: 700 },
+      volume: 0.8
+    })
+    this._.instruments['bass #2'] = new Instrument(ctx, {
+      waveType: 'square',
+      pan: 0.7,
+      filter: { lowpass: 700 },
+      volume: 0.8
+    })
 
     const addNote = (instrument, note, time) => {
       const tempo = 0.15
@@ -136,7 +157,7 @@ class Audio extends EventEmitter {
         event: 'note on',
         pitch: fromScientificNotation(pitch),
         time: time * tempo,
-        velocity: 0.3
+        velocity: 0.5
       })
       instrument.schedule({
         event: 'note off',
@@ -377,11 +398,13 @@ class Audio extends EventEmitter {
     }, 50)
     */
 
-    const { instruments } = this._
+    const { instruments, ctx } = this._
+
+    const now = ctx.currentTime
 
     compose(
       forEach(instrument => {
-        instrument.play()
+        instrument.play(now)
       }),
       values
     )(instruments)
@@ -425,7 +448,13 @@ class Audio extends EventEmitter {
   stop() {}
 
   renderToWav(filename) {
-    // AudioFileManager(buffer.get()).save(filename)
+    /*
+    const { ctx } = this._
+    this.play()
+    ctx.startRendering().then(buffer => {
+      AudioFileManager(buffer).save(filename)
+    })
+    */
   }
 }
 
