@@ -12,4 +12,4 @@ const connectStaticContext = mapStateToProps => WrappedComponent => {
   }
 }
 
-export default (__isBrowser__ ? connect : connectStaticContext)
+export default __isBrowser__ ? connect : connectStaticContext

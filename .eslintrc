@@ -53,8 +53,7 @@
     "ramda/reject-simplification": "error",
     "ramda/set-simplification": "error",
     "ramda/unless-simplification": "error",
-    "ramda/when-simplification": "error",
-    "no-prototype-builtins": "off"
+    "ramda/when-simplification": "error"
   },
   "settings": {
     "import/resolver": {

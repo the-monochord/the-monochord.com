@@ -20,6 +20,7 @@ class Midi extends EventEmitter {
   isSupported() {
     return !!navigator.requestMIDIAccess
   }
+
   async init() {
     const enableMidiSupport = midiAccess => {
       midiAccess.onstatechange = event => {

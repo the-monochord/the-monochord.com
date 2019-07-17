@@ -94,10 +94,8 @@ class Instrument {
     }
   }
 
-  pause() {
-    const { nodes, ctx } = this._
-
-    const now = ctx.currentTime
+  pause(now) {
+    const { nodes } = this._
 
     nodes.gain.gain.cancelScheduledValues(now)
     nodes.gain.gain.setValueAtTime(0, now)
@@ -117,7 +115,7 @@ class Audio extends EventEmitter {
   }
 
   isSupported() {
-    return window.hasOwnProperty('AudioContext')
+    return Object.prototype.hasOwnProperty.call(window, 'AudioContext')
   }
 
   async init() {
@@ -399,7 +397,6 @@ class Audio extends EventEmitter {
     */
 
     const { instruments, ctx } = this._
-
     const now = ctx.currentTime
 
     compose(
@@ -436,10 +433,11 @@ class Audio extends EventEmitter {
     clearInterval(this._.interval)
     */
 
-    const { instruments } = this._
+    const { instruments, ctx } = this._
+    const now = ctx.currentTime
     compose(
       forEach(instrument => {
-        instrument.pause()
+        instrument.pause(now)
       }),
       values
     )(instruments)
