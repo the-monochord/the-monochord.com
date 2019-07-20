@@ -1,7 +1,7 @@
 import path from 'path'
 import { curry, forEach } from 'ramda'
 import bodyParser from 'body-parser'
-import minifyHTML from 'express-minify-html'
+import minifyHTML from 'express-minify-html-2'
 import cors from 'cors'
 import express from 'express'
 import { minifyHTMLConfig, mode } from './config'
