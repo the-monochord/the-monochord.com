@@ -1,5 +1,5 @@
 import autodux from 'autodux'
-import { remove, append, clone, compose, map, evolve, F, adjust, T, assoc, reject, propEq } from 'ramda'
+import { remove, append, clone, compose, map, evolve, F, adjust, T, assoc, reject, propEq, findIndex } from 'ramda'
 import { emptyProject } from '../config/defaults'
 
 const { reducer, actions } = autodux({
@@ -18,14 +18,9 @@ const { reducer, actions } = autodux({
             compose(
               evolve({
                 bars: append({
-                  // name: '',
                   trackId,
-                  notes: {
-                    // instrument: '',
-                    // events: [],
-                    // props: {},
-                    // startTime: 0
-                  }
+                  startTime: 0,
+                  events: []
                 }),
                 tracks: append({
                   id: trackId,
@@ -49,14 +44,15 @@ const { reducer, actions } = autodux({
       })(state)
     },
     addTrack: (state, payload) => {
-      const { projectIdx, name, trackId } = payload
+      const { projectIdx, name, trackId, volume } = payload
       return evolve({
         projects: adjust(
           projectIdx,
           evolve({
             tracks: append({
               id: trackId,
-              name
+              name,
+              volume
             })
           })
         )
@@ -73,6 +69,20 @@ const { reducer, actions } = autodux({
         )
       })(state)
     },
+    setTrackProperty: (state, payload) => {
+      const { projectIdx, trackId, property, value } = payload
+      return evolve({
+        projects: adjust(
+          projectIdx,
+          evolve({
+            tracks: tracks => {
+              const trackIdx = findIndex(propEq('id', trackId), tracks)
+              return adjust(trackIdx, assoc(property, value), tracks)
+            }
+          })
+        )
+      })(state)
+    },
     setTitle: (state, payload) => {
       const { projectIdx, title } = payload
       return evolve({
@@ -80,20 +90,15 @@ const { reducer, actions } = autodux({
       })(state)
     },
     addBar: (state, payload) => {
-      const { projectIdx, trackId } = payload
+      const { projectIdx, trackId, startTime } = payload
       return evolve({
         projects: adjust(
           projectIdx,
           evolve({
             bars: append({
-              // name: '',
               trackId,
-              notes: {
-                // instrument: '',
-                // events: [],
-                // props: {},
-                // startTime: 0
-              }
+              startTime,
+              events: []
             })
           })
         )
@@ -109,10 +114,6 @@ const { reducer, actions } = autodux({
           })
         )
       })(state)
-    },
-    moveBar: (state, payload) => {
-      // TODO
-      return state
     }
   }
 })

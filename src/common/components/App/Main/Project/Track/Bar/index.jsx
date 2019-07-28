@@ -1,11 +1,13 @@
 import React from 'react'
 
 const Bar = props => {
-  const { notes = [] } = props
+  const { startTime, events } = props
   return (
     <div className={'Bar'}>
-      {notes.map((note, idx) => (
-        <span key={idx}>{JSON.stringify(note)}</span>
+      starts from: {startTime}
+      <br />
+      {events.map((event, eventIdx) => (
+        <pre key={eventIdx}>{JSON.stringify(event, null, 2)}</pre>
       ))}
     </div>
   )
