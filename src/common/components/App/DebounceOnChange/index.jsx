@@ -5,25 +5,30 @@ import { debounce } from '../../../helpers/events'
 
 // based on https://github.com/erikras/redux-form/issues/1835#issuecomment-249424667
 const DebounceOnChange = curry((debounceTime, Component) => {
-  let handleChange = NOP
-
   return props => {
     const { onChange, value, ...otherProps } = props
 
     const [displayedValue, setDisplayedValue] = useState(value)
     const [lastPropValue, setLastPropValue] = useState(value)
+    const [handleChange, setHandleChange] = useState(NOP)
 
     useEffect(() => {
       const debouncedOnChange = debounce(event => {
         onChange(event.target.value)
       }, debounceTime)
 
-      handleChange = event => {
+      // https://medium.com/@pshrmn/react-hook-gotchas-e6ca52f49328 'Function as state' part
+      setHandleChange(() => event => {
         event.persist()
         setDisplayedValue(event.target.value)
         debouncedOnChange(event)
-      }
-    }, 1)
+      })
+    }, [onChange])
+
+    useEffect(() => {
+      setDisplayedValue(value)
+      setLastPropValue(value)
+    }, [value])
 
     const getValue = () => {
       if (value === lastPropValue) {
@@ -34,7 +39,15 @@ const DebounceOnChange = curry((debounceTime, Component) => {
       }
     }
 
-    return <Component {...{ onChange: handleChange, value: getValue(), ...otherProps }} />
+    return (
+      <Component
+        {...{
+          onChange: handleChange || NOP, // useState is not ready yet, need default value
+          value: getValue(),
+          ...otherProps
+        }}
+      />
+    )
   }
 })
 
