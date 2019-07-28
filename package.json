@@ -55,7 +55,7 @@
   },
   "homepage": "https://github.com/the-monochord/the-monochord.com#readme",
   "dependencies": {
-    "absolute-cent": "^1.0.8",
+    "absolute-cent": "^1.0.9",
     "audio": "github:audiojs/audio",
     "autodux": "^5.0.2",
     "body-parser": "^1.19.0",
