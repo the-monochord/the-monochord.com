@@ -1,5 +1,20 @@
 import autodux from 'autodux'
-import { remove, append, clone, compose, map, evolve, F, adjust, T, assoc, reject, propEq, findIndex } from 'ramda'
+import {
+  remove,
+  append,
+  clone,
+  compose,
+  map,
+  evolve,
+  F,
+  adjust,
+  T,
+  assoc,
+  reject,
+  propEq,
+  findIndex,
+  assocPath
+} from 'ramda'
 import { emptyProject } from '../config/defaults'
 
 const { reducer, actions } = autodux({
@@ -46,74 +61,71 @@ const { reducer, actions } = autodux({
     addTrack: (state, payload) => {
       const { projectIdx, name, trackId, volume } = payload
       return evolve({
-        projects: adjust(
-          projectIdx,
-          evolve({
+        projects: {
+          [projectIdx]: {
             tracks: append({
               id: trackId,
               name,
               volume
             })
-          })
-        )
+          }
+        }
       })(state)
     },
     removeTrack: (state, payload) => {
       const { projectIdx, trackId } = payload
       return evolve({
-        projects: adjust(
-          projectIdx,
-          evolve({
+        projects: {
+          [projectIdx]: {
             tracks: reject(propEq('id', trackId))
-          })
-        )
+          }
+        }
       })(state)
     },
     setTrackProperty: (state, payload) => {
       const { projectIdx, trackId, property, value } = payload
       return evolve({
-        projects: adjust(
-          projectIdx,
-          evolve({
+        projects: {
+          [projectIdx]: {
             tracks: tracks => {
               const trackIdx = findIndex(propEq('id', trackId), tracks)
               return adjust(trackIdx, assoc(property, value), tracks)
             }
-          })
-        )
+          }
+        }
       })(state)
     },
     setTitle: (state, payload) => {
       const { projectIdx, title } = payload
-      return evolve({
-        projects: adjust(projectIdx, assoc('title', title))
-      })(state)
+      return assocPath(['projects', projectIdx, 'title'], title, state)
     },
     addBar: (state, payload) => {
       const { projectIdx, trackId, startTime } = payload
       return evolve({
-        projects: adjust(
-          projectIdx,
-          evolve({
+        projects: {
+          [projectIdx]: {
             bars: append({
               trackId,
               startTime,
               events: []
             })
-          })
-        )
+          }
+        }
       })(state)
     },
     removeBar: (state, payload) => {
       const { projectIdx, barIdx } = payload
       return evolve({
-        projects: adjust(
-          projectIdx,
-          evolve({
+        projects: {
+          [projectIdx]: {
             bars: remove(barIdx, 1)
-          })
-        )
+          }
+        }
       })(state)
+    },
+    setCursor: (state, payload) => {
+      const { projectIdx, cursorAt } = payload
+      return assocPath(['projects', projectIdx, 'cursorAt'], cursorAt, state)
     }
   }
 })

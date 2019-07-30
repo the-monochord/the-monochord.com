@@ -7,7 +7,7 @@ import Bar from './Bar'
 const DebouncedTextField = DebounceOnChange(300, TextField)
 
 const Track = props => {
-  const { bars = [], name, id, volume, setTrackProperty, addBar, removeBar, projectIdx } = props
+  const { bars = [], name, id, volume, setTrackProperty, addBar, removeBar, projectIdx, cursorAt } = props
   return (
     <div className={'Track'}>
       <DebouncedTextField
@@ -38,7 +38,7 @@ const Track = props => {
         </Fragment>
       ))}
       <br />
-      <Button onClick={() => addBar({ projectIdx, trackId: id, startTime: 0 })} label={'add bar'} />
+      <Button onClick={() => addBar({ projectIdx, trackId: id, startTime: cursorAt })} label={'add bar'} />
     </div>
   )
 }

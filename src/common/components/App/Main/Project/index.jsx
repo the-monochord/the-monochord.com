@@ -8,6 +8,7 @@ import { actions as draftActions } from '../../../../reducers/drafts'
 import Button from '../../Button'
 import TextField from '../../TextField'
 import DebounceOnChange from '../../DebounceOnChange'
+import { roundToNDecimals } from '../../../../helpers/number'
 import Track from './Track'
 
 const enhance = compose(
@@ -26,8 +27,18 @@ const enhance = compose(
 const DebouncedTextField = DebounceOnChange(300, TextField)
 
 const Project = props => {
-  const { activeDraftIndex, activeDraft, setTitle, addTrack, removeTrack, setTrackProperty, addBar, removeBar } = props
-  const { tracks = [], bars = [], title = '' } = activeDraft
+  const {
+    activeDraftIndex,
+    activeDraft,
+    setTitle,
+    addTrack,
+    removeTrack,
+    setTrackProperty,
+    addBar,
+    removeBar,
+    setCursor
+  } = props
+  const { tracks = [], bars = [], title = '', cursorAt = 0 } = activeDraft
 
   return (
     <div className={'Project'}>
@@ -41,12 +52,29 @@ const Project = props => {
           })
         }}
       />
+      <br />
+      cursor at:
+      <input
+        type="number"
+        min="0"
+        value={cursorAt}
+        onChange={e => {
+          // TODO: add debounce
+          if (!isNaN(parseFloat(e.target.value))) {
+            setCursor({
+              projectIdx: activeDraftIndex,
+              cursorAt: roundToNDecimals(3, parseFloat(e.target.value))
+            })
+          }
+        }}
+      />
+      <br />
       {tracks.map(track => (
         <Fragment key={track.id}>
           <Track
             {...track}
             bars={filter(propEq('trackId', track.id), bars)}
-            {...{ setTrackProperty, addBar, removeBar, projectIdx: activeDraftIndex }}
+            {...{ setTrackProperty, addBar, removeBar, projectIdx: activeDraftIndex, cursorAt }}
           />
           <Button
             onClick={() => removeTrack({ projectIdx: activeDraftIndex, trackId: track.id })}
