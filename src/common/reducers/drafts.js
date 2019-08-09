@@ -39,7 +39,8 @@ const { reducer, actions } = autodux({
                 }),
                 tracks: append({
                   id: trackId,
-                  name
+                  name,
+                  volume: 1
                 })
               }),
               clone

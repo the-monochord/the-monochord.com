@@ -46,7 +46,7 @@ class Audio extends EventEmitter {
 
     // --------------------------------
 
-    this._.instruments['demo'] = new Instrument(ctx, { waveType: 'square' })
+    this._.instruments['demo'] = new Instrument(ctx, { waveType: 'sine' })
 
     this._.instruments['demo'].schedule({
       event: 'note on',

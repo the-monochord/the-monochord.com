@@ -67,7 +67,7 @@ const Main = props => {
                 }
               }}
             />
-            {title || <i>untitled</i>}
+            {title || <i>Untitled project</i>}
             <Button onClick={() => deleteDraft({ projectIdx })} label={'delete'} />
           </li>
         ))}
