@@ -6,7 +6,8 @@ const i18nConfig = {
   whitelist: languages,
   load: 'all',
   keySeparator: false,
-  defaultNS: 'translation'
+  defaultNS: 'translation',
+  debug: true
 }
 
 export { i18nConfig, languages }
