@@ -90,7 +90,7 @@ const App = props => {
       tabIndex={0}
       ref={AppRef}
       onKeyDown={e => {
-        if (e.target === AppRef.current) {
+        if (!e.repeat && e.target === AppRef.current) {
           hotkeyPressed({
             key: e.key
           })
