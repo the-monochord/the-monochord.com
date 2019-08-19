@@ -3,7 +3,7 @@ import cn from 'classnames'
 import { compose, isEmpty } from 'ramda'
 import { withTranslation } from 'react-i18next'
 import { Route, Switch, withRouter } from 'react-router-dom'
-import { When, Unless } from 'react-if'
+import { When, Unless, If, Then, Else } from 'react-if'
 import isomorphicConnect from '../../helpers/isomorphicConnect'
 import routes from '../../config/routes'
 import { actions as stateActions } from '../../reducers/state'
@@ -106,7 +106,13 @@ const App = props => {
           <br />
           <hr />
           <br />
-          {isOnline ? 'online' : 'offline'}
+          <If condition={isOnline}>
+            <Then>online</Then>
+            <Else>
+              offline
+              <small>reconnecting in {4} seconds</small>
+            </Else>
+          </If>
           <When condition={isLoggedIn}>
             <div>
               <Unless condition={isEmpty(profilePicture)}>

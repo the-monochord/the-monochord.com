@@ -12,6 +12,7 @@ let wss = null
 let shouldTryToReconnect = true
 let reconnectTimeout = null
 let retryTimingIndex = 1
+const maxRetryTimingIndex = 10
 let isOnline = false
 let queuedMessages = null
 
@@ -55,7 +56,7 @@ const createSocketClient = (store, onMessageHandler) => {
         createSocketClient(store, onMessageHandler)
       }, retrySeconds * 1000)
 
-      if (retryTimingIndex < 9) {
+      if (retryTimingIndex < maxRetryTimingIndex) {
         retryTimingIndex++
       }
     }
@@ -101,6 +102,7 @@ const shutdownSocket = () => {
 }
 
 const restartSocket = () => {
+  shouldTryToReconnect = true
   wss.close()
 }
 
