@@ -1,17 +1,18 @@
 import React from 'react'
+import { Trans } from 'react-i18next'
 import { TYPE as NOTIFICATION_TYPE } from './Notifications'
 
 const midiNotSupported = {
   title: (
-    <>
+    <Trans i18nKey="Messages:NoMidi-Title">
       <a href="https://www.w3.org/TR/webmidi/">Web MIDI API</a> is not supported
-    </>
+    </Trans>
   ),
   detail: (
-    <>
+    <Trans i18nKey="Messages:NoMidi-Detail">
       To see, which browsers support the Web MIDI API, please visit{' '}
       <a href="https://caniuse.com/#feat=midi">https://caniuse.com/#feat=midi</a>
-    </>
+    </Trans>
   ),
   type: NOTIFICATION_TYPE.WARNING
 }

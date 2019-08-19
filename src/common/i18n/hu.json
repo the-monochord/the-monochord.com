@@ -38,5 +38,8 @@
   "Tools": {
     "Tools": "Eszközök"
   },
-  "Project": {}
+  "Project": {},
+  "Messages": {
+    "NoMidi-Title": "A <0>Web MIDI API</0> nem támogatott"
+  }
 }
