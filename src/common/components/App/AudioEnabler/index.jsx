@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import ToggleSwitch from '../ToggleSwitch'
 import { NOP } from '../../../helpers/function'
+import { useEffectOnce } from '../../../helpers/react'
 
 const AudioEnabler = props => {
   const { audio, onReady = NOP } = props
   const [isAudioInited, setIsAudioInited] = useState(false)
 
-  useEffect(() => {
+  useEffectOnce(() => {
     if (audio.isSupported()) {
       audio.on('ready', () => {
         onReady()
       })
     }
-  }, 1)
+  })
 
   return (
     <ToggleSwitch

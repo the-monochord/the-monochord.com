@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, createRef } from 'react'
+import React, { useContext, createRef } from 'react'
 import cn from 'classnames'
 import { compose, isEmpty } from 'ramda'
 import { withTranslation } from 'react-i18next'
@@ -11,6 +11,7 @@ import { actions as midiActions } from '../../reducers/midi'
 import { actions as historyActions } from '../../reducers/history'
 import MidiContext from '../../contexts/MidiContext'
 import AudioContext from '../../contexts/AudioContext'
+import { useEffectOnce } from '../../helpers/react'
 import Settings from './Settings'
 import Notifications from './Notifications'
 import Navigation from './Navigation'
@@ -66,7 +67,7 @@ const App = props => {
   const midi = useContext(MidiContext)
   const audio = useContext(AudioContext)
 
-  useEffect(() => {
+  useEffectOnce(() => {
     if (midi.isSupported()) {
       midi
         .on('note on', note => noteOn({ noteIdx: note }))
@@ -80,7 +81,7 @@ const App = props => {
     if (!audio.isSupported()) {
       addNotification(audioNotSupported)
     }
-  }, 1)
+  })
 
   const AppRef = createRef()
 

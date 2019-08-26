@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import ToggleSwitch from '../ToggleSwitch'
 import { NOP } from '../../../helpers/function'
+import { useEffectOnce } from '../../../helpers/react'
 
 const MidiEnabler = props => {
   const { midi, onReady = NOP } = props
   const [isMidiInited, setIsMidiInited] = useState(false)
   const [isMidiBlocked, setIsMidiBlocked] = useState(false)
 
-  useEffect(() => {
+  useEffectOnce(() => {
     if (midi.isSupported()) {
       midi
         .on('blocked', () => {
@@ -18,7 +19,7 @@ const MidiEnabler = props => {
           onReady()
         })
     }
-  }, 1)
+  })
 
   return (
     <ToggleSwitch
