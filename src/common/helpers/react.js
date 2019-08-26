@@ -1,16 +1,15 @@
 import { useRef, useEffect } from 'react'
 
-// https://stackoverflow.com/a/53180013/1806628
 const useEffectSkipFirst = (fn, inputs) => {
-  const didMountRef = useRef(false)
+  const isFirstCallRef = useRef(true)
 
   useEffect(() => {
-    if (!didMountRef.current) {
-      didMountRef.current = true
+    if (isFirstCallRef.current) {
+      isFirstCallRef.current = false
       return
     }
 
-    fn()
+    return fn()
   }, inputs)
 }
 
