@@ -1,24 +1,12 @@
 import React from 'react'
-import { NavLink, withRouter } from 'react-router-dom'
-import { compose } from 'ramda'
+import { NavLink } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { If, Then, Else } from 'react-if'
-import isomorphicConnect from '../../../helpers/isomorphicConnect'
-
-const enhance = compose(
-  withRouter,
-  isomorphicConnect(
-    state => ({
-      isLoggedIn: state.user.isLoggedIn
-    }),
-    {}
-  )
-)
+import { useNamespaceSelector } from '../../../helpers/react'
 
 const Navigation = props => {
-  const { isLoggedIn } = props
-
   const { t } = useTranslation(['Navigation'])
+  const { isLoggedIn } = useNamespaceSelector('user', ['isLoggedIn'])
 
   return (
     <nav>
@@ -49,4 +37,4 @@ const Navigation = props => {
   )
 }
 
-export default enhance(Navigation)
+export default Navigation

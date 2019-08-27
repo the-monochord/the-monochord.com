@@ -1,20 +1,17 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { compose } from 'ramda'
-import { NavLink, withRouter } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { When } from 'react-if'
+import useRouter from 'use-react-router'
 import ConvertRatioToCents from './ConvertRatioToCents'
 
-const enhance = compose(withRouter)
-
 const Tools = props => {
+  const { t } = useTranslation(['Tools'])
   const {
     match: {
       params: { tool, input }
     }
-  } = props
-
-  const { t } = useTranslation(['Tools'])
+  } = useRouter()
 
   return (
     <div>
@@ -35,4 +32,4 @@ const Tools = props => {
   )
 }
 
-export default enhance(Tools)
+export default Tools
