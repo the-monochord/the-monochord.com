@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink, withRouter } from 'react-router-dom'
 import { compose } from 'ramda'
-import { withTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { If, Then, Else } from 'react-if'
 import isomorphicConnect from '../../../helpers/isomorphicConnect'
 
@@ -12,12 +12,14 @@ const enhance = compose(
       isLoggedIn: state.user.isLoggedIn
     }),
     {}
-  ),
-  withTranslation(['Navigation'])
+  )
 )
 
 const Navigation = props => {
-  const { isLoggedIn, t } = props
+  const { isLoggedIn } = props
+
+  const { t } = useTranslation(['Navigation'])
+
   return (
     <nav>
       <ul>

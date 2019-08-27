@@ -1,5 +1,5 @@
 import React from 'react'
-import { withTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { compose } from 'ramda'
 import { withRouter } from 'react-router-dom'
 import isomorphicConnect from '../../../helpers/isomorphicConnect'
@@ -22,12 +22,14 @@ const enhance = compose(
     {
       ...stateActions
     }
-  ),
-  withTranslation(['Notifications'])
+  )
 )
 
 const Notifications = props => {
-  const { t, notifications, removeNotification } = props
+  const { notifications, removeNotification } = props
+
+  const { t } = useTranslation(['Notifications'])
+
   return (
     <div>
       <h2>{t('Notifications')}</h2>

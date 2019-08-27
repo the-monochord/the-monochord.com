@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import { filter, propEq, compose, findIndex } from 'ramda'
 import { withRouter } from 'react-router-dom'
-import { withTranslation } from 'react-i18next'
+// import { useTranslation } from 'react-i18next'
 import shortid from 'shortid'
 import isomorphicConnect from '../../../../helpers/isomorphicConnect'
 import { actions as draftActions } from '../../../../reducers/drafts'
@@ -20,8 +20,7 @@ const enhance = compose(
     {
       ...draftActions
     }
-  ),
-  withTranslation(['Project'])
+  )
 )
 
 const DebouncedTextField = DebounceOnChange(300, TextField)
@@ -38,6 +37,9 @@ const Project = props => {
     removeBar,
     setCursor
   } = props
+
+  // const { t } = useTranslation(['Project'])
+
   const { tracks = [], bars = [], title = '', cursorAt = 0 } = activeDraft
 
   return (

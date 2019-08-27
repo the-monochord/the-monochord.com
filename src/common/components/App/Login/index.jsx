@@ -1,11 +1,8 @@
 import React from 'react'
-import { withTranslation } from 'react-i18next'
-import { compose } from 'ramda'
-
-const enhance = compose(withTranslation(['Login']))
+import { useTranslation } from 'react-i18next'
 
 const Login = props => {
-  const { t } = props
+  const { t } = useTranslation(['Login'])
   return (
     <div>
       <a href="/login/facebook">{t('Login with facebook')}</a>
@@ -13,4 +10,4 @@ const Login = props => {
   )
 }
 
-export default enhance(Login)
+export default Login

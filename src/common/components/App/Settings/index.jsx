@@ -1,5 +1,5 @@
 import React from 'react'
-import { withTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { compose } from 'ramda'
 import { withRouter } from 'react-router-dom'
 import Button from '../Button'
@@ -16,12 +16,14 @@ const enhance = compose(
     {
       ...settingsActions
     }
-  ),
-  withTranslation(['Settings'])
+  )
 )
 
 const Settings = props => {
-  const { t, theme: currentTheme, language: currentLanguage, valuesOfSettings, updateTheme, updateLanguage } = props
+  const { theme: currentTheme, language: currentLanguage, valuesOfSettings, updateTheme, updateLanguage } = props
+
+  const { t } = useTranslation(['Settings'])
+
   return (
     <div>
       <h2>{t('Settings')}</h2>

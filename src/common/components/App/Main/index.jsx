@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { withTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import { withRouter } from 'react-router-dom'
 import { compose, isNil, find, propEq } from 'ramda'
 import { Unless } from 'react-if'
@@ -25,13 +25,11 @@ const enhance = compose(
       ...draftActions,
       ...stateActions
     }
-  ),
-  withTranslation(['Main'])
+  )
 )
 
 const Main = props => {
   const {
-    t,
     match: {
       params: { hash, revision }
     },
@@ -45,6 +43,8 @@ const Main = props => {
     pauseDraft,
     isAudioEnabled
   } = props
+
+  const { t } = useTranslation(['Main'])
 
   const audio = useContext(AudioContext)
 

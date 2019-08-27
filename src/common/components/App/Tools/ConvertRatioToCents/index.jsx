@@ -1,11 +1,8 @@
 import React from 'react'
-import { withTranslation } from 'react-i18next'
-import { compose } from 'ramda'
-
-const enhance = compose(withTranslation(['ConvertRatioToCents']))
+import { useTranslation } from 'react-i18next'
 
 const ConvertRatioToCents = props => {
-  const { t } = props
+  const { t } = useTranslation(['ConvertRatioToCents'])
   return (
     <div>
       <h3>{t('Convert ratio to cents')}</h3>
@@ -13,4 +10,4 @@ const ConvertRatioToCents = props => {
   )
 }
 
-export default enhance(ConvertRatioToCents)
+export default ConvertRatioToCents
