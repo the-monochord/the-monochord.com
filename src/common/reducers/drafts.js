@@ -124,7 +124,7 @@ const { reducer, actions } = autodux({
         }
       })(state)
     },
-    setCursor: (state, payload) => {
+    setCursorPosition: (state, payload) => {
       const { projectIdx, cursorAt } = payload
       return assocPath(['projects', projectIdx, 'cursorAt'], cursorAt, state)
     }

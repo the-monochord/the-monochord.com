@@ -1,44 +1,25 @@
 import React, { Fragment } from 'react'
-import { filter, propEq, compose, findIndex } from 'ramda'
-import { withRouter } from 'react-router-dom'
-// import { useTranslation } from 'react-i18next'
+import { filter, propEq, findIndex } from 'ramda'
+import { useTranslation } from 'react-i18next'
 import shortid from 'shortid'
-import isomorphicConnect from '../../../../helpers/isomorphicConnect'
 import { actions as draftActions } from '../../../../reducers/drafts'
 import Button from '../../Button'
 import TextField from '../../TextField'
 import DebounceOnChange from '../../DebounceOnChange'
 import { roundToNDecimals } from '../../../../helpers/number'
+import { useSelector, useDispatch } from '../../../../helpers/react'
 import Track from './Track'
-
-const enhance = compose(
-  withRouter,
-  isomorphicConnect(
-    state => ({
-      activeDraftIndex: findIndex(propEq('isActive', true), state.drafts.projects)
-    }),
-    {
-      ...draftActions
-    }
-  )
-)
 
 const DebouncedTextField = DebounceOnChange(300, TextField)
 
-const Project = props => {
-  const {
-    activeDraftIndex,
-    activeDraft,
-    setTitle,
-    addTrack,
-    removeTrack,
-    setTrackProperty,
-    addBar,
-    removeBar,
-    setCursor
-  } = props
+const { setTitle, addTrack, removeTrack, setCursorPosition } = draftActions
+const { setTrackProperty, addBar, removeBar } = draftActions // TODO!!
 
-  // const { t } = useTranslation(['Project'])
+const Project = props => {
+  const { activeDraft } = props
+  const { t } = useTranslation(['Project'])
+  const activeDraftIndex = useSelector(state => findIndex(propEq('isActive', true), state.drafts.projects))
+  const dispatch = useDispatch()
 
   const { tracks = [], bars = [], title = '', cursorAt = 0 } = activeDraft
 
@@ -48,10 +29,12 @@ const Project = props => {
         placeholder="Untitled project"
         value={title}
         onChange={value => {
-          setTitle({
-            projectIdx: activeDraftIndex,
-            title: value
-          })
+          dispatch(
+            setTitle({
+              projectIdx: activeDraftIndex,
+              title: value
+            })
+          )
         }}
       />
       <br />
@@ -63,10 +46,12 @@ const Project = props => {
         onChange={e => {
           // TODO: add debounce
           if (!isNaN(parseFloat(e.target.value))) {
-            setCursor({
-              projectIdx: activeDraftIndex,
-              cursorAt: roundToNDecimals(3, parseFloat(e.target.value))
-            })
+            dispatch(
+              setCursorPosition({
+                projectIdx: activeDraftIndex,
+                cursorAt: roundToNDecimals(3, parseFloat(e.target.value))
+              })
+            )
           }
         }}
       />
@@ -79,8 +64,8 @@ const Project = props => {
             {...{ setTrackProperty, addBar, removeBar, projectIdx: activeDraftIndex, cursorAt }}
           />
           <Button
-            onClick={() => removeTrack({ projectIdx: activeDraftIndex, trackId: track.id })}
-            label={'remove track'}
+            onClick={() => dispatch(removeTrack({ projectIdx: activeDraftIndex, trackId: track.id }))}
+            label={t('Remove track')}
           />
         </Fragment>
       ))}
@@ -88,12 +73,12 @@ const Project = props => {
       <Button
         onClick={() => {
           const trackId = shortid.generate()
-          addTrack({ projectIdx: activeDraftIndex, name: trackId, trackId, volume: 1 })
+          dispatch(addTrack({ projectIdx: activeDraftIndex, name: trackId, trackId, volume: 1 }))
         }}
-        label={'add track'}
+        label={t('Add track')}
       />
     </div>
   )
 }
 
-export default enhance(Project)
+export default Project

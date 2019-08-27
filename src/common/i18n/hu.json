@@ -37,7 +37,10 @@
   "Tools": {
     "Tools": "Eszközök"
   },
-  "Project": {},
+  "Project": {
+    "Add track": "Hangsáv hozzáadása",
+    "Remove track": "Hangsáv törlése"
+  },
   "Messages": {
     "NoMidi-Title": "A <0>Web MIDI API</0> nem támogatott ebben a böngészőben!",
     "NoMidi-Detail": "A Web MIDI API-t támogató böngészők listája a következő linken tekinthető meg <2>https://caniuse.com/#feat=midi</2>!",
