@@ -1,7 +1,7 @@
 import { actions as stateActions } from '../reducers/state'
 
 const hotkeyHandler = store => next => action => {
-  if (action.type !== 'state/hotkeyPressed') {
+  if (action.type !== 'state/pressHotkey') {
     return next(action)
   }
 

@@ -65,7 +65,7 @@ const { reducer, actions } = autodux({
         isAudioEnabled: T
       })(state)
     },
-    hotkeyPressed: (state, payload) => {
+    pressHotkey: (state, payload) => {
       return state
     }
   }
