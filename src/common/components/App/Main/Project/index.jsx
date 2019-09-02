@@ -13,7 +13,6 @@ import Track from './Track'
 const DebouncedTextField = DebounceOnChange(300, TextField)
 
 const { setTitle, addTrack, removeTrack, setCursorPosition } = draftActions
-const { setTrackProperty, addBar, removeBar } = draftActions // TODO!!
 
 const Project = props => {
   const { activeDraft } = props
@@ -61,7 +60,8 @@ const Project = props => {
           <Track
             {...track}
             bars={filter(propEq('trackId', track.id), bars)}
-            {...{ setTrackProperty, addBar, removeBar, projectIdx: activeDraftIndex, cursorAt }}
+            projectIdx={activeDraftIndex}
+            cursorAt={cursorAt}
           />
           <Button
             onClick={() => dispatch(removeTrack({ projectIdx: activeDraftIndex, trackId: track.id }))}

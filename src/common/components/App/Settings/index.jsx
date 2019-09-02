@@ -1,26 +1,16 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { compose } from 'ramda'
-import { withRouter } from 'react-router-dom'
 import Button from '../Button'
-import isomorphicConnect from '../../../helpers/isomorphicConnect'
 import { actions as settingsActions } from '../../../reducers/settings'
+import { useNamespaceSelector, useDispatch } from '../../../helpers/react'
 
-const enhance = compose(
-  withRouter,
-  isomorphicConnect(
-    state => ({
-      ...state.settings,
-      valuesOfSettings: state.constants.valuesOfSettings
-    }),
-    {
-      ...settingsActions
-    }
-  )
-)
+const { updateTheme, updateLanguage } = settingsActions
 
 const Settings = props => {
-  const { theme: currentTheme, language: currentLanguage, valuesOfSettings, updateTheme, updateLanguage } = props
+  const { theme: currentTheme, language: currentLanguage } = useNamespaceSelector('settings', ['theme', 'language'])
+  const { valuesOfSettings } = useNamespaceSelector('constants', ['valuesOfSettings'])
+
+  const dispatch = useDispatch()
 
   const { t } = useTranslation(['Settings'])
 
@@ -33,7 +23,7 @@ const Settings = props => {
           <Button
             key={theme}
             disabled={theme === currentTheme}
-            onClick={() => updateTheme({ theme })}
+            onClick={() => dispatch(updateTheme({ theme }))}
             label={`${theme}${theme === currentTheme ? ' (active)' : ''}`}
           />
         ))}
@@ -45,9 +35,11 @@ const Settings = props => {
             key={language}
             disabled={language === currentLanguage}
             onClick={() =>
-              updateLanguage({
-                language
-              })
+              dispatch(
+                updateLanguage({
+                  language
+                })
+              )
             }
             label={`${language}${language === currentLanguage ? ' (active)' : ''}`}
           />
@@ -57,4 +49,4 @@ const Settings = props => {
   )
 }
 
-export default enhance(Settings)
+export default Settings

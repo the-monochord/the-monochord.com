@@ -1,50 +1,33 @@
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import { withRouter } from 'react-router-dom'
-import { compose, isNil, find, propEq } from 'ramda'
+import useRouter from 'use-react-router'
+import { isNil, find, propEq } from 'ramda'
 import { Unless } from 'react-if'
 import shortid from 'shortid'
 import moment from 'moment'
-import isomorphicConnect from '../../../helpers/isomorphicConnect'
 import { actions as draftActions } from '../../../reducers/drafts'
 import { actions as stateActions } from '../../../reducers/state'
 import Button from '../Button'
 import AudioContext from '../../../contexts/AudioContext'
+import { useNamespaceSelector, useSelector, useDispatch } from '../../../helpers/react'
 import Project from './Project'
 
-const enhance = compose(
-  withRouter,
-  isomorphicConnect(
-    state => ({
-      drafts: state.drafts.projects,
-      activeDraft: find(propEq('isActive', true), state.drafts.projects),
-      isPlaying: state.state.isPlaying,
-      isAudioEnabled: state.state.isAudioEnabled
-    }),
-    {
-      ...draftActions,
-      ...stateActions
-    }
-  )
-)
+const { deleteDraft, createDraft, makeDraftActive } = draftActions
+const { playDraft, pauseDraft } = stateActions
 
 const Main = props => {
+  const { t } = useTranslation(['Main'])
   const {
     match: {
       params: { hash, revision }
-    },
-    drafts,
-    deleteDraft,
-    createDraft,
-    makeDraftActive,
-    activeDraft,
-    isPlaying,
-    playDraft,
-    pauseDraft,
-    isAudioEnabled
-  } = props
-
-  const { t } = useTranslation(['Main'])
+    }
+  } = useRouter()
+  const { isPlaying, isAudioEnabled } = useNamespaceSelector('state', ['isPlaying', 'isAudioEnabled'])
+  const { projects } = useNamespaceSelector('drafts', ['projects'])
+  const { activeDraft } = useSelector(state => ({
+    activeDraft: find(propEq('isActive', true), state.drafts.projects)
+  }))
+  const dispatch = useDispatch()
 
   const audio = useContext(AudioContext)
 
@@ -56,26 +39,26 @@ const Main = props => {
       <hr />
       Drafts
       <ul>
-        {drafts.map(({ title, isActive }, projectIdx) => (
+        {projects.map(({ title, isActive }, projectIdx) => (
           <li key={projectIdx}>
             <input
               type="checkbox"
               checked={isActive}
               onChange={() => {
                 if (!isActive) {
-                  makeDraftActive({ projectIdx })
+                  dispatch(makeDraftActive({ projectIdx }))
                 }
               }}
             />
             {title || <i>Untitled project</i>}
-            <Button onClick={() => deleteDraft({ projectIdx })} label={'delete'} />
+            <Button onClick={() => dispatch(deleteDraft({ projectIdx }))} label={'delete'} />
           </li>
         ))}
       </ul>
       <Button
         onClick={() => {
           const trackId = shortid.generate()
-          createDraft({ trackId, name: trackId })
+          dispatch(createDraft({ trackId, name: trackId }))
         }}
         label={'create new draft'}
       />
@@ -85,9 +68,9 @@ const Main = props => {
         label={isPlaying ? 'pause' : 'play'}
         onClick={() => {
           if (isPlaying) {
-            pauseDraft()
+            dispatch(pauseDraft())
           } else {
-            playDraft()
+            dispatch(playDraft())
           }
         }}
       />
@@ -106,4 +89,4 @@ const Main = props => {
   )
 }
 
-export default enhance(Main)
+export default Main
