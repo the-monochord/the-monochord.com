@@ -15,12 +15,10 @@ const DebouncedTextField = DebounceOnChange(300, TextField)
 const { setTitle, addTrack, removeTrack, setCursorPosition } = draftActions
 
 const Project = props => {
-  const { activeDraft } = props
+  const { tracks, bars, title, cursorAt } = props
   const { t } = useTranslation(['Project'])
   const activeDraftIndex = useSelector(state => findIndex(propEq('isActive', true), state.drafts.projects))
   const dispatch = useDispatch()
-
-  const { tracks = [], bars = [], title = '', cursorAt = 0 } = activeDraft
 
   return (
     <div className={'Project'}>

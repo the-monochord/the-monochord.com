@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import useRouter from 'use-react-router'
-import { isNil, find, propEq } from 'ramda'
+import { isNil, find, propEq, mergeDeepRight, defaultTo, compose, path } from 'ramda'
 import { Unless } from 'react-if'
 import shortid from 'shortid'
 import moment from 'moment'
@@ -10,6 +10,7 @@ import { actions as stateActions } from '../../../reducers/state'
 import Button from '../Button'
 import AudioContext from '../../../contexts/AudioContext'
 import { useNamespaceSelector, useSelector, useDispatch } from '../../../helpers/react'
+import Checkbox from '../Checkbox'
 import Project from './Project'
 
 const { deleteDraft, createDraft, makeDraftActive } = draftActions
@@ -24,9 +25,14 @@ const Main = props => {
   } = useRouter()
   const { isPlaying, isAudioEnabled } = useNamespaceSelector('state', ['isPlaying', 'isAudioEnabled'])
   const { projects } = useNamespaceSelector('drafts', ['projects'])
-  const { activeDraft } = useSelector(state => ({
-    activeDraft: find(propEq('isActive', true), state.drafts.projects)
-  }))
+  const activeDraft = useSelector(
+    compose(
+      mergeDeepRight({ tracks: [], bars: [], title: '', cursorAt: 0 }),
+      defaultTo({}),
+      find(propEq('isActive', true)),
+      path(['drafts', 'projects'])
+    )
+  )
   const dispatch = useDispatch()
 
   const audio = useContext(AudioContext)
@@ -41,8 +47,8 @@ const Main = props => {
       <ul>
         {projects.map(({ title, isActive }, projectIdx) => (
           <li key={projectIdx}>
-            <input
-              type="checkbox"
+            <Checkbox
+              label={title || <i>Untitled project</i>}
               checked={isActive}
               onChange={() => {
                 if (!isActive) {
@@ -50,7 +56,6 @@ const Main = props => {
                 }
               }}
             />
-            {title || <i>Untitled project</i>}
             <Button onClick={() => dispatch(deleteDraft({ projectIdx }))} label={'delete'} />
           </li>
         ))}
@@ -82,9 +87,7 @@ const Main = props => {
         }}
       />
       <hr />
-      <Unless condition={isNil(activeDraft)}>
-        <Project activeDraft={activeDraft} />
-      </Unless>
+      <Project {...activeDraft} />
     </div>
   )
 }
