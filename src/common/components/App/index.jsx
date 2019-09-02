@@ -10,7 +10,8 @@ import { actions as midiActions } from '../../reducers/midi'
 import { actions as historyActions } from '../../reducers/history'
 import MidiContext from '../../contexts/MidiContext'
 import AudioContext from '../../contexts/AudioContext'
-import { useEffectOnce, useNamespaceSelector, useSelector, useDispatch } from '../../helpers/react'
+import { useEffectOnce, useNamespaceSelector, useSelector, useDispatch, useEffectSkipFirst } from '../../helpers/react'
+import { forceSocketReconnect } from '../../../client/websocket'
 import Settings from './Settings'
 import Notifications from './Notifications'
 import Navigation from './Navigation'
@@ -20,20 +21,19 @@ import Button from './Button'
 import { audioNotSupported, midiNotSupported } from './messages'
 import s from './style.scss'
 
-const { addNotification, enableAudio, enableMidi, pressHotkey } = stateActions
+const { addNotification, enableAudio, enableMidi, pressHotkey, setSocketReconnectTime } = stateActions
 const { noteOn, noteOff, sustainOn, sustainOff } = midiActions
 const { undo, redo } = historyActions
 
 const App = props => {
   const { t } = useTranslation(['App'])
-
   const { theme } = useNamespaceSelector('settings', ['theme'])
   const { isLoggedIn, profileName, profilePicture } = useNamespaceSelector('user', [
     'isLoggedIn',
     'profileName',
     'profilePicture'
   ])
-  const { isOnline } = useNamespaceSelector('state', ['isOnline'])
+  const { isOnline, socketReconnectTime } = useNamespaceSelector('state', ['isOnline', 'socketReconnectTime'])
   const { canUndo, canRedo } = useSelector(state => ({
     canUndo: !isEmpty(state.history.prevs),
     canRedo: !isEmpty(state.history.nexts)
@@ -59,6 +59,22 @@ const App = props => {
       dispatch(addNotification(audioNotSupported))
     }
   })
+
+  useEffectSkipFirst(() => {
+    if (socketReconnectTime > 0) {
+      const t = setTimeout(() => {
+        dispatch(
+          setSocketReconnectTime({
+            socketReconnectTime: socketReconnectTime - 1
+          })
+        )
+      }, 1000)
+
+      return () => {
+        clearTimeout(t)
+      }
+    }
+  }, [socketReconnectTime])
 
   const AppRef = createRef()
 
@@ -90,7 +106,18 @@ const App = props => {
             <Then>online</Then>
             <Else>
               offline
-              <small>reconnecting in {4} seconds</small>
+              <If condition={socketReconnectTime > 0}>
+                <Then>
+                  <small>reconnecting in {socketReconnectTime} seconds</small>
+                  <Button
+                    label={'click here to reconnect now'}
+                    onClick={() => {
+                      forceSocketReconnect()
+                    }}
+                  />
+                </Then>
+                <Else>reconnecting &hellip;</Else>
+              </If>
             </Else>
           </If>
           <When condition={isLoggedIn}>

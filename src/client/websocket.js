@@ -11,10 +11,24 @@ const nthFibonacci = memoizeWith(toString, n => Math.round(phi ** n / root5 - (1
 let wss = null
 let shouldTryToReconnect = true
 let reconnectTimeout = null
+let reconnectInterval = null
 let retryTimingIndex = 1
 const maxRetryTimingIndex = 10
 let isOnline = false
 let queuedMessages = null
+let canReconnect = false
+
+const stopTimers = () => {
+  if (!isNil(reconnectTimeout)) {
+    clearTimeout(reconnectTimeout)
+    reconnectTimeout = null
+  }
+
+  if (!isNil(reconnectInterval)) {
+    clearInterval(reconnectInterval)
+    reconnectInterval = null
+  }
+}
 
 const createSocketClient = (store, onMessageHandler) => {
   if (isNil(queuedMessages)) {
@@ -35,10 +49,6 @@ const createSocketClient = (store, onMessageHandler) => {
       console.log('websocket: sending data to the server:', messages)
       wss.send(JSON.stringify(messages))
     }
-    if (!isNil(reconnectTimeout)) {
-      clearTimeout(reconnectTimeout)
-      reconnectTimeout = null
-    }
     retryTimingIndex = 1
   }
   wss.onclose = () => {
@@ -50,11 +60,31 @@ const createSocketClient = (store, onMessageHandler) => {
     wss = null
     if (shouldTryToReconnect) {
       const retrySeconds = nthFibonacci(retryTimingIndex)
+      store.dispatch(
+        stateActions.setSocketReconnectTime({
+          socketReconnectTime: retrySeconds
+        })
+      )
       console.log(`websocket: reconnecting to the server in ${retrySeconds} seconds`)
       reconnectTimeout = setTimeout(() => {
+        canReconnect = true
+      }, retrySeconds * 1000)
+
+      reconnectInterval = setInterval(() => {
+        if (!canReconnect) {
+          return
+        }
+
+        canReconnect = false
+        stopTimers()
+        store.dispatch(
+          stateActions.setSocketReconnectTime({
+            socketReconnectTime: 0
+          })
+        )
         queuedMessages.off('change', onMessageHandler)
         createSocketClient(store, onMessageHandler)
-      }, retrySeconds * 1000)
+      }, 100)
 
       if (retryTimingIndex < maxRetryTimingIndex) {
         retryTimingIndex++
@@ -106,4 +136,9 @@ const restartSocket = () => {
   wss.close()
 }
 
-export { createSocketClient, sendSocketMessage, shutdownSocket, restartSocket }
+const forceSocketReconnect = () => {
+  retryTimingIndex = 1
+  canReconnect = true
+}
+
+export { createSocketClient, sendSocketMessage, shutdownSocket, restartSocket, forceSocketReconnect }

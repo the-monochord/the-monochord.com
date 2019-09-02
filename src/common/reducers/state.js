@@ -1,4 +1,4 @@
-import { evolve, append, reject, propEq, always, T, F } from 'ramda'
+import { evolve, append, reject, propEq, assoc, T, F } from 'ramda'
 import uuidV4 from 'uuid/v4'
 import autodux from 'autodux'
 
@@ -26,9 +26,7 @@ const { reducer, actions } = autodux({
     },
     updateModificationTime: (state, payload) => {
       const { currentUpdateTime } = payload
-      return evolve({
-        lastModified: always(currentUpdateTime)
-      })(state)
+      return assoc('lastModified', currentUpdateTime, state)
     },
     turnOffline: (state, payload) => {
       return evolve({
@@ -67,6 +65,10 @@ const { reducer, actions } = autodux({
     },
     pressHotkey: (state, payload) => {
       return state
+    },
+    setSocketReconnectTime: (state, payload) => {
+      const { socketReconnectTime } = payload
+      return assoc('socketReconnectTime', socketReconnectTime, state)
     }
   }
 })
