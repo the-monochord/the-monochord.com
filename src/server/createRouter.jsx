@@ -1,6 +1,6 @@
 import React from 'react'
 import express from 'express'
-import { find, isNil } from 'ramda'
+import { find, isNil, mergeDeepRight } from 'ramda'
 import { I18nextProvider } from 'react-i18next'
 import { matchPath, StaticRouter } from 'react-router-dom'
 import { renderToString } from 'react-dom/server'
@@ -79,7 +79,17 @@ const createRouter = (passport, i18n, logger) => {
         return
       }
 
-      const appData = generateAppData(req)
+      const appData = mergeDeepRight(
+        activeRoute.appData || {},
+        mergeDeepRight(
+          {
+            seo: {
+              url: 'TODO' // TODO
+            }
+          },
+          generateAppData(req)
+        )
+      )
 
       ;(async () => {
         if (i18n.language !== sessionData.settings.language) {
