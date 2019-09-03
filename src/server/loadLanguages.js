@@ -12,7 +12,7 @@ const loadLanguages = (languages, agent, i18n) =>
           .then(
             compose(
               forEach(([ns, data]) => {
-                i18n.addResources(lang, ns, data)
+                i18n.addResourceBundle(lang, ns, data)
               }),
               toPairs
             )

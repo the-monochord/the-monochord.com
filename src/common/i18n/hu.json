@@ -42,9 +42,13 @@
     "Remove track": "Hangsáv törlése"
   },
   "Messages": {
-    "NoMidi-Title": "A <0>Web MIDI API</0> nem támogatott ebben a böngészőben!",
-    "NoMidi-Detail": "A Web MIDI API-t támogató böngészők listája a következő linken tekinthető meg <2>https://caniuse.com/#feat=midi</2>!",
-    "NoAudio-Title": "A <0>Web Audio API</0> nem támogatott ebben a böngészőben!",
-    "NoAudio-Detail": "A Web Audio API-t támogató böngészők listája a következő linken tekinthető meg <2>https://caniuse.com/#feat=audio-api</2>!"
+    "noMidi": {
+      "title": "A <0>Web MIDI API</0> nem támogatott ebben a böngészőben!",
+      "detail": "A Web MIDI API-t támogató böngészők listája a következő linken tekinthető meg <2>https://caniuse.com/#feat=midi</2>!"
+    },
+    "noAudio": {
+      "title": "A <0>Web Audio API</0> nem támogatott ebben a böngészőben!",
+      "detail": "A Web Audio API-t támogató böngészők listája a következő linken tekinthető meg <2>https://caniuse.com/#feat=audio-api</2>!"
+    }
   }
 }

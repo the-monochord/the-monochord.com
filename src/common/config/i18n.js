@@ -6,7 +6,6 @@ const i18nConfig = {
   fallbackLng: 'en',
   whitelist: languages,
   load: 'all',
-  keySeparator: false,
   defaultNS: 'translation'
 }
 

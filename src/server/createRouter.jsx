@@ -78,22 +78,22 @@ const createRouter = (passport, i18n, logger) => {
         return // preCheck handled the request for us
       }
 
-      const appData = mergeDeepRight(
-        {
-          seo: {
-            title: '',
-            status: '',
-            description: 'DESCRIPTION',
-            url: 'URL'
-          }
-        },
-        generateAppData(req)
-      )
-
       ;(async () => {
         if (i18n.language !== sessionData.settings.language) {
           await i18n.changeLanguage(sessionData.settings.language)
         }
+
+        const appData = mergeDeepRight(
+          {
+            seo: {
+              title: i18n.t('TITLE'), // Tools:Tools
+              status: '',
+              description: 'DESCRIPTION',
+              url: 'URL'
+            }
+          },
+          generateAppData(req)
+        )
 
         const markup = renderToString(
           <I18nextProvider i18n={i18n}>
