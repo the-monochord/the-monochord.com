@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= appData.settings.language %>">
 <head>
-  <title><%= appData.seo.title %></title>
+  <title><%= appData.seo.status + (appData.seo.status !== '' ? ' ' : '') + appData.seo.title + (appData.seo.title !== '' ? ' - ' : '') %><%= appData.seo.brand %></title>
   
   <meta charset="utf-8" />
   <meta name="description" content="<%= appData.seo.description %>" />

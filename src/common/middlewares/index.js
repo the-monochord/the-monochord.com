@@ -6,6 +6,7 @@ import requestSessionCookie from './requestSessionCookie'
 import historyInjecter from './historyInjecter'
 import hotkeyHandler from './hotkeyHandler'
 import audioLinker from './audioLinker'
+import documentTitleSync from './documentTitleSync'
 
 export {
   languageLoader,
@@ -15,5 +16,6 @@ export {
   requestSessionCookie,
   historyInjecter,
   hotkeyHandler,
-  audioLinker
+  audioLinker,
+  documentTitleSync
 }

@@ -8,6 +8,7 @@ import routes from '../../config/routes'
 import { actions as stateActions } from '../../reducers/state'
 import { actions as midiActions } from '../../reducers/midi'
 import { actions as historyActions } from '../../reducers/history'
+import { actions as seoActions } from '../../reducers/seo'
 import MidiContext from '../../contexts/MidiContext'
 import AudioContext from '../../contexts/AudioContext'
 import { useEffectOnce, useNamespaceSelector, useSelector, useDispatch, useEffectSkipFirst } from '../../helpers/react'
@@ -24,6 +25,7 @@ import s from './style.scss'
 const { addNotification, enableAudio, enableMidi, pressHotkey, setSocketReconnectTime } = stateActions
 const { noteOn, noteOff, sustainOn, sustainOff } = midiActions
 const { undo, redo } = historyActions
+const { setSeoData } = seoActions
 
 const App = props => {
   const { t } = useTranslation(['App'])
@@ -33,7 +35,11 @@ const App = props => {
     'profileName',
     'profilePicture'
   ])
-  const { isOnline, socketReconnectTime } = useNamespaceSelector('state', ['isOnline', 'socketReconnectTime'])
+  const { isOnline, socketReconnectTime, isPlaying } = useNamespaceSelector('state', [
+    'isOnline',
+    'socketReconnectTime',
+    'isPlaying'
+  ])
   const { canUndo, canRedo } = useSelector(state => ({
     canUndo: !isEmpty(state.history.prevs),
     canRedo: !isEmpty(state.history.nexts)
@@ -75,6 +81,14 @@ const App = props => {
       }
     }
   }, [socketReconnectTime])
+
+  useEffectSkipFirst(() => {
+    dispatch(
+      setSeoData({
+        status: isPlaying ? '▶' : ''
+      })
+    )
+  }, [isPlaying])
 
   const AppRef = createRef()
 
@@ -136,7 +150,9 @@ const App = props => {
               key={path}
               path={path}
               exact={exact}
-              render={({ match: { params } }) => <Component {...rest} {...params} />}
+              render={({ match: { params } }) => {
+                return <Component {...rest} {...params} />
+              }}
             />
           ))}
         </Switch>

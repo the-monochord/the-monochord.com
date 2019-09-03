@@ -36,13 +36,7 @@ const routes = [
   },
   {
     path: '/:hash?/:revision?',
-    component: Main,
-    appData: {
-      seo: {
-        title: 'AAA', // TODO
-        description: 'BBB'
-      }
-    }
+    component: Main
   }
 ]
 

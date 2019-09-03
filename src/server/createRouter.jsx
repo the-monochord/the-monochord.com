@@ -75,20 +75,19 @@ const createRouter = (passport, i18n, logger) => {
         isFunction(activeRoute.preCheck) &&
         activeRoute.preCheck(req, res, matchPath(req.url, activeRoute.path).params)
       ) {
-        // preCheck handled the request for us
-        return
+        return // preCheck handled the request for us
       }
 
       const appData = mergeDeepRight(
-        activeRoute.appData || {},
-        mergeDeepRight(
-          {
-            seo: {
-              url: 'TODO' // TODO
-            }
-          },
-          generateAppData(req)
-        )
+        {
+          seo: {
+            title: '',
+            status: '',
+            description: 'DESCRIPTION',
+            url: 'URL'
+          }
+        },
+        generateAppData(req)
       )
 
       ;(async () => {
