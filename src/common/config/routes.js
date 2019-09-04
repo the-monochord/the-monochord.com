@@ -1,4 +1,4 @@
-import { includes, isNil } from 'ramda'
+import { includes, isNil, mergeDeepLeft } from 'ramda'
 import Main from '../components/App/Main'
 import Tools from '../components/App/Tools'
 import Listen from '../components/App/Listen'
@@ -14,11 +14,35 @@ const routes = [
         res.redirect('/tools')
         return true
       }
+    },
+    updateAppData: ({ tool, input }, appData) => {
+      return mergeDeepLeft(
+        {
+          seo: {
+            title: 'Tools',
+            description: 'Tools',
+            url: '/tools'
+          }
+        },
+        appData
+      )
     }
   },
   {
     path: '/listen/:notes/:timbre?',
-    component: Listen
+    component: Listen,
+    updateAppData: ({ notes, timbre }, appData) => {
+      return mergeDeepLeft(
+        {
+          seo: {
+            title: 'Listen',
+            description: 'Listen',
+            url: '/listen'
+          }
+        },
+        appData
+      )
+    }
   },
   {
     path: '/login/:strategy?',
@@ -28,15 +52,51 @@ const routes = [
         res.redirect('/')
         return true
       }
+    },
+    updateAppData: ({ strategy }, appData) => {
+      return mergeDeepLeft(
+        {
+          seo: {
+            title: 'Login',
+            description: 'Login',
+            url: '/login'
+          }
+        },
+        appData
+      )
     }
   },
   {
     path: '/connect/:strategy?',
-    component: Connect
+    component: Connect,
+    updateAppData: ({ strategy }, appData) => {
+      return mergeDeepLeft(
+        {
+          seo: {
+            title: 'Connect',
+            description: 'Connect',
+            url: '/connect'
+          }
+        },
+        appData
+      )
+    }
   },
   {
     path: '/:hash?/:revision?',
-    component: Main
+    component: Main,
+    updateAppData: ({ hash, revision }, appData) => {
+      return mergeDeepLeft(
+        {
+          seo: {
+            title: 'Main',
+            description: 'Main',
+            url: '/'
+          }
+        },
+        appData
+      )
+    }
   }
 ]
 

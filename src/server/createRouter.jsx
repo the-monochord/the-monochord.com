@@ -1,6 +1,6 @@
 import React from 'react'
 import express from 'express'
-import { find, isNil, mergeDeepRight } from 'ramda'
+import { find, isNil, when, evolve, compose } from 'ramda'
 import { I18nextProvider } from 'react-i18next'
 import { matchPath, StaticRouter } from 'react-router-dom'
 import { renderToString } from 'react-dom/server'
@@ -71,29 +71,22 @@ const createRouter = (passport, i18n, logger) => {
     const activeRoute = find(route => matchPath(req.url, route), routes)
 
     if (activeRoute) {
-      if (
-        isFunction(activeRoute.preCheck) &&
-        activeRoute.preCheck(req, res, matchPath(req.url, activeRoute.path).params)
-      ) {
+      const activeRouteParams = matchPath(req.url, activeRoute.path).params
+
+      if (isFunction(activeRoute.preCheck) && activeRoute.preCheck(req, res, activeRouteParams)) {
         return // preCheck handled the request for us
       }
 
+      const appData = compose(
+        when(() => isFunction(activeRoute.updateAppData), data => activeRoute.updateAppData(activeRouteParams, data)),
+        generateAppData
+      )(req)
+
+      console.log(activeRoute.updateAppData({}, {}))
       ;(async () => {
         if (i18n.language !== sessionData.settings.language) {
           await i18n.changeLanguage(sessionData.settings.language)
         }
-
-        const appData = mergeDeepRight(
-          {
-            seo: {
-              title: i18n.t('TITLE'), // Tools:Tools
-              status: '',
-              description: 'DESCRIPTION',
-              url: 'URL'
-            }
-          },
-          generateAppData(req)
-        )
 
         const markup = renderToString(
           <I18nextProvider i18n={i18n}>
@@ -106,7 +99,12 @@ const createRouter = (passport, i18n, logger) => {
         res.render('pages/index', {
           markup,
           mode,
-          appData
+          appData: evolve({
+            seo: {
+              title: title => i18n.t(title),
+              description: description => i18n.t(description)
+            }
+          })(appData)
         })
       })()
     } else {

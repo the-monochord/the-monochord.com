@@ -1,5 +1,5 @@
 import autodux from 'autodux'
-import { evolve, always } from 'ramda'
+import { assoc } from 'ramda'
 
 const { reducer, actions } = autodux({
   slice: 'settings',
@@ -7,15 +7,11 @@ const { reducer, actions } = autodux({
   actions: {
     updateTheme: (state, payload) => {
       const { theme } = payload
-      return evolve({
-        theme: always(theme)
-      })(state)
+      return assoc('theme', theme, state)
     },
     updateLanguage: (state, payload) => {
       const { language } = payload
-      return evolve({
-        language: always(language)
-      })(state)
+      return assoc('language', language, state)
     }
   }
 })
