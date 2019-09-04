@@ -135,12 +135,14 @@ const App = props => {
             </Else>
           </If>
           <When condition={isLoggedIn}>
-            <div>
-              <Unless condition={isEmpty(profilePicture)}>
-                <img src={profilePicture} width="50" height="50" />
-              </Unless>
-              {t('Welcome, {{name}}!', { name: profileName })}
-            </div>
+            {() => (
+              <div>
+                <Unless condition={isEmpty(profilePicture)}>
+                  {() => <img src={profilePicture} width="50" height="50" />}
+                </Unless>
+                {t('Welcome, {{name}}!', { name: profileName })}
+              </div>
+            )}
           </When>
           <Navigation />
         </header>

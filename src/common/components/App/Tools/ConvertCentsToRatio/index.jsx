@@ -1,13 +1,13 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
-const ConvertRatioToCents = props => {
+const ConvertCentsToRatio = props => {
   const { t } = useTranslation(['Tools'])
   return (
     <div>
-      <h3>{t('Convert ratio to cents')}</h3>
+      <h3>{t('Convert cents to ratio')}</h3>
     </div>
   )
 }
 
-export default ConvertRatioToCents
+export default ConvertCentsToRatio

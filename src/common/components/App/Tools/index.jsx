@@ -1,9 +1,10 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink } from 'react-router-dom'
-import { When } from 'react-if'
+import { Switch, Case } from 'react-if'
 import useRouter from 'use-react-router'
 import ConvertRatioToCents from './ConvertRatioToCents'
+import ConvertCentsToRatio from './ConvertCentsToRatio'
 
 const Tools = props => {
   const { t } = useTranslation(['Tools'])
@@ -22,12 +23,10 @@ const Tools = props => {
       <NavLink to={'/tools/convert-cents-to-ratio'}>{t('Convert cents to ratio')}</NavLink>
       <br />
 
-      <When condition={tool === 'convert-ratio-to-cents'}>
-        <ConvertRatioToCents input={input} />
-      </When>
-      <When condition={tool === 'convert-cents-to-ratio'}>
-        <h3>{t('Convert cents to ratio')}</h3>
-      </When>
+      <Switch>
+        <Case condition={tool === 'convert-ratio-to-cents'}>{() => <ConvertRatioToCents input={input} />}</Case>
+        <Case condition={tool === 'convert-cents-to-ratio'}>{() => <ConvertCentsToRatio input={input} />}</Case>
+      </Switch>
     </div>
   )
 }
