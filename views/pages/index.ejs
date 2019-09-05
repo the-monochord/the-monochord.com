@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="<%= appData.settings.language %>">
 <head>
-  <title><%= appData.seo.status + (appData.seo.status !== '' ? ' ' : '') + appData.seo.title + (appData.seo.title !== '' ? ' - ' : '') %><%= appData.seo.brand %></title>
+  <title><%= seo.title.length === 0 ? '' : seo.title + ' - ' %><%= appData.seo.brand %></title>
   
   <meta charset="utf-8" />
-  <meta name="description" content="<%= appData.seo.description %>" />
+  <meta name="description" content="<%= seo.description %>" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   
-  <meta property="og:url" content="<%= appData.seo.url %>" />
+  <meta property="og:url" content="<%= seo.url %>" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="<%= appData.seo.title %>" />
+  <meta property="og:title" content="<%= seo.title %>" />
   
-  <meta property="og:description" content="<%= appData.seo.description %>" />
+  <meta property="og:description" content="<%= seo.description %>" />
 
   <meta property="og:image" content="<%= appData.constants.staticPath %>/img/monochord-logo.png" />
   <meta property="og:image:type" content="image/png" />
@@ -20,7 +20,7 @@
 
   <link rel="preconnect" href="<%= appData.constants.staticPath %>" crossorigin />
 
-  <link rel="canonical" href="<%= appData.seo.url %>" />
+  <link rel="canonical" href="<%= seo.url %>" />
 
   <link rel="apple-touch-icon" sizes="180x180" href="<%= appData.constants.staticPath %>/img/apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="<%= appData.constants.staticPath %>/img/favicon-32x32.png" />

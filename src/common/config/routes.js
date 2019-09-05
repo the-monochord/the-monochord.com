@@ -1,9 +1,11 @@
-import { includes, isNil, mergeDeepLeft } from 'ramda'
-import Main from '../components/App/Main'
+import { includes, isNil } from 'ramda'
+import i18n from 'i18next'
+import Editor from '../components/App/Editor'
 import Tools from '../components/App/Tools'
 import Listen from '../components/App/Listen'
 import Login from '../components/App/Login'
 import Connect from '../components/App/Connect'
+import { prefixIfNotEmpty } from '../helpers/string'
 
 const routes = [
   {
@@ -15,33 +17,55 @@ const routes = [
         return true
       }
     },
-    updateAppData: ({ tool, input }, appData) => {
-      return mergeDeepLeft(
-        {
-          seo: {
-            title: 'Tools',
-            description: 'Tools',
+    getSeoData: ({ tool, input }) => {
+      switch (tool) {
+        case 'convert-ratio-to-cents':
+          if (isNil(input)) {
+            return {
+              title: i18n.t('Tools:Convert ratio to cents'),
+              url: '/tools/convert-ratio-to-cents'
+            }
+          } else {
+            return {
+              title: i18n.t('Tools:Convert {{ratio}} to cents', { ratio: input }),
+              url: `/tools/convert-ratio-to-cents/${input}`
+            }
+          }
+        case 'convert-cents-to-ratio':
+          if (isNil(input)) {
+            return {
+              title: i18n.t('Tools:Convert cents to ratio'),
+              url: '/tools/convert-cents-to-ratio'
+            }
+          } else {
+            return {
+              title: i18n.t('Tools:Convert {{cents}} to ratio', { ratio: input }),
+              url: `/tools/convert-cents-to-ratio/${input}`
+            }
+          }
+        default:
+          return {
+            title: i18n.t('Tools:Tools'),
             url: '/tools'
           }
-        },
-        appData
-      )
+      }
     }
   },
   {
     path: '/listen/:notes/:timbre?',
     component: Listen,
-    updateAppData: ({ notes, timbre }, appData) => {
-      return mergeDeepLeft(
-        {
-          seo: {
-            title: 'Listen',
-            description: 'Listen',
-            url: '/listen'
-          }
-        },
-        appData
-      )
+    getSeoData: ({ notes, timbre }) => {
+      if (isNil(notes)) {
+        return {
+          title: i18n.t('Listen:Listen'),
+          url: '/listen'
+        }
+      } else {
+        return {
+          title: i18n.t('Listen:Listen to {{notes}}', { notes: notes }),
+          url: `/listen/${notes}`
+        }
+      }
     }
   },
   {
@@ -53,49 +77,45 @@ const routes = [
         return true
       }
     },
-    updateAppData: ({ strategy }, appData) => {
-      return mergeDeepLeft(
-        {
-          seo: {
-            title: 'Login',
-            description: 'Login',
-            url: '/login'
-          }
-        },
-        appData
-      )
+    getSeoData: ({ strategy }) => {
+      if (isNil(strategy)) {
+        return {
+          title: i18n.t('Login:Login'),
+          url: '/login'
+        }
+      } else {
+        return {
+          title: i18n.t('Login:Login with {{strategy}}', { strategy: strategy }),
+          url: `/login/${strategy}`
+        }
+      }
     }
   },
   {
     path: '/connect/:strategy?',
     component: Connect,
-    updateAppData: ({ strategy }, appData) => {
-      return mergeDeepLeft(
-        {
-          seo: {
-            title: 'Connect',
-            description: 'Connect',
-            url: '/connect'
-          }
-        },
-        appData
-      )
+    getSeoData: ({ strategy }) => {
+      if (isNil(strategy)) {
+        return {
+          title: i18n.t('Connect:Connect'),
+          url: '/connect'
+        }
+      } else {
+        return {
+          title: i18n.t('Connect:Connect with {{strategy}}', { strategy: strategy }),
+          url: `/connect/${strategy}`
+        }
+      }
     }
   },
   {
     path: '/:hash?/:revision?',
-    component: Main,
-    updateAppData: ({ hash, revision }, appData) => {
-      return mergeDeepLeft(
-        {
-          seo: {
-            title: 'Main',
-            description: 'Main',
-            url: '/'
-          }
-        },
-        appData
-      )
+    component: Editor,
+    getSeoData: ({ hash, revision }) => {
+      return {
+        title: i18n.t('Editor:Editor'),
+        url: `/${hash}${prefixIfNotEmpty('/', revision)}`
+      }
     }
   }
 ]

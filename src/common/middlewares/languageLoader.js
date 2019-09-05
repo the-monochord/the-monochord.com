@@ -12,7 +12,14 @@ const languageLoader = store => next => action => {
   } = store.getState()
 
   if (oldLanguage !== newLanguage) {
-    loadLanguageFile(newLanguage, staticPath, i18n).then(() => i18n.changeLanguage(newLanguage))
+    loadLanguageFile(newLanguage, staticPath, i18n)
+      .then(() => i18n.changeLanguage(newLanguage))
+      .then(() => {
+        store.dispatch({
+          type: 'feedback/languageChanged',
+          payload: {}
+        })
+      })
   }
 
   return result

@@ -12,7 +12,7 @@ const Navigation = props => {
     <nav>
       <ul>
         <li>
-          <NavLink to={'/'}>Home</NavLink>
+          <NavLink to={'/'}>Editor</NavLink>
         </li>
         <li>
           <NavLink to={'/listen/1:1-3:2-2:1/triangle'}>Listen to 1:1, 3:2 and 2:1</NavLink>

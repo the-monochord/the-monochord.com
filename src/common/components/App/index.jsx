@@ -4,6 +4,7 @@ import { isEmpty } from 'ramda'
 import { useTranslation } from 'react-i18next'
 import { Route, Switch } from 'react-router-dom'
 import { When, Unless, If, Then, Else } from 'react-if'
+import useRouter from 'use-react-router'
 import routes from '../../config/routes'
 import { actions as stateActions } from '../../reducers/state'
 import { actions as midiActions } from '../../reducers/midi'
@@ -25,7 +26,7 @@ import s from './style.scss'
 const { addNotification, enableAudio, enableMidi, pressHotkey, setSocketReconnectTime } = stateActions
 const { noteOn, noteOff, sustainOn, sustainOff } = midiActions
 const { undo, redo } = historyActions
-const { setSeoData } = seoActions
+const { setStatus } = seoActions
 
 const App = props => {
   const { t } = useTranslation(['App'])
@@ -49,6 +50,17 @@ const App = props => {
 
   const midi = useContext(MidiContext)
   const audio = useContext(AudioContext)
+
+  const {
+    location: { pathname }
+  } = useRouter()
+
+  useEffectSkipFirst(() => {
+    dispatch({
+      type: 'feedback/locationChanged',
+      payload: {}
+    })
+  }, [pathname])
 
   useEffectOnce(() => {
     if (midi.isSupported()) {
@@ -84,7 +96,7 @@ const App = props => {
 
   useEffectSkipFirst(() => {
     dispatch(
-      setSeoData({
+      setStatus({
         status: isPlaying ? '▶' : ''
       })
     )

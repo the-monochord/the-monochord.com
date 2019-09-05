@@ -2,12 +2,17 @@
   "App": {
     "Welcome, {{name}}!": "Üdv, {{name}}!"
   },
-  "Connect": {},
-  "ConvertRatioToCents": {},
+  "Connect": {
+    "Connect": "Csatlakozás",
+    "Connect with {{strategy}}": "Csatlakozás {{strategy}}-kal"
+  },
   "Listen": {},
-  "Login": {},
-  "Main": {
-    "Main app": "Főoldal"
+  "Login": {
+    "Login": "Bejelentkezés",
+    "Login with {{strategy}}": "Bejelentkezés {{strategy}}-kal"
+  },
+  "Editor": {
+    "Editor": "Szerkesztő"
   },
   "Navigation": {
     "Convert {{ratio}} to cents": "{{ratio}} átalakítása centekké",
@@ -35,7 +40,11 @@
     "Music is just organized noise": "A zene nem más, mint rendezett zaj"
   },
   "Tools": {
-    "Tools": "Eszközök"
+    "Tools": "Eszközök",
+    "Convert {{ratio}} to cents": "{{ratio}} átalakítása centekké",
+    "Convert {{cents}} to ratio": "{{cents}} átalakítása aránnyá",
+    "Convert ratio to cents": "Arány átalakítása centekké",
+    "Convert cents to ratio": "Centek átalakítása aránnyá"
   },
   "Project": {
     "Add track": "Hangsáv hozzáadása",

@@ -27,9 +27,6 @@ const generateAppData = req => {
     seo: {
       themeColor: '#33332b',
       brand: 'The Monochord',
-      title: '',
-      url: '/',
-      description: '',
       status: ''
     },
     state: {

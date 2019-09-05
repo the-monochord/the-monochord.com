@@ -1,6 +1,6 @@
 import React from 'react'
 import express from 'express'
-import { find, isNil, when, evolve, compose } from 'ramda'
+import { find, isNil } from 'ramda'
 import { I18nextProvider } from 'react-i18next'
 import { matchPath, StaticRouter } from 'react-router-dom'
 import { renderToString } from 'react-dom/server'
@@ -77,12 +77,8 @@ const createRouter = (passport, i18n, logger) => {
         return // preCheck handled the request for us
       }
 
-      const appData = compose(
-        when(() => isFunction(activeRoute.updateAppData), data => activeRoute.updateAppData(activeRouteParams, data)),
-        generateAppData
-      )(req)
+      const appData = generateAppData(req)
 
-      console.log(activeRoute.updateAppData({}, {}))
       ;(async () => {
         if (i18n.language !== sessionData.settings.language) {
           await i18n.changeLanguage(sessionData.settings.language)
@@ -99,12 +95,8 @@ const createRouter = (passport, i18n, logger) => {
         res.render('pages/index', {
           markup,
           mode,
-          appData: evolve({
-            seo: {
-              title: title => i18n.t(title),
-              description: description => i18n.t(description)
-            }
-          })(appData)
+          appData,
+          seo: activeRoute.getSeoData(activeRouteParams)
         })
       })()
     } else {
