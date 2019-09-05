@@ -1,8 +1,6 @@
 # The Monochord
 
-This is the backend and frontend code for the microtonal web app [The Monochord](http://the-monochord.com)
-
-The project is maintained by Lajos Mészáros (m_lajos[at]hotmail[dot]com)
+This is the backend and frontend code for the microtonal music app [The Monochord](http://the-monochord.com)
 
 ## How to get the project running locally
 
