@@ -63,7 +63,7 @@ const routes = [
       } else {
         return {
           title: i18n.t('Listen:Listen to {{notes}}', { notes: notes }),
-          url: `/listen/${notes}`
+          url: `/listen/${notes}${prefixIfNotEmpty('/', timbre)}`
         }
       }
     }
