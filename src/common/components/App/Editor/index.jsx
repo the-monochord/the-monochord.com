@@ -16,8 +16,8 @@ import Project from './Project'
 const { deleteDraft, createDraft, makeDraftActive } = draftActions
 const { playDraft, pauseDraft } = stateActions
 
-const Main = props => {
-  const { t } = useTranslation(['Main'])
+const Editor = props => {
+  const { t } = useTranslation(['Editor'])
   const {
     match: {
       params: { hash, revision }
@@ -38,8 +38,8 @@ const Main = props => {
   const audio = useContext(AudioContext)
 
   return (
-    <div className={'Main'}>
-      {t('Main app')}
+    <div className={'Editor'}>
+      {t('Editor')}
       <Unless condition={isNil(hash)}>{` - ${hash}`}</Unless>
       <Unless condition={isNil(revision)}>{` - ${revision}`}</Unless>
       <hr />
@@ -92,4 +92,4 @@ const Main = props => {
   )
 }
 
-export default Main
+export default Editor
