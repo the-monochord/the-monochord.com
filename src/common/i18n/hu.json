@@ -6,7 +6,10 @@
     "Connect": "Csatlakozás",
     "Connect with {{strategy}}": "Csatlakozás {{strategy}}-kal"
   },
-  "Listen": {},
+  "Listen": {
+    "Listen to {{note}}": "{{note}} meghallgatása",
+    "Listen to {{notes}} and {{lastNote}}": "{{notes}} és {{lastNote}} meghallgatása"
+  },
   "Login": {
     "Login": "Bejelentkezés",
     "Login with {{strategy}}": "Bejelentkezés {{strategy}}-kal"

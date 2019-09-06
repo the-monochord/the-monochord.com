@@ -61,9 +61,16 @@ const routes = [
           url: '/listen'
         }
       } else {
-        return {
-          title: i18n.t('Listen:Listen to {{notes}}', { notes: notes }),
-          url: `/listen/${notes}${prefixIfNotEmpty('/', timbre)}`
+        if (notes.length === 1) {
+          return {
+            title: i18n.t('Listen:Listen to {{note}}', { note: notes }),
+            url: `/listen/${notes}${prefixIfNotEmpty('/', timbre)}`
+          }
+        } else {
+          return {
+            title: i18n.t('Listen:Listen to {{notes}} and {{lastNote}}', { notes: notes, lastNote: '' }),
+            url: `/listen/${notes}${prefixIfNotEmpty('/', timbre)}`
+          }
         }
       }
     }
