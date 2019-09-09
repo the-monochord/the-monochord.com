@@ -52,9 +52,9 @@ const routes = [
     }
   },
   {
-    path: '/listen/:notes/:timbre?',
+    path: '/listen/:notes?/:timbre?/:baseFrequency?',
     component: Listen,
-    getSeoData: ({ notes, timbre }) => {
+    getSeoData: ({ notes, timbre, baseFrequency }) => {
       if (isNil(notes)) {
         return {
           title: i18n.t('Listen:Listen'),
@@ -64,12 +64,12 @@ const routes = [
         if (notes.length === 1) {
           return {
             title: i18n.t('Listen:Listen to {{note}}', { note: notes }),
-            url: `/listen/${notes}${prefixIfNotEmpty('/', timbre)}`
+            url: `/listen/${notes}${prefixIfNotEmpty('/', timbre)}${prefixIfNotEmpty('/', baseFrequency)}`
           }
         } else {
           return {
             title: i18n.t('Listen:Listen to {{notes}} and {{lastNote}}', { notes: notes, lastNote: '' }),
-            url: `/listen/${notes}${prefixIfNotEmpty('/', timbre)}`
+            url: `/listen/${notes}${prefixIfNotEmpty('/', timbre)}${prefixIfNotEmpty('/', baseFrequency)}`
           }
         }
       }

@@ -15,7 +15,7 @@ const Navigation = props => {
           <NavLink to={'/'}>Editor</NavLink>
         </li>
         <li>
-          <NavLink to={'/listen/1:1-3:2-2:1/triangle'}>Listen to 1:1, 3:2 and 2:1</NavLink>
+          <NavLink to={'/listen/2:6:7:8:9:11/triangle/131'}>Listen to 2:6:7:8:9:11</NavLink>
         </li>
         <li>
           <NavLink to={'/tools/convert-ratio-to-cents/5:4'}>
