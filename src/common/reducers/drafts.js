@@ -15,6 +15,7 @@ import {
   findIndex,
   assocPath
 } from 'ramda'
+import { fromScientificNotation } from 'absolute-cent'
 import { emptyProject } from '../config/defaults'
 
 const { reducer, actions } = autodux({
@@ -35,7 +36,19 @@ const { reducer, actions } = autodux({
                 bars: append({
                   trackId,
                   startTime: 0,
-                  events: []
+                  events: [
+                    {
+                      event: 'note on',
+                      pitch: fromScientificNotation('F4'),
+                      time: 0,
+                      velocity: 0.5
+                    },
+                    {
+                      event: 'note off',
+                      pitch: fromScientificNotation('F4'),
+                      time: 2
+                    }
+                  ]
                 }),
                 tracks: append({
                   id: trackId,

@@ -1,6 +1,6 @@
 import { pathOr, propOr, forEach } from 'ramda'
 
-class Instrument {
+class Simple {
   constructor(ctx, options = {}) {
     const filter = ctx.createBiquadFilter()
     filter.type = 'lowpass'
@@ -32,6 +32,10 @@ class Instrument {
 
   setLoopSize(loopSize) {
     this._.meta.loopSize = loopSize
+  }
+
+  clearEvents() {
+    this._.events = []
   }
 
   schedule(eventData) {
@@ -68,10 +72,10 @@ class Instrument {
       nodes: { gain, oscillator }
     } = this._
 
-    gain.gain.cancelScheduledValues(now)
-    gain.gain.setValueAtTime(0, now)
+    gain.gain.cancelAndHoldAtTime(now)
+    gain.gain.linearRampToValueAtTime(0, now + 0.02)
     oscillator.frequency.cancelScheduledValues(now)
   }
 }
 
-export default Instrument
+export default Simple

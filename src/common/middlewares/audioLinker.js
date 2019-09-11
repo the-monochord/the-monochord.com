@@ -1,4 +1,4 @@
-import { find, propEq, isNil } from 'ramda'
+import { find, propEq, isNil, filter, compose, forEach, pluck, flatten } from 'ramda'
 import AudioContext from '../contexts/AudioContext'
 
 const audioLinker = store => next => action => {
@@ -24,7 +24,19 @@ const audioLinker = store => next => action => {
 
       if (!isNil(activeProject)) {
         audio.stop()
-        // audio.setSequences(activeProject.bars)
+
+        forEach(
+          compose(
+            ({ instrument, events }) => {
+              audio.setInstrument(instrument)
+              audio.setEvents(instrument, events)
+            },
+            ({ id: trackId }) => ({
+              instrument: trackId,
+              events: flatten(pluck('events', filter(propEq('trackId', trackId), activeProject.bars)))
+            })
+          )
+        )(activeProject.tracks)
       }
       break
   }

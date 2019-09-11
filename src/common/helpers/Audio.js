@@ -1,9 +1,9 @@
 /* global AudioContext */
 
 import EventEmitter from 'eventemitter3'
-import { parseTuning, retune, toHertz, fromScientificNotation } from 'absolute-cent'
+import { parseTuning, retune, toHertz } from 'absolute-cent'
 import { forEach, /* reduce, isNil, is, */ compose, values } from 'ramda'
-import Instrument from '../audio/Instrument'
+import Simple from '../audio/instruments/Simple'
 // import AudioFileManager from 'audio'
 
 const generateNEdo = n => {
@@ -36,6 +36,30 @@ class Audio extends EventEmitter {
     return Object.prototype.hasOwnProperty.call(window, 'AudioContext')
   }
 
+  setInstrument(instrumentName) {
+    const { instruments, ctx } = this._
+    if (instruments[instrumentName]) {
+      instruments[instrumentName].clearEvents()
+    }
+    instruments[instrumentName] = new Simple(ctx, { waveType: 'sine' })
+  }
+
+  setEvents(instrumentName, events) {
+    const instrument = this._.instruments[instrumentName]
+
+    if (instrument) {
+      instrument.clearEvents()
+      events.forEach(({ event, pitch, time, velocity }) => {
+        instrument.schedule({
+          event,
+          pitch: toHertz(retune(pitch, tuningData)),
+          time,
+          velocity
+        })
+      })
+    }
+  }
+
   async init() {
     // const ctx = new OfflineAudioContext(2, 44100 * 6, 44100)
     const ctx = new AudioContext()
@@ -46,34 +70,19 @@ class Audio extends EventEmitter {
 
     // --------------------------------
 
-    this._.instruments['demo'] = new Instrument(ctx, { waveType: 'sine' })
-
-    this._.instruments['demo'].schedule({
-      event: 'note on',
-      pitch: toHertz(retune(fromScientificNotation('F4'), tuningData)),
-      time: 0,
-      velocity: 0.5
-    })
-
-    this._.instruments['demo'].schedule({
-      event: 'note off',
-      pitch: toHertz(retune(fromScientificNotation('F4'), tuningData)),
-      time: 2
-    })
-
     /*
-    this._.instruments['guitar #1'] = new Instrument(ctx, { waveType: 'square', pan: -0.4, volume: 0.5 })
-    this._.instruments['guitar #2'] = new Instrument(ctx, { waveType: 'square', pan: -0.1, volume: 0.5 })
-    this._.instruments['guitar #3'] = new Instrument(ctx, { waveType: 'square', pan: 0.1, volume: 0.5 })
-    this._.instruments['guitar #4'] = new Instrument(ctx, { waveType: 'square', pan: 0.4, volume: 0.5 })
+    this._.instruments['guitar #1'] = new Simple(ctx, { waveType: 'square', pan: -0.4, volume: 0.5 })
+    this._.instruments['guitar #2'] = new Simple(ctx, { waveType: 'square', pan: -0.1, volume: 0.5 })
+    this._.instruments['guitar #3'] = new Simple(ctx, { waveType: 'square', pan: 0.1, volume: 0.5 })
+    this._.instruments['guitar #4'] = new Simple(ctx, { waveType: 'square', pan: 0.4, volume: 0.5 })
 
-    this._.instruments['bass #1'] = new Instrument(ctx, {
+    this._.instruments['bass #1'] = new Simple(ctx, {
       waveType: 'square',
       pan: -0.7,
       filter: { lowpass: 700 },
       volume: 0.8
     })
-    this._.instruments['bass #2'] = new Instrument(ctx, {
+    this._.instruments['bass #2'] = new Simple(ctx, {
       waveType: 'square',
       pan: 0.7,
       filter: { lowpass: 700 },
