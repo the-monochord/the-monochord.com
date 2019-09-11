@@ -1,4 +1,4 @@
-import { find, propEq, isNil, filter, compose, forEach, pluck, flatten } from 'ramda'
+import { find, propEq, isNil, filter, compose, forEach, map, add, flatten, evolve } from 'ramda'
 import AudioContext from '../contexts/AudioContext'
 
 const audioLinker = store => next => action => {
@@ -33,7 +33,17 @@ const audioLinker = store => next => action => {
             },
             ({ id: trackId }) => ({
               instrument: trackId,
-              events: flatten(pluck('events', filter(propEq('trackId', trackId), activeProject.bars)))
+              events: compose(
+                flatten,
+                map(({ events, startTime }) =>
+                  map(
+                    evolve({
+                      time: add(startTime)
+                    })
+                  )(events)
+                ),
+                filter(propEq('trackId', trackId))
+              )(activeProject.bars)
             })
           )
         )(activeProject.tracks)
