@@ -28,7 +28,8 @@ class Audio extends EventEmitter {
     super()
 
     this._ = {
-      instruments: {}
+      instruments: {},
+      inited: false
     }
   }
 
@@ -37,26 +38,31 @@ class Audio extends EventEmitter {
   }
 
   setInstrument(instrumentName) {
-    const { instruments, ctx } = this._
-    if (instruments[instrumentName]) {
-      instruments[instrumentName].clearEvents()
+    const { instruments, ctx, inited } = this._
+    if (inited) {
+      if (instruments[instrumentName]) {
+        instruments[instrumentName].clearEvents()
+      }
+      instruments[instrumentName] = new Simple(ctx, { waveType: 'sine' })
     }
-    instruments[instrumentName] = new Simple(ctx, { waveType: 'sine' })
   }
 
   setEvents(instrumentName, events) {
-    const instrument = this._.instruments[instrumentName]
+    const { inited, instruments } = this._
+    if (inited) {
+      const instrument = instruments[instrumentName]
 
-    if (instrument) {
-      instrument.clearEvents()
-      events.forEach(({ event, pitch, time, velocity }) => {
-        instrument.schedule({
-          event,
-          pitch: toHertz(retune(pitch, tuningData)),
-          time,
-          velocity
+      if (instrument) {
+        instrument.clearEvents()
+        events.forEach(({ event, pitch, time, velocity }) => {
+          instrument.schedule({
+            event,
+            pitch: toHertz(retune(pitch, tuningData)),
+            time,
+            velocity
+          })
         })
-      })
+      }
     }
   }
 
@@ -65,6 +71,7 @@ class Audio extends EventEmitter {
     const ctx = new AudioContext()
 
     this._.ctx = ctx
+    this._.inited = true
 
     this.emit('ready')
 

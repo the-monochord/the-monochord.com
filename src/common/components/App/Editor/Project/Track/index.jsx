@@ -49,14 +49,7 @@ const Track = props => {
       />
       {bars.map((bar, idx) => (
         <Fragment key={idx}>
-          <div>{JSON.stringify(bar)}</div>
-          <Bar {...bar} />
-          <Button
-            onClick={() => {
-              console.log('edit bar: ', projectIdx, idx)
-            }}
-            label={'edit bar'}
-          />
+          <Bar {...bar} projectIdx={projectIdx} barIdx={idx} />
           <Button onClick={() => dispatch(removeBar({ projectIdx, barIdx: idx }))} label={'remove bar'} />
         </Fragment>
       ))}

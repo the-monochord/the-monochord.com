@@ -140,6 +140,30 @@ const { reducer, actions } = autodux({
     setCursorPosition: (state, payload) => {
       const { projectIdx, cursorAt } = payload
       return assocPath(['projects', projectIdx, 'cursorAt'], cursorAt, state)
+    },
+    setBarStartTime: (state, payload) => {
+      const { projectIdx, barIdx, startTime } = payload
+      return evolve({
+        projects: {
+          [projectIdx]: {
+            bars: {
+              [barIdx]: assoc('startTime', startTime)
+            }
+          }
+        }
+      })(state)
+    },
+    setBarEvents: (state, payload) => {
+      const { projectIdx, barIdx, events } = payload
+      return evolve({
+        projects: {
+          [projectIdx]: {
+            bars: {
+              [barIdx]: assoc('events', events)
+            }
+          }
+        }
+      })(state)
     }
   }
 })
