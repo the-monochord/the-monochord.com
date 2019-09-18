@@ -82,7 +82,12 @@ const common = {
 
 const clientConfig = {
   entry: {
-    monochord: ['regenerator-runtime/runtime', 'cancelandholdattime-polyfill', './src/client/index.jsx']
+    monochord: [
+      'regenerator-runtime/runtime',
+      'audioparam-getvalueattime',
+      'cancelandholdattime-polyfill',
+      './src/client/index.jsx'
+    ]
   },
   output: {
     path: path.resolve(__dirname, 'static-cdn'),
