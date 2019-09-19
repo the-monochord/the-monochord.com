@@ -1,6 +1,4 @@
-import { pathOr, propOr, forEach, addIndex } from 'ramda'
-
-const indexedForEach = addIndex(forEach)
+import { pathOr, propOr, forEach } from 'ramda'
 
 class Simple {
   constructor(ctx, options = {}) {
@@ -52,29 +50,38 @@ class Simple {
 
     const startFrom = startTime || ctx.currentTime
 
-    indexedForEach(({ event, velocity, pitch, time }, idx) => {
+    forEach(({ event, velocity, pitch, time }) => {
       const t = startFrom + time
       switch (event) {
         case 'note on':
-          if (nodes.gain.gain.hasScheduledChangesAtTime(t)) {
-            nodes.gain.gain.cancelAndHoldAtTime(t)
-          } else {
-            const valueAtTime = nodes.gain.gain.getValueAtTime(t)
-            nodes.gain.gain.setValueAtTime(valueAtTime, t)
-          }
+          {
+            const gain = nodes.gain.gain
+            const frequency = nodes.oscillator.frequency
 
-          nodes.gain.gain.linearRampToValueAtTime(velocity, t + attack)
-          nodes.oscillator.frequency.setValueAtTime(pitch, t)
+            if (gain.hasScheduledChangesAtTime(t)) {
+              gain.cancelAndHoldAtTime(t)
+            } else {
+              const valueAtTime = gain.getValueAtTime(t)
+              gain.setValueAtTime(valueAtTime, t)
+            }
+
+            gain.linearRampToValueAtTime(velocity, t + attack)
+            frequency.setValueAtTime(pitch, t)
+          }
           break
         case 'note off':
-          if (nodes.gain.gain.hasScheduledChangesAtTime(t)) {
-            nodes.gain.gain.cancelAndHoldAtTime(t)
-          } else {
-            const valueAtTime = nodes.gain.gain.getValueAtTime(t)
-            nodes.gain.gain.setValueAtTime(valueAtTime, t)
-          }
+          {
+            const gain = nodes.gain.gain
 
-          nodes.gain.gain.linearRampToValueAtTime(0, t + release)
+            if (gain.hasScheduledChangesAtTime(t)) {
+              gain.cancelAndHoldAtTime(t)
+            } else {
+              const valueAtTime = gain.getValueAtTime(t)
+              gain.setValueAtTime(valueAtTime, t)
+            }
+
+            gain.linearRampToValueAtTime(0, t + release)
+          }
           break
       }
     })(events)
