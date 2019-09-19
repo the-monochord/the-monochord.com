@@ -57,7 +57,7 @@
   "dependencies": {
     "absolute-cent": "^1.0.9",
     "audio": "github:audiojs/audio",
-    "audioparam-getvalueattime": "^1.1.0",
+    "audioparam-getvalueattime": "^1.2.0",
     "autodux": "^5.0.3",
     "body-parser": "^1.19.0",
     "cookie": "^0.4.0",
