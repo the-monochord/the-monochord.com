@@ -21,7 +21,7 @@ const Project = props => {
   const dispatch = useDispatch()
 
   return (
-    <div className={'Project'}>
+    <div className="Project">
       <DebouncedTextField
         placeholder="Untitled project"
         value={title}

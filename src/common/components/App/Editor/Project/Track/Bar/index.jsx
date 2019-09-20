@@ -9,7 +9,7 @@ const Bar = props => {
   const { startTime, events, projectIdx, barIdx } = props
   const dispatch = useDispatch()
   return (
-    <div className={'Bar'}>
+    <div className="Bar">
       startTime:{' '}
       <input
         type="number"

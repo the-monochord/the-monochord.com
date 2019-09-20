@@ -12,15 +12,13 @@ const Navigation = props => {
     <nav>
       <ul>
         <li>
-          <NavLink to={'/'}>Editor</NavLink>
+          <NavLink to="/">Editor</NavLink>
         </li>
         <li>
-          <NavLink to={'/listen/2:6:7:8:9:11/triangle/131'}>Listen to 2:6:7:8:9:11</NavLink>
+          <NavLink to="/listen/2:6:7:8:9:11/triangle/131">Listen to 2:6:7:8:9:11</NavLink>
         </li>
         <li>
-          <NavLink to={'/tools/convert-ratio-to-cents/5:4'}>
-            {t('Convert {{ratio}} to cents', { ratio: '5:4' })}
-          </NavLink>
+          <NavLink to="/tools/convert-ratio-to-cents/5:4">{t('Convert {{ratio}} to cents', { ratio: '5:4' })}</NavLink>
         </li>
         <li>
           <If condition={isLoggedIn}>
@@ -28,7 +26,7 @@ const Navigation = props => {
               <a href="/logout">{t('Logout')}</a>
             </Then>
             <Else>
-              <NavLink to={'/login'}>{t('Login')}</NavLink>
+              <NavLink to="/login">{t('Login')}</NavLink>
             </Else>
           </If>
         </li>

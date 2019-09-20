@@ -136,7 +136,7 @@ const App = props => {
                 <Then>
                   <small>reconnecting in {socketReconnectTime} seconds</small>
                   <Button
-                    label={'click here to reconnect now'}
+                    label="click here to reconnect now"
                     onClick={() => {
                       forceSocketReconnect()
                     }}
@@ -171,8 +171,8 @@ const App = props => {
           ))}
         </Switch>
         <hr />
-        <Button disabled={!canUndo} label={'UNDO'} onClick={() => dispatch(undo())} />
-        <Button disabled={!canRedo} label={'REDO'} onClick={() => dispatch(redo(/* */))} />
+        <Button disabled={!canUndo} label="UNDO" onClick={() => dispatch(undo())} />
+        <Button disabled={!canRedo} label="REDO" onClick={() => dispatch(redo(/* */))} />
         <Settings />
         <Notifications />
       </div>

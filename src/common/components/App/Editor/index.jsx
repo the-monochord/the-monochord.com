@@ -38,7 +38,7 @@ const Editor = props => {
   const audio = useContext(AudioContext)
 
   return (
-    <div className={'Editor'}>
+    <div className="Editor">
       {t('Editor')}
       <Unless condition={isNil(hash)}>{` - ${hash}`}</Unless>
       <Unless condition={isNil(revision)}>{` - ${revision}`}</Unless>
@@ -56,7 +56,7 @@ const Editor = props => {
                 }
               }}
             />
-            <Button onClick={() => dispatch(deleteDraft({ projectIdx }))} label={'delete'} />
+            <Button onClick={() => dispatch(deleteDraft({ projectIdx }))} label="delete" />
           </li>
         ))}
       </ul>
@@ -65,7 +65,7 @@ const Editor = props => {
           const trackId = shortid.generate()
           dispatch(createDraft({ trackId, name: trackId }))
         }}
-        label={'create new draft'}
+        label="create new draft"
       />
       <hr />
       <Button
@@ -81,7 +81,7 @@ const Editor = props => {
       />
       <Button
         disabled={!isAudioEnabled}
-        label={'save as wav'}
+        label="save as wav"
         onClick={() => {
           audio.renderToWav(`${activeDraft.title || 'monochord-demo'}-${moment().format('YYYY-M-D-H-m-s')}.wav`)
         }}

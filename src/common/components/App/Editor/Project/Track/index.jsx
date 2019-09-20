@@ -17,7 +17,7 @@ const Track = props => {
   const dispatch = useDispatch()
 
   return (
-    <div className={'Track'}>
+    <div className="Track">
       <DebouncedTextField
         placeholder="Unnamed track"
         value={name}
@@ -50,11 +50,11 @@ const Track = props => {
       {bars.map((bar, idx) => (
         <Fragment key={idx}>
           <Bar {...bar} projectIdx={projectIdx} barIdx={idx} />
-          <Button onClick={() => dispatch(removeBar({ projectIdx, barIdx: idx }))} label={'remove bar'} />
+          <Button onClick={() => dispatch(removeBar({ projectIdx, barIdx: idx }))} label="remove bar" />
         </Fragment>
       ))}
       <br />
-      <Button onClick={() => dispatch(addBar({ projectIdx, trackId: id, startTime: cursorAt }))} label={'add bar'} />
+      <Button onClick={() => dispatch(addBar({ projectIdx, trackId: id, startTime: cursorAt }))} label="add bar" />
     </div>
   )
 }

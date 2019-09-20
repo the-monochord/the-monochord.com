@@ -23,7 +23,7 @@ const MidiEnabler = props => {
 
   return (
     <ToggleSwitch
-      className={'MidiEnabler'}
+      className="MidiEnabler"
       on={isMidiInited}
       disabled={isMidiInited}
       onChange={() => {

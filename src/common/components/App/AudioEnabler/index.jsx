@@ -17,7 +17,7 @@ const AudioEnabler = props => {
 
   return (
     <ToggleSwitch
-      className={'AudioEnabler'}
+      className="AudioEnabler"
       on={isAudioInited}
       disabled={isAudioInited}
       onChange={() => {
@@ -30,7 +30,7 @@ const AudioEnabler = props => {
           setIsAudioInited(true)
         }
       }}
-      label={`Audio Enabled`}
+      label="Audio Enabled"
     />
   )
 }

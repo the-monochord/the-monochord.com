@@ -18,9 +18,9 @@ const Tools = props => {
     <div>
       <h2>{t('Tools')}</h2>
 
-      <NavLink to={'/tools/convert-ratio-to-cents'}>{t('Convert ratio to cents')}</NavLink>
+      <NavLink to="/tools/convert-ratio-to-cents">{t('Convert ratio to cents')}</NavLink>
       <br />
-      <NavLink to={'/tools/convert-cents-to-ratio'}>{t('Convert cents to ratio')}</NavLink>
+      <NavLink to="/tools/convert-cents-to-ratio">{t('Convert cents to ratio')}</NavLink>
       <br />
 
       <Switch>
