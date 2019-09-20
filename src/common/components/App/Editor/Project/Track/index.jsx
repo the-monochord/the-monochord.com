@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useCallback } from 'react'
 import Button from '../../../Button'
 import DebounceOnChange from '../../../DebounceOnChange'
 import TextField from '../../../TextField'
@@ -16,45 +16,42 @@ const Track = props => {
   const { bars = [], name, id, volume, projectIdx, cursorAt } = props
   const dispatch = useDispatch()
 
+  const onNameChange = useCallback(value => {
+    dispatch(
+      setTrackProperty({
+        projectIdx,
+        trackId: id,
+        property: 'name',
+        value
+      })
+    )
+  }, [])
+  const onVolumeChange = useCallback(value => {
+    dispatch(
+      setTrackProperty({
+        projectIdx,
+        trackId: id,
+        property: 'volume',
+        value
+      })
+    )
+  }, [])
+  const onAddBarClick = useCallback(() => dispatch(addBar({ projectIdx, trackId: id, startTime: cursorAt })), [])
+  const onRemoveBarClick = useCallback(barId => () => dispatch(removeBar({ projectIdx, barId })), [])
+
   return (
     <div className="Track">
-      <DebouncedTextField
-        placeholder="Unnamed track"
-        value={name}
-        onChange={value => {
-          dispatch(
-            setTrackProperty({
-              projectIdx,
-              trackId: id,
-              property: 'name',
-              value
-            })
-          )
-        }}
-      />
+      <DebouncedTextField placeholder="Unnamed track" value={name} onChange={onNameChange} />
       <br />
-      volume:{' '}
-      <DebouncedVolumeControl
-        value={volume}
-        onChange={value => {
-          dispatch(
-            setTrackProperty({
-              projectIdx,
-              trackId: id,
-              property: 'volume',
-              value
-            })
-          )
-        }}
-      />
+      volume: <DebouncedVolumeControl value={volume} onChange={onVolumeChange} />
       {bars.map((bar, idx) => (
         <Fragment key={idx}>
-          <Bar {...bar} projectIdx={projectIdx} barIdx={idx} />
-          <Button onClick={() => dispatch(removeBar({ projectIdx, barIdx: idx }))} label="remove bar" />
+          <Bar {...bar} projectIdx={projectIdx} />
+          <Button label="remove bar" onClick={onRemoveBarClick(bar.id)} />
         </Fragment>
       ))}
       <br />
-      <Button onClick={() => dispatch(addBar({ projectIdx, trackId: id, startTime: cursorAt }))} label="add bar" />
+      <Button label="add bar" onClick={onAddBarClick} />
     </div>
   )
 }

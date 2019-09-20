@@ -16,6 +16,7 @@ import {
   assocPath
 } from 'ramda'
 import { fromScientificNotation } from 'absolute-cent'
+import shortid from 'shortid'
 import { emptyProject } from '../config/defaults'
 
 const { reducer, actions } = autodux({
@@ -36,6 +37,7 @@ const { reducer, actions } = autodux({
                 bars: append({
                   trackId,
                   startTime: 0,
+                  id: shortid.generate(),
                   events: [
                     {
                       event: 'note on',
@@ -91,6 +93,7 @@ const { reducer, actions } = autodux({
       return evolve({
         projects: {
           [projectIdx]: {
+            bars: reject(propEq('trackId', trackId)),
             tracks: reject(propEq('id', trackId))
           }
         }
@@ -119,6 +122,7 @@ const { reducer, actions } = autodux({
         projects: {
           [projectIdx]: {
             bars: append({
+              id: shortid.generate(),
               trackId,
               startTime,
               events: []
@@ -128,11 +132,11 @@ const { reducer, actions } = autodux({
       })(state)
     },
     removeBar: (state, payload) => {
-      const { projectIdx, barIdx } = payload
+      const { projectIdx, barId } = payload
       return evolve({
         projects: {
           [projectIdx]: {
-            bars: remove(barIdx, 1)
+            bars: reject(propEq('id', barId))
           }
         }
       })(state)
@@ -141,25 +145,14 @@ const { reducer, actions } = autodux({
       const { projectIdx, cursorAt } = payload
       return assocPath(['projects', projectIdx, 'cursorAt'], cursorAt, state)
     },
-    setBarStartTime: (state, payload) => {
-      const { projectIdx, barIdx, startTime } = payload
+    setBarProperty: (state, payload) => {
+      const { projectIdx, barId, property, value } = payload
+      const barIdx = findIndex(propEq('id', barId), state.projects[projectIdx].bars)
       return evolve({
         projects: {
           [projectIdx]: {
             bars: {
-              [barIdx]: assoc('startTime', startTime)
-            }
-          }
-        }
-      })(state)
-    },
-    setBarEvents: (state, payload) => {
-      const { projectIdx, barIdx, events } = payload
-      return evolve({
-        projects: {
-          [projectIdx]: {
-            bars: {
-              [barIdx]: assoc('events', events)
+              [barIdx]: assoc(property, value)
             }
           }
         }

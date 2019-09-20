@@ -1,7 +1,7 @@
-import React, { useContext } from 'react'
+import React, { useContext, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import useRouter from 'use-react-router'
-import { isNil, find, propEq, mergeDeepRight, defaultTo, compose, path } from 'ramda'
+import { isNil, find, propEq, compose, path } from 'ramda'
 import { Unless } from 'react-if'
 import shortid from 'shortid'
 import moment from 'moment'
@@ -27,15 +27,37 @@ const Editor = props => {
   const { projects } = useNamespaceSelector('drafts', ['projects'])
   const activeDraft = useSelector(
     compose(
-      mergeDeepRight({ tracks: [], bars: [], title: '', cursorAt: 0 }),
-      defaultTo({}),
       find(propEq('isActive', true)),
       path(['drafts', 'projects'])
     )
   )
   const dispatch = useDispatch()
-
   const audio = useContext(AudioContext)
+
+  const onActiveProjectToggle = useCallback(
+    (isActive, projectIdx) => () => {
+      if (!isActive) {
+        dispatch(makeDraftActive({ projectIdx }))
+      }
+    },
+    []
+  )
+  const onProjectDeleteClick = useCallback(projectIdx => () => dispatch(deleteDraft({ projectIdx })), [])
+  const onCreateNewDraftClick = useCallback(() => {
+    const trackId = shortid.generate()
+    dispatch(createDraft({ trackId, name: trackId }))
+  }, [])
+  const onPlayPauseClick = useCallback(() => {
+    if (isPlaying) {
+      dispatch(pauseDraft())
+    } else {
+      dispatch(playDraft())
+    }
+  }, [])
+
+  const onSaveAsWavClick = useCallback(() => {
+    audio.renderToWav(`${activeDraft.title || 'monochord-demo'}-${moment().format('YYYY-M-D-H-m-s')}.wav`)
+  }, [])
 
   return (
     <div className="Editor">
@@ -50,44 +72,24 @@ const Editor = props => {
             <Checkbox
               label={title || <i>Untitled project</i>}
               checked={isActive}
-              onChange={() => {
-                if (!isActive) {
-                  dispatch(makeDraftActive({ projectIdx }))
-                }
-              }}
+              onChange={onActiveProjectToggle(isActive, projectIdx)}
             />
-            <Button onClick={() => dispatch(deleteDraft({ projectIdx }))} label="delete" />
+            <Button label="delete" onClick={onProjectDeleteClick(projectIdx)} />
           </li>
         ))}
       </ul>
-      <Button
-        onClick={() => {
-          const trackId = shortid.generate()
-          dispatch(createDraft({ trackId, name: trackId }))
-        }}
-        label="create new draft"
-      />
+      <Button label="create new draft" onClick={onCreateNewDraftClick} />
       <hr />
-      <Button
-        disabled={!isAudioEnabled}
-        label={isPlaying ? 'pause' : 'play'}
-        onClick={() => {
-          if (isPlaying) {
-            dispatch(pauseDraft())
-          } else {
-            dispatch(playDraft())
-          }
-        }}
-      />
-      <Button
-        disabled={!isAudioEnabled}
-        label="save as wav"
-        onClick={() => {
-          audio.renderToWav(`${activeDraft.title || 'monochord-demo'}-${moment().format('YYYY-M-D-H-m-s')}.wav`)
-        }}
-      />
-      <hr />
-      <Project {...activeDraft} />
+      <Button disabled={!isAudioEnabled} label={isPlaying ? 'pause' : 'play'} onClick={onPlayPauseClick} />
+      <Button disabled={!isAudioEnabled} label="save as wav" onClick={onSaveAsWavClick} />
+      <Unless condition={isNil(activeDraft)}>
+        {() => (
+          <>
+            <hr />
+            <Project {...activeDraft} />
+          </>
+        )}
+      </Unless>
     </div>
   )
 }
