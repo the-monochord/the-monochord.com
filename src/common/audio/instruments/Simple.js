@@ -1,4 +1,7 @@
-import { pathOr, propOr, forEach } from 'ramda'
+import { pathOr, propOr, forEach, compose, sort, prop, last, __, lt, isNil, filter, gte } from 'ramda'
+
+const attack = 0.1
+const release = 0.3
 
 const properCancelAndHold = (node, time) => {
   if (node.hasScheduledChangesAtTime(time)) {
@@ -7,6 +10,46 @@ const properCancelAndHold = (node, time) => {
     const valueAtTime = node.getValueAtTime(time)
     node.setValueAtTime(valueAtTime, time)
   }
+}
+
+const getLastEvent = events => {
+  return compose(
+    last,
+    sort(prop('time'))
+  )(events)
+}
+
+const calculateTimeToReachSilence = event => {
+  switch (event.event) {
+    case 'note on':
+      return Infinity
+    case 'note off':
+      return event.time + release
+    default:
+      return 0
+  }
+}
+
+const getEventAtTime = (events, time) => {
+  return compose(
+    last,
+    sort(prop('time')),
+    filter(
+      compose(
+        lt(__, time),
+        prop('time')
+      )
+    )
+  )(events)
+}
+
+const filterEventsAtOrAfterTime = (events, time) => {
+  return filter(
+    compose(
+      gte(__, time),
+      prop('time')
+    )
+  )(events)
 }
 
 class Simple {
@@ -51,16 +94,11 @@ class Simple {
     this._.events.push(eventData)
   }
 
-  play(now, cursorAt) {
-    const { nodes, events, ctx } = this._
-
-    const attack = 0.1
-    const release = 0.3
-
-    const startFrom = now || ctx.currentTime
+  invokeEvents(events, startFrom, correction) {
+    const { nodes } = this._
 
     forEach(({ event, velocity, pitch, time }) => {
-      const t = startFrom + time
+      const t = startFrom + time + correction
       switch (event) {
         case 'note on':
           {
@@ -80,17 +118,46 @@ class Simple {
           break
       }
     })(events)
+  }
+
+  play(now, cursorAt) {
+    const { nodes, events, ctx } = this._
+
+    const startFrom = now || ctx.currentTime
 
     if (cursorAt > 0) {
       const gain = nodes.gain.gain
-      const gainAtCursor = gain.getValueAtTime(startFrom + cursorAt)
-      gain.cancelScheduledValues(startFrom)
-      gain.setValueAtTime(gainAtCursor, startFrom)
-
       const frequency = nodes.oscillator.frequency
-      const frequencyAtCursor = frequency.getValueAtTime(startFrom + cursorAt)
-      frequency.cancelScheduledValues(startFrom)
-      frequency.setValueAtTime(frequencyAtCursor, startFrom)
+
+      // gain.setValueAtTime(0, startFrom)
+      // frequency.setValueAtTime(0, startFrom)
+
+      const timeToReachSilence = calculateTimeToReachSilence(getLastEvent(events))
+      if (timeToReachSilence > cursorAt) {
+        const slicedEvent = getEventAtTime(events, cursorAt)
+        if (!isNil(slicedEvent)) {
+          const t = slicedEvent.time - cursorAt
+          if (slicedEvent.event === 'note on') {
+            if (t > 0 && t < attack) {
+              gain.linearRampToValueAtTime(slicedEvent.velocity, startFrom + t + attack)
+            } else {
+              gain.setValueAtTime(slicedEvent.velocity, startFrom)
+            }
+            frequency.setValueAtTime(slicedEvent.pitch, startFrom)
+          } else if (slicedEvent.event === 'note off') {
+            if (t > 0 && t < attack) {
+              gain.linearRampToValueAtTime(0, t + release)
+            } else {
+              gain.setValueAtTime(0, startFrom)
+            }
+          }
+        }
+
+        const eventsAtOrAfterCursor = filterEventsAtOrAfterTime(events, cursorAt)
+        this.invokeEvents(eventsAtOrAfterCursor, startFrom, -cursorAt)
+      }
+    } else {
+      this.invokeEvents(events, startFrom, 0)
     }
   }
 
