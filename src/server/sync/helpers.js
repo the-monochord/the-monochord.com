@@ -36,7 +36,8 @@ const generateAppData = req => {
       isPlaying: false,
       isAudioEnabled: false,
       isMidiEnabled: false,
-      socketReconnectTime: 0
+      socketReconnectTime: 0,
+      loopPlayback: false
     },
     midi: {
       sustainOn: false,
