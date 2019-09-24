@@ -1,5 +1,8 @@
-import { find, propEq, isNil, filter, compose, forEach, map, add, flatten, evolve, startsWith } from 'ramda'
+import { find, propEq, isNil, filter, compose, forEach, map, add, flatten, evolve, startsWith, findIndex } from 'ramda'
 import AudioContext from '../contexts/AudioContext'
+import { actions as draftActions } from '../reducers/drafts'
+
+const { setCursorPosition } = draftActions
 
 const audioLinker = store => next => action => {
   const audio = AudioContext._currentValue
@@ -13,7 +16,7 @@ const audioLinker = store => next => action => {
     const activeProject = find(propEq('isActive', true), projects)
 
     if (!isNil(activeProject)) {
-      audio.stop()
+      audio.pause()
 
       forEach(
         compose(
@@ -54,11 +57,30 @@ const audioLinker = store => next => action => {
       case 'state/pauseDraft':
         {
           const cursorAt = audio.pause()
-          console.log('paused at', cursorAt)
+          const {
+            drafts: { projects }
+          } = store.getState()
+          store.dispatch(
+            setCursorPosition({
+              projectIdx: findIndex(propEq('isActive', true), projects),
+              cursorAt: cursorAt
+            })
+          )
         }
         break
       case 'state/stopDraft':
-        audio.stop()
+        {
+          audio.pause()
+          const {
+            drafts: { projects }
+          } = store.getState()
+          store.dispatch(
+            setCursorPosition({
+              projectIdx: findIndex(propEq('isActive', true), projects),
+              cursorAt: 0
+            })
+          )
+        }
         break
     }
   }

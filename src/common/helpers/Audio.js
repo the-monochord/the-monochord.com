@@ -29,7 +29,8 @@ class Audio extends EventEmitter {
 
     this._ = {
       instruments: {},
-      inited: false
+      inited: false,
+      previousPlaybackStartTime: 0
     }
   }
 
@@ -356,6 +357,8 @@ class Audio extends EventEmitter {
       }),
       values
     )(instruments)
+
+    this._.previousPlaybackStartTime = now - cursorAt
   }
 
   pause() {
@@ -384,7 +387,7 @@ class Audio extends EventEmitter {
     clearInterval(this._.interval)
     */
 
-    const { instruments, ctx } = this._
+    const { instruments, ctx, previousPlaybackStartTime } = this._
     const now = ctx.currentTime
     compose(
       forEach(instrument => {
@@ -392,9 +395,8 @@ class Audio extends EventEmitter {
       }),
       values
     )(instruments)
+    return now - previousPlaybackStartTime
   }
-
-  stop() {}
 
   renderToWav(filename) {
     /*
