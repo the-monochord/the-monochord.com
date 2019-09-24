@@ -1,5 +1,14 @@
 import { pathOr, propOr, forEach } from 'ramda'
 
+const properCancelAndHold = (node, time) => {
+  if (node.hasScheduledChangesAtTime(time)) {
+    node.cancelAndHoldAtTime(time)
+  } else {
+    const valueAtTime = node.getValueAtTime(time)
+    node.setValueAtTime(valueAtTime, time)
+  }
+}
+
 class Simple {
   constructor(ctx, options = {}) {
     const filter = ctx.createBiquadFilter()
@@ -42,13 +51,13 @@ class Simple {
     this._.events.push(eventData)
   }
 
-  play(startTime) {
+  play(now, cursorAt) {
     const { nodes, events, ctx } = this._
 
-    const attack = 0.01
+    const attack = 0.1
     const release = 0.3
 
-    const startFrom = startTime || ctx.currentTime
+    const startFrom = now || ctx.currentTime
 
     forEach(({ event, velocity, pitch, time }) => {
       const t = startFrom + time
@@ -57,14 +66,7 @@ class Simple {
           {
             const gain = nodes.gain.gain
             const frequency = nodes.oscillator.frequency
-
-            if (gain.hasScheduledChangesAtTime(t)) {
-              gain.cancelAndHoldAtTime(t)
-            } else {
-              const valueAtTime = gain.getValueAtTime(t)
-              gain.setValueAtTime(valueAtTime, t)
-            }
-
+            properCancelAndHold(gain, t)
             gain.linearRampToValueAtTime(velocity, t + attack)
             frequency.setValueAtTime(pitch, t)
           }
@@ -72,19 +74,24 @@ class Simple {
         case 'note off':
           {
             const gain = nodes.gain.gain
-
-            if (gain.hasScheduledChangesAtTime(t)) {
-              gain.cancelAndHoldAtTime(t)
-            } else {
-              const valueAtTime = gain.getValueAtTime(t)
-              gain.setValueAtTime(valueAtTime, t)
-            }
-
+            properCancelAndHold(gain, t)
             gain.linearRampToValueAtTime(0, t + release)
           }
           break
       }
     })(events)
+
+    if (cursorAt > 0) {
+      const gain = nodes.gain.gain
+      const gainAtCursor = gain.getValueAtTime(startFrom + cursorAt)
+      gain.cancelScheduledValues(startFrom)
+      gain.setValueAtTime(gainAtCursor, startFrom)
+
+      const frequency = nodes.oscillator.frequency
+      const frequencyAtCursor = frequency.getValueAtTime(startFrom + cursorAt)
+      frequency.cancelScheduledValues(startFrom)
+      frequency.setValueAtTime(frequencyAtCursor, startFrom)
+    }
   }
 
   pause(now) {
@@ -92,8 +99,9 @@ class Simple {
       nodes: { gain, oscillator }
     } = this._
 
-    gain.gain.cancelAndHoldAtTime(now)
-    gain.gain.linearRampToValueAtTime(0, now + 0.02)
+    // TODO: why is the audio clicking here?
+    properCancelAndHold(gain.gain, now)
+    gain.gain.linearRampToValueAtTime(0, now + 0.01)
     oscillator.frequency.cancelAndHoldAtTime(now)
   }
 }

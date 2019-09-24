@@ -313,7 +313,7 @@ class Audio extends EventEmitter {
     */
   }
 
-  play() {
+  play(cursorAt = 0) {
     /*
     // AM/FM example
 
@@ -352,7 +352,7 @@ class Audio extends EventEmitter {
 
     compose(
       forEach(instrument => {
-        instrument.play(now)
+        instrument.play(now, cursorAt)
       }),
       values
     )(instruments)

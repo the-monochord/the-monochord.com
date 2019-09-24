@@ -42,10 +42,20 @@ const audioLinker = store => next => action => {
   } else {
     switch (action.type) {
       case 'state/playDraft':
-        audio.play()
+        {
+          const {
+            drafts: { projects }
+          } = store.getState()
+          const activeProject = find(propEq('isActive', true), projects)
+          const cursorAt = isNil(activeProject) ? 0 : activeProject.cursorAt
+          audio.play(cursorAt)
+        }
         break
       case 'state/pauseDraft':
-        audio.pause()
+        {
+          const cursorAt = audio.pause()
+          console.log('paused at', cursorAt)
+        }
         break
       case 'state/stopDraft':
         audio.stop()
