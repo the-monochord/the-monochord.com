@@ -35,7 +35,7 @@ const setupPassport = () => {
               drafts,
               settings,
               personal: {
-                picture: pathOr(null, ['photos', 0, 'value'], profile),
+                picture: pathOr(null, ['picture', 'data', 'url'], facebookProfileData),
                 displayName: profile.displayName,
                 publicContacts: [],
                 favourites: [],
@@ -52,7 +52,7 @@ const setupPassport = () => {
                   facebook: facebookProfileData
                 },
                 personal: {
-                  picture: pathOr(null, ['photos', 0, 'value'], profile)
+                  picture: pathOr(null, ['picture', 'data', 'url'], facebookProfileData)
                 }
               }
             }),

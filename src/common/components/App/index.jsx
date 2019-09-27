@@ -1,6 +1,6 @@
 import React, { useContext, createRef } from 'react'
 import cn from 'classnames'
-import { isEmpty } from 'ramda'
+import { isEmpty, isNil } from 'ramda'
 import { useTranslation } from 'react-i18next'
 import { Route, Switch } from 'react-router-dom'
 import { When, Unless, If, Then, Else } from 'react-if'
@@ -31,11 +31,7 @@ const { setStatus } = seoActions
 const App = props => {
   const { t } = useTranslation(['App'])
   const { theme } = useNamespaceSelector('settings', ['theme'])
-  const { isLoggedIn, profileName, profilePicture } = useNamespaceSelector('user', [
-    'isLoggedIn',
-    'profileName',
-    'profilePicture'
-  ])
+  const { isLoggedIn, displayName, picture } = useNamespaceSelector('user', ['isLoggedIn', 'displayName', 'picture'])
   const { isOnline, socketReconnectTime, isPlaying } = useNamespaceSelector('state', [
     'isOnline',
     'socketReconnectTime',
@@ -149,10 +145,10 @@ const App = props => {
           <When condition={isLoggedIn}>
             {() => (
               <div>
-                <Unless condition={isEmpty(profilePicture)}>
-                  {() => <img src={profilePicture} width="50" height="50" />}
+                <Unless condition={isNil(picture) || isEmpty(picture)}>
+                  {() => <img src={picture} width="50" height="50" />}
                 </Unless>
-                {t('Welcome, {{name}}!', { name: profileName })}
+                {t('Welcome, {{name}}!', { name: displayName })}
               </div>
             )}
           </When>
