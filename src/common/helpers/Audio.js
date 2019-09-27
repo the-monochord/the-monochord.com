@@ -38,14 +38,20 @@ class Audio extends EventEmitter {
     return Object.prototype.hasOwnProperty.call(window, 'AudioContext')
   }
 
-  setInstrument(instrumentName) {
+  setVolume(instrumentName, volume) {
+    this._.instruments[instrumentName].setProperty('volume', volume)
+  }
+
+  setInstrument(instrumentName, volume) {
     const { instruments, ctx, inited } = this._
-    if (inited) {
-      if (instruments[instrumentName]) {
-        instruments[instrumentName].clearEvents()
-      }
-      instruments[instrumentName] = new Simple(ctx, { waveType: 'sine' })
+    if (instruments[instrumentName]) {
+      instruments[instrumentName].clearEvents()
     }
+    const newInstrument = new Simple({ waveType: 'sine', volume })
+    if (inited) {
+      newInstrument.setContext(ctx)
+    }
+    instruments[instrumentName] = newInstrument
   }
 
   setEvents(instrumentName, events) {
@@ -73,6 +79,10 @@ class Audio extends EventEmitter {
 
     this._.ctx = ctx
     this._.inited = true
+
+    forEach(instrument => {
+      instrument.setContext(ctx)
+    }, values(this._.instruments))
 
     this.emit('ready')
 

@@ -53,7 +53,18 @@ const filterEventsAtOrAfterTime = (events, time) => {
 }
 
 class Simple {
-  constructor(ctx, options = {}) {
+  constructor(options = {}) {
+    this._ = {
+      nodes: {},
+      events: [],
+      options,
+      ctx: null
+    }
+  }
+
+  generateNodes() {
+    const { ctx, options } = this._
+
     const filter = ctx.createBiquadFilter()
     filter.type = 'lowpass'
     filter.frequency.value = pathOr(20000, ['filter', 'lowpass'], options)
@@ -71,15 +82,17 @@ class Simple {
     oscillator.type = propOr('triangle', 'waveType', options)
     oscillator.start()
 
-    this._ = {
-      ctx,
-      nodes: {
-        gain,
-        oscillator,
-        panner
-      },
-      events: []
+    // TODO: if this._.nodes is not empty (probably by accidentally calling generateNodes multiple times), then cleanup
+    this._.nodes = {
+      gain,
+      oscillator,
+      panner
     }
+  }
+
+  setContext(ctx) {
+    this._.ctx = ctx
+    this.generateNodes()
   }
 
   setLoopSize(loopSize) {
@@ -95,7 +108,10 @@ class Simple {
   }
 
   invokeEvents(events, startFrom, correction) {
-    const { nodes } = this._
+    const {
+      nodes,
+      options: { volume }
+    } = this._
 
     forEach(({ event, velocity, pitch, time }) => {
       const t = startFrom + time + correction
@@ -105,7 +121,7 @@ class Simple {
             const gain = nodes.gain.gain
             const frequency = nodes.oscillator.frequency
             properCancelAndHold(gain, t)
-            gain.linearRampToValueAtTime(velocity, t + attack)
+            gain.linearRampToValueAtTime(velocity * volume, t + attack)
             frequency.setValueAtTime(pitch, t)
           }
           break
@@ -121,7 +137,12 @@ class Simple {
   }
 
   play(now, cursorAt) {
-    const { nodes, events, ctx } = this._
+    const {
+      nodes,
+      options: { volume },
+      events,
+      ctx
+    } = this._
 
     const startFrom = now || ctx.currentTime
 
@@ -139,9 +160,9 @@ class Simple {
           const t = slicedEvent.time - cursorAt
           if (slicedEvent.event === 'note on') {
             if (t > 0 && t < attack) {
-              gain.linearRampToValueAtTime(slicedEvent.velocity, startFrom + t + attack)
+              gain.linearRampToValueAtTime(slicedEvent.velocity * volume, startFrom + t + attack)
             } else {
-              gain.setValueAtTime(slicedEvent.velocity, startFrom)
+              gain.setValueAtTime(slicedEvent.velocity * volume, startFrom)
             }
             frequency.setValueAtTime(slicedEvent.pitch, startFrom)
           } else if (slicedEvent.event === 'note off') {
@@ -170,6 +191,11 @@ class Simple {
     properCancelAndHold(gain.gain, now)
     gain.gain.linearRampToValueAtTime(0, now + 0.01)
     oscillator.frequency.cancelAndHoldAtTime(now)
+  }
+
+  setOption(property, value) {
+    this._.options[property] = value
+    // TODO: if isPlaying -> adjust audio
   }
 }
 
