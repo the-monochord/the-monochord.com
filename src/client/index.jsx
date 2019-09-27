@@ -18,9 +18,9 @@ import { createSocketClient } from './websocket'
 
 const container = document.getElementById('app')
 const mode = window.appData.constants.mode
-/* eslint-disable */
+/* eslint-disable no-undef, no-global-assign, camelcase */
 __webpack_public_path__ = postfixIfNeeded('/', window.appData.constants.staticPath)
-/* eslint-enable */
+/* eslint-enable no-undef, no-global-assign, camelcase */
 
 if (container) {
   ;(async () => {
