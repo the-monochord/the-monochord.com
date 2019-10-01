@@ -1,5 +1,5 @@
 import { createContext } from 'react'
-import Audio from '../helpers/Audio'
+import Audio from '../audio/Audio'
 
 const AudioContext = createContext(new Audio())
 

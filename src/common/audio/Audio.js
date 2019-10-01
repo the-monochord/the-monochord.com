@@ -3,7 +3,7 @@
 import EventEmitter from 'eventemitter3'
 import { parseTuning, retune, toHertz } from 'absolute-cent'
 import { forEach, /* reduce, isNil, is, */ compose, values } from 'ramda'
-import Simple from '../audio/instruments/Simple'
+import Simple from './instruments/Simple'
 // import AudioFileManager from 'audio'
 
 const generateNEdo = n => {
