@@ -1,5 +1,4 @@
 import React, { useContext, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
 import useRouter from 'use-react-router'
 import { isNil, find, propEq, compose, path } from 'ramda'
 import { Unless } from 'react-if'
@@ -17,7 +16,6 @@ const { deleteDraft, createDraft, makeDraftActive } = draftActions
 const { playDraft, pauseDraft } = stateActions
 
 const Editor = props => {
-  const { t } = useTranslation(['Editor'])
   const {
     match: {
       params: { hash, revision }
@@ -61,7 +59,6 @@ const Editor = props => {
 
   return (
     <div className="Editor">
-      {t('Editor')}
       <Unless condition={isNil(hash)}>{` - ${hash}`}</Unless>
       <Unless condition={isNil(revision)}>{` - ${revision}`}</Unless>
       <hr />

@@ -1,7 +1,4 @@
 {
-  "App": {
-    "Welcome, {{name}}!": "Üdv, {{name}}!"
-  },
   "Connect": {
     "Connect": "Csatlakozás",
     "Connect with {{strategy}}": "Csatlakozás {{strategy}}-kal"
@@ -13,9 +10,6 @@
   "Login": {
     "Login": "Bejelentkezés",
     "Login with {{strategy}}": "Bejelentkezés {{strategy}}-kal"
-  },
-  "Editor": {
-    "Editor": "Szerkesztő"
   },
   "Navigation": {
     "Convert {{ratio}} to cents": "{{ratio}} átalakítása centekké",
