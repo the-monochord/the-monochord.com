@@ -1,27 +1,10 @@
 /* global AudioContext */
-
 import EventEmitter from 'eventemitter3'
 import { parseTuning, retune, toHertz } from 'absolute-cent'
 import { forEach, /* reduce, isNil, is, */ compose, values } from 'ramda'
 import Simple from './instruments/Simple'
+import { generateNEdo } from './helpers'
 // import AudioFileManager from 'audio'
-
-const generateNEdo = n => {
-  const pitches = []
-
-  for (let i = 0; i <= 1200; i += 1200 / n) {
-    pitches.push(i)
-  }
-
-  return pitches
-}
-
-const tuningData = parseTuning({
-  anchor: [0, 'C4'],
-  pitches: generateNEdo(12)
-})
-
-// ---------------------------
 
 class Audio extends EventEmitter {
   constructor() {
@@ -30,7 +13,11 @@ class Audio extends EventEmitter {
     this._ = {
       instruments: {},
       inited: false,
-      previousPlaybackStartTime: 0
+      previousPlaybackStartTime: 0,
+      tuningData: parseTuning({
+        anchor: [0, 'C4'],
+        pitches: generateNEdo(12)
+      })
     }
   }
 
@@ -55,7 +42,7 @@ class Audio extends EventEmitter {
   }
 
   setEvents(instrumentName, events) {
-    const { inited, instruments } = this._
+    const { inited, instruments, tuningData } = this._
     if (inited) {
       const instrument = instruments[instrumentName]
 
