@@ -100,6 +100,12 @@ class Audio extends EventEmitter {
     return now - previousPlaybackStartTime
   }
 
+  cursorAt() {
+    const { ctx, previousPlaybackStartTime } = this._
+    const now = ctx.currentTime
+    return now - previousPlaybackStartTime
+  }
+
   renderToWav(filename) {
     /*
     const { ctx } = this._

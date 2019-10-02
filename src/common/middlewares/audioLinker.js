@@ -1,5 +1,5 @@
 import { propEq, isNil, filter, compose, forEach, map, add, flatten, evolve, startsWith, findIndex } from 'ramda'
-import AudioContext from '../contexts/AudioContext'
+import { audio } from '../contexts/AudioContext'
 import { actions as draftActions } from '../reducers/drafts'
 import { roundToNDecimals } from '../helpers/number'
 // import { actions as stateActions } from '../reducers/state'
@@ -10,8 +10,6 @@ const { setCursorPosition } = draftActions
 let cursorAtInterval = null
 
 const audioLinker = store => next => action => {
-  const audio = AudioContext._currentValue
-
   const result = next(action)
   const {
     state: { isPlaying },
@@ -67,13 +65,11 @@ const audioLinker = store => next => action => {
               drafts: { projects }
             } = store.getState()
             const activeProjectIdx = findIndex(propEq('isActive', true), projects)
-            const activeProject = projects[activeProjectIdx]
-            const cursorAt = isNil(activeProject) ? 0 : activeProject.cursorAt
             // TODO: need to prevent history/add
             store.dispatch(
               setCursorPosition({
                 projectIdx: activeProjectIdx,
-                cursorAt: roundToNDecimals(3, cursorAt + 1) // TODO: ctx.currentTime would be more accurate
+                cursorAt: roundToNDecimals(3, audio.cursorAt() + 1)
               })
             )
           }, 500)
