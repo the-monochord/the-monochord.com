@@ -1,4 +1,6 @@
+import { findIndex, propEq } from 'ramda'
 import { actions as stateActions } from '../reducers/state'
+import { actions as draftActions } from '../reducers/drafts'
 
 const hotkeyHandler = store => next => action => {
   if (action.type !== 'state/pressHotkey') {
@@ -21,17 +23,25 @@ const hotkeyHandler = store => next => action => {
         }
       }
       break
-    case 'Home':
-      {
-        const {
-          state: { isAudioEnabled }
-        } = store.getState()
+    case 'Home': {
+      const {
+        state: { isAudioEnabled },
+        drafts: { projects }
+      } = store.getState()
 
-        if (isAudioEnabled) {
-          return next(stateActions.stopDraft())
-        }
+      if (isAudioEnabled) {
+        return next(stateActions.stopDraft())
+      } else {
+        const activeProjectIdx = findIndex(propEq('isActive', true), projects)
+
+        return next(
+          draftActions.setCursorPosition({
+            projectIdx: activeProjectIdx,
+            cursorAt: 0
+          })
+        )
       }
-      break
+    }
   }
 
   return next({ type: 'noop' })
