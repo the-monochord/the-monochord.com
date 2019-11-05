@@ -16,28 +16,37 @@ const Track = props => {
   const { bars = [], name, id, volume, projectIdx, cursorAt } = props
   const dispatch = useDispatch()
 
-  const onNameChange = useCallback(value => {
-    dispatch(
-      setTrackProperty({
-        projectIdx,
-        trackId: id,
-        property: 'name',
-        value
-      })
-    )
-  }, [])
-  const onVolumeChange = useCallback(value => {
-    dispatch(
-      setTrackProperty({
-        projectIdx,
-        trackId: id,
-        property: 'volume',
-        value
-      })
-    )
-  }, [])
-  const onAddBarClick = useCallback(() => dispatch(addBar({ projectIdx, trackId: id, startTime: cursorAt })), [])
-  const onRemoveBarClick = useCallback(barId => () => dispatch(removeBar({ projectIdx, barId })), [])
+  const onNameChange = useCallback(
+    value => {
+      dispatch(
+        setTrackProperty({
+          projectIdx,
+          trackId: id,
+          property: 'name',
+          value
+        })
+      )
+    },
+    [projectIdx, id]
+  )
+  const onVolumeChange = useCallback(
+    value => {
+      dispatch(
+        setTrackProperty({
+          projectIdx,
+          trackId: id,
+          property: 'volume',
+          value
+        })
+      )
+    },
+    [projectIdx, id]
+  )
+  const onAddBarClick = useCallback(() => dispatch(addBar({ projectIdx, trackId: id, startTime: cursorAt })), [
+    projectIdx,
+    id
+  ])
+  const onRemoveBarClick = useCallback(barId => () => dispatch(removeBar({ projectIdx, barId })), [projectIdx])
 
   return (
     <div className="Track">

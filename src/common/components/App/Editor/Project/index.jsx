@@ -20,36 +20,42 @@ const Project = props => {
   const activeDraftIndex = useSelector(state => findIndex(propEq('isActive', true), state.drafts.projects))
   const dispatch = useDispatch()
 
-  const onTitleChange = useCallback(value => {
-    dispatch(
-      setTitle({
-        projectIdx: activeDraftIndex,
-        title: value
-      })
-    )
-  }, [])
-
-  // TODO: add debounce
-  const onCursorAtChange = useCallback(e => {
-    if (!isNaN(parseFloat(e.target.value))) {
+  const onTitleChange = useCallback(
+    value => {
       dispatch(
-        setCursorPosition({
+        setTitle({
           projectIdx: activeDraftIndex,
-          cursorAt: roundToNDecimals(3, parseFloat(e.target.value))
+          title: value
         })
       )
-    }
-  }, [])
+    },
+    [activeDraftIndex]
+  )
+
+  // TODO: add debounce
+  const onCursorAtChange = useCallback(
+    e => {
+      if (!isNaN(parseFloat(e.target.value))) {
+        dispatch(
+          setCursorPosition({
+            projectIdx: activeDraftIndex,
+            cursorAt: roundToNDecimals(3, parseFloat(e.target.value))
+          })
+        )
+      }
+    },
+    [activeDraftIndex]
+  )
 
   const onRemoveTrackClick = useCallback(
     trackId => () => dispatch(removeTrack({ projectIdx: activeDraftIndex, trackId })),
-    []
+    [activeDraftIndex]
   )
 
   const onAddTrackClick = useCallback(() => {
     const trackId = shortid.generate()
     dispatch(addTrack({ projectIdx: activeDraftIndex, name: trackId, trackId, volume: 1 }))
-  }, [])
+  }, [activeDraftIndex])
 
   return (
     <div className="Project">

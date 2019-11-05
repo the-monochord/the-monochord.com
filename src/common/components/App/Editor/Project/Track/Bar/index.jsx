@@ -9,31 +9,37 @@ const Bar = props => {
   const { startTime, events, projectIdx, id } = props
   const dispatch = useDispatch()
 
-  const onStartTimeChange = useCallback(e => {
-    if (!isNaN(parseFloat(e.target.value))) {
-      dispatch(
-        setBarProperty({
-          projectIdx,
-          barId: id,
-          property: 'startTime',
-          value: roundToNDecimals(3, parseFloat(e.target.value))
-        })
-      )
-    }
-  }, [])
+  const onStartTimeChange = useCallback(
+    e => {
+      if (!isNaN(parseFloat(e.target.value))) {
+        dispatch(
+          setBarProperty({
+            projectIdx,
+            barId: id,
+            property: 'startTime',
+            value: roundToNDecimals(3, parseFloat(e.target.value))
+          })
+        )
+      }
+    },
+    [projectIdx, id]
+  )
 
-  const onEventChange = useCallback(e => {
-    try {
-      dispatch(
-        setBarProperty({
-          projectIdx,
-          barId: id,
-          property: 'events',
-          value: JSON.parse(e.target.value)
-        })
-      )
-    } catch (error) {}
-  }, [])
+  const onEventChange = useCallback(
+    e => {
+      try {
+        dispatch(
+          setBarProperty({
+            projectIdx,
+            barId: id,
+            property: 'events',
+            value: JSON.parse(e.target.value)
+          })
+        )
+      } catch (error) {}
+    },
+    [projectIdx, id]
+  )
 
   return (
     <div className="Bar">

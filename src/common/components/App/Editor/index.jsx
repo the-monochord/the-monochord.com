@@ -51,11 +51,11 @@ const Editor = props => {
     } else {
       dispatch(playDraft())
     }
-  }, [])
+  }, [isPlaying])
 
   const onSaveAsWavClick = useCallback(() => {
     audio.renderToWav(`${activeDraft.title || 'monochord-demo'}-${moment().format('YYYY-M-D-H-m-s')}.wav`)
-  }, [])
+  }, [activeDraft.title])
 
   return (
     <div className="Editor">
