@@ -1,6 +1,6 @@
 import React, { useContext, useCallback } from 'react'
 import useRouter from 'use-react-router'
-import { isNil, find, propEq, compose, path } from 'ramda'
+import { isNil, find, propEq, compose, path, propOr } from 'ramda'
 import { Unless } from 'react-if'
 import shortid from 'shortid'
 import moment from 'moment'
@@ -54,8 +54,8 @@ const Editor = props => {
   }, [isPlaying])
 
   const onSaveAsWavClick = useCallback(() => {
-    audio.renderToWav(`${activeDraft.title || 'monochord-demo'}-${moment().format('YYYY-M-D-H-m-s')}.wav`)
-  }, [activeDraft.title])
+    audio.renderToWav(`${propOr('monochord-demo', 'title', activeDraft)}-${moment().format('YYYY-M-D-H-m-s')}.wav`)
+  }, [propOr('', 'title', activeDraft)])
 
   return (
     <div className="Editor">
