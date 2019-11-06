@@ -61,6 +61,7 @@ const audioLinker = store => next => action => {
             clearInterval(cursorAtInterval)
           }
           cursorAtInterval = setInterval(() => {
+            /*
             const {
               drafts: { projects }
             } = store.getState()
@@ -72,6 +73,7 @@ const audioLinker = store => next => action => {
                 cursorAt: roundToNDecimals(3, audio.cursorAt() + 1)
               })
             )
+            */
           }, 500)
         }
         break
