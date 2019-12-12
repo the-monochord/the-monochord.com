@@ -1,6 +1,7 @@
-import { last, head } from 'ramda'
+import { last, head, pathOr } from 'ramda'
 import { actions as historyActions } from '../reducers/history'
 import { capitalize } from '../helpers/string'
+import { PAYLOAD_FLAGS } from '../helpers/flags'
 import { getSliceFromAction } from './helpers'
 
 const toSetter = slice => `${slice}/set${capitalize(slice)}`
@@ -12,7 +13,7 @@ const isUndoable = action => {
 }
 
 const historyInjecter = store => next => action => {
-  if (isUndoable(action)) {
+  if (isUndoable(action) && !pathOr(false, ['payload', PAYLOAD_FLAGS.DONT_ADD_TO_HISTORY], action)) {
     const slice = getSliceFromAction(action)
     store.dispatch(historyActions.add({ stateBefore: store.getState()[slice], action, slice }))
   }

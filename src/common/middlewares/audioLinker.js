@@ -1,11 +1,26 @@
-import { propEq, isNil, filter, compose, forEach, map, add, flatten, evolve, startsWith, findIndex } from 'ramda'
+import {
+  propEq,
+  isNil,
+  filter,
+  compose,
+  forEach,
+  map,
+  add,
+  flatten,
+  evolve,
+  startsWith,
+  findIndex,
+  mergeDeepRight,
+  pathOr
+} from 'ramda'
 import { audio } from '../contexts/AudioContext'
 import { actions as draftActions } from '../reducers/drafts'
 import { roundToNDecimals } from '../helpers/number'
-// import { actions as stateActions } from '../reducers/state'
+import { PAYLOAD_FLAGS } from '../helpers/flags'
+import { actions as stateActions } from '../reducers/state'
 
 const { setCursorPosition } = draftActions
-// const { pauseDraft } = stateActions
+const { pauseDraft } = stateActions
 
 let cursorAtInterval = null
 
@@ -21,9 +36,8 @@ const audioLinker = store => next => action => {
 
   if (action.type === 'state/enableAudio' || startsWith('drafts/', action.type)) {
     if (!isNil(activeProject)) {
-      if (isPlaying) {
-        // store.dispatch(pauseDraft())
-        audio.pause()
+      if (isPlaying && !pathOr(false, ['payload', PAYLOAD_FLAGS.FEEDBACK], action)) {
+        store.dispatch(pauseDraft())
       }
 
       forEach(
@@ -61,20 +75,26 @@ const audioLinker = store => next => action => {
             clearInterval(cursorAtInterval)
           }
           cursorAtInterval = setInterval(() => {
-            /*
             const {
               drafts: { projects }
             } = store.getState()
             const activeProjectIdx = findIndex(propEq('isActive', true), projects)
-            // TODO: need to prevent history/add
             store.dispatch(
-              setCursorPosition({
-                projectIdx: activeProjectIdx,
-                cursorAt: roundToNDecimals(3, audio.cursorAt() + 1)
-              })
+              mergeDeepRight(
+                setCursorPosition({
+                  projectIdx: activeProjectIdx,
+                  cursorAt: roundToNDecimals(3, audio.cursorAt())
+                }),
+                {
+                  payload: {
+                    [PAYLOAD_FLAGS.FEEDBACK]: true,
+                    [PAYLOAD_FLAGS.DONT_ADD_TO_HISTORY]: true,
+                    [PAYLOAD_FLAGS.DONT_SYNC_THROUGH_SOCKET]: true
+                  }
+                }
+              )
             )
-            */
-          }, 500)
+          }, 100)
         }
         break
       case 'state/pauseDraft':

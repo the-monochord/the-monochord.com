@@ -91,18 +91,21 @@ class Audio extends EventEmitter {
   pause() {
     const { instruments, ctx, previousPlaybackStartTime } = this._
     const now = ctx.currentTime
+
     compose(
       forEach(instrument => {
         instrument.pause(now)
       }),
       values
     )(instruments)
+
     return now - previousPlaybackStartTime
   }
 
   cursorAt() {
     const { ctx, previousPlaybackStartTime } = this._
     const now = ctx.currentTime
+
     return now - previousPlaybackStartTime
   }
 

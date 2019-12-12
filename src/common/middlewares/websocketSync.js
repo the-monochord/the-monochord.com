@@ -1,5 +1,6 @@
-import { compose, includes, __ } from 'ramda'
+import { compose, includes, __, pathOr } from 'ramda'
 import { sendSocketMessage } from '../../client/websocket'
+import { PAYLOAD_FLAGS } from '../helpers/flags'
 import { getSliceFromAction } from './helpers'
 
 const isSyncable = compose(
@@ -10,7 +11,11 @@ const isSyncable = compose(
 const websocketSync = store => next => action => {
   const result = next(action)
 
-  if (!action.fromServer && isSyncable(action)) {
+  if (
+    !action.fromServer &&
+    isSyncable(action) &&
+    !pathOr(false, ['payload', PAYLOAD_FLAGS.DONT_SYNC_THROUGH_SOCKET], action)
+  ) {
     sendSocketMessage(action)
   }
 
