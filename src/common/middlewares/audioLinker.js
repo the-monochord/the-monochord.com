@@ -44,6 +44,11 @@ const audioLinker = store => next => action => {
         compose(
           ({ instrument, volume, events }) => {
             audio.setInstrument(instrument, volume)
+            if (action.type === 'drafts/setTrackProperty') {
+              audio.setProperties(instrument, {
+                volume
+              })
+            }
             audio.setEvents(instrument, events)
           },
           ({ id: trackId, volume }) => ({

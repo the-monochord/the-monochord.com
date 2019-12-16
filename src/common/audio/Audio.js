@@ -40,6 +40,14 @@ class Audio extends EventEmitter {
     }
   }
 
+  setProperties(instrumentName, properties) {
+    const { instruments } = this._
+
+    if (instruments[instrumentName]) {
+      instruments[instrumentName].setOption('volume', properties.volume)
+    }
+  }
+
   setEvents(instrumentName, events) {
     const { inited, instruments, tuningData } = this._
     if (inited) {
