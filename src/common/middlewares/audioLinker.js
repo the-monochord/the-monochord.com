@@ -43,12 +43,9 @@ const audioLinker = store => next => action => {
       forEach(
         compose(
           ({ instrument, volume, events }) => {
-            audio.setInstrument(instrument, volume)
-            if (action.type === 'drafts/setTrackProperty') {
-              audio.setProperties(instrument, {
-                volume
-              })
-            }
+            audio.setInstrument(instrument, {
+              volume
+            })
             audio.setEvents(instrument, events)
           },
           ({ id: trackId, volume }) => ({
@@ -120,6 +117,13 @@ const audioLinker = store => next => action => {
         }
         break
       case 'state/stopDraft':
+        if (isPlaying) {
+          if (cursorAtInterval !== null) {
+            clearInterval(cursorAtInterval)
+            cursorAtInterval = null
+          }
+        }
+
         audio.pause()
         store.dispatch(
           setCursorPosition({

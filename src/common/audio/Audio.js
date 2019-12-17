@@ -29,10 +29,12 @@ class Audio extends EventEmitter {
     this._.instruments[instrumentName].setProperty('volume', volume)
   }
 
-  setInstrument(instrumentName, volume) {
+  setInstrument(instrumentName, props) {
     const { instruments, ctx, inited } = this._
-    if (!instruments[instrumentName]) {
-      const newInstrument = new Simple({ waveType: 'sine', volume })
+    if (instruments[instrumentName]) {
+      this.setProperties(instrumentName, props)
+    } else {
+      const newInstrument = new Simple({ waveType: 'sine', ...props })
       if (inited) {
         newInstrument.setContext(ctx)
       }

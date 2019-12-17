@@ -25,22 +25,17 @@ const hotkeyHandler = store => next => action => {
       break
     case 'Home': {
       const {
-        state: { isAudioEnabled },
         drafts: { projects }
       } = store.getState()
 
-      if (isAudioEnabled) {
-        return next(stateActions.stopDraft())
-      } else {
-        const activeProjectIdx = findIndex(propEq('isActive', true), projects)
+      const activeProjectIdx = findIndex(propEq('isActive', true), projects)
 
-        return next(
-          draftActions.setCursorPosition({
-            projectIdx: activeProjectIdx,
-            cursorAt: 0
-          })
-        )
-      }
+      return next(
+        draftActions.setCursorPosition({
+          projectIdx: activeProjectIdx,
+          cursorAt: 0
+        })
+      )
     }
   }
 
