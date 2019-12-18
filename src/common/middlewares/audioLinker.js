@@ -37,7 +37,11 @@ const audioLinker = store => next => action => {
   if (action.type === 'state/enableAudio' || startsWith('drafts/', action.type)) {
     if (!isNil(activeProject)) {
       if (isPlaying && !pathOr(false, ['payload', PAYLOAD_FLAGS.FEEDBACK], action)) {
-        store.dispatch(pauseDraft())
+        store.dispatch(
+          pauseDraft({
+            setCursorPosition: action.type !== 'drafts/setCursorPosition'
+          })
+        )
       }
 
       forEach(
@@ -108,12 +112,14 @@ const audioLinker = store => next => action => {
             cursorAtInterval = null
           }
 
-          store.dispatch(
-            setCursorPosition({
-              projectIdx: activeProjectIdx,
-              cursorAt: roundToNDecimals(3, cursorAt)
-            })
-          )
+          if (pathOr(true, ['payload', 'setCursorPosition'], action)) {
+            store.dispatch(
+              setCursorPosition({
+                projectIdx: activeProjectIdx,
+                cursorAt: roundToNDecimals(3, cursorAt)
+              })
+            )
+          }
         }
         break
       case 'state/stopDraft':
