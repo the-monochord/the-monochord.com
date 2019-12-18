@@ -15,7 +15,11 @@ import {
   unless,
   any,
   propEq,
-  adjust
+  adjust,
+  when,
+  isEmpty,
+  append,
+  clone
 } from 'ramda'
 import passport from 'passport'
 import { Strategy as FacebookStrategy } from 'passport-facebook'
@@ -80,9 +84,10 @@ const setupPassport = () => {
               data: {
                 drafts: {
                   projects: compose(
-                    unless(any(propEq('isActive', true)), adjust(-1, evolve({ isActive: T }))),
-                    concat(__, reject(isEmptyProject, drafts.projects)),
-                    map(evolve({ isActive: F }))
+                    unless(any(propEq('isActive', true)), adjust(-1, evolve({ isActive: T }))), // if no projects are active, then mark last as active
+                    when(isEmpty, append(clone(emptyProject))), // if there are no drafts after these, add default
+                    concat(__, reject(isEmptyProject, drafts.projects)), // append drafts, which are not empty
+                    map(evolve({ isActive: F })) // make sure none of the user's existing projects are active
                   )
                 }
               }
