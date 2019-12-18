@@ -99,7 +99,10 @@ const App = props => {
         if (!e.repeat && e.target === AppRef.current) {
           dispatch(
             pressHotkey({
-              key: e.key
+              key: e.key,
+              shift: e.shiftKey,
+              alt: e.altKey,
+              ctrlOrCmd: e.ctrlKey || e.metaKey
             })
           )
         }

@@ -51,7 +51,7 @@ const hotkeyHandler = store => next => action => {
       return next(
         draftActions.setCursorPosition({
           projectIdx: activeProjectIdx,
-          cursorAt: clamp(0, Infinity, cursorAt - seekAmountsInSeconds.medium)
+          cursorAt: clamp(0, Infinity, cursorAt - seekAmountsInSeconds[action.payload.shift ? 'small' : 'medium'])
         })
       )
     }
@@ -68,7 +68,7 @@ const hotkeyHandler = store => next => action => {
       return next(
         draftActions.setCursorPosition({
           projectIdx: activeProjectIdx,
-          cursorAt: cursorAt + seekAmountsInSeconds.medium
+          cursorAt: cursorAt + seekAmountsInSeconds[action.payload.shift ? 'small' : 'medium']
         })
       )
     }
