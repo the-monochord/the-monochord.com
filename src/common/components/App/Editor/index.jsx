@@ -10,7 +10,9 @@ import Button from '../Button'
 import AudioContext from '../../../contexts/AudioContext'
 import { useNamespaceSelector, useSelector, useDispatch } from '../../../helpers/react'
 import Checkbox from '../Checkbox'
+import ModalDialog from '../ModalDialog'
 import Project from './Project'
+import PianoRoll from './PianoRoll'
 
 const { deleteDraft, createDraft, makeDraftActive } = draftActions
 const { playDraft, pauseDraft } = stateActions
@@ -84,6 +86,9 @@ const Editor = props => {
           <>
             <hr />
             <Project {...activeDraft} />
+            <ModalDialog>
+              <PianoRoll />
+            </ModalDialog>
           </>
         )}
       </Unless>
