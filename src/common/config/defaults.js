@@ -15,4 +15,10 @@ const valuesOfSettings = {
   theme: ['dark', 'light']
 }
 
-export { emptyProject, valuesOfSettings }
+const seekAmountsInSeconds = {
+  small: 1,
+  medium: 5,
+  large: 10
+}
+
+export { emptyProject, valuesOfSettings, seekAmountsInSeconds }
