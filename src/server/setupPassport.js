@@ -1,4 +1,22 @@
-import { compose, mergeDeepRight, __, pathOr, concat, reject, equals, map, evolve, F, assoc, isNil } from 'ramda'
+import {
+  compose,
+  mergeDeepRight,
+  __,
+  pathOr,
+  concat,
+  reject,
+  equals,
+  map,
+  evolve,
+  F,
+  T,
+  assoc,
+  isNil,
+  unless,
+  any,
+  propEq,
+  adjust
+} from 'ramda'
 import passport from 'passport'
 import { Strategy as FacebookStrategy } from 'passport-facebook'
 import moment from 'moment'
@@ -7,6 +25,8 @@ import { emptyProject } from '../common/config/defaults'
 import { facebookConfig, defaultSessionData } from './config'
 import { findUserByFacebookId, findUserById, upsertUser } from './db/User'
 import { getSessionData } from './helpers'
+
+const isEmptyProject = equals(emptyProject)
 
 const setupPassport = () => {
   passport.use(
@@ -60,7 +80,8 @@ const setupPassport = () => {
               data: {
                 drafts: {
                   projects: compose(
-                    concat(__, reject(equals(emptyProject), drafts.projects)),
+                    unless(any(propEq('isActive', true)), adjust(-1, evolve({ isActive: T }))),
+                    concat(__, reject(isEmptyProject, drafts.projects)),
                     map(evolve({ isActive: F }))
                   )
                 }
