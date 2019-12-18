@@ -2,31 +2,32 @@
 
 const debounce = (func, delay) => {
   let inDebounce
-  return function() {
-    const context = this
-    const args = arguments
+  return (...args) => {
     clearTimeout(inDebounce)
-    inDebounce = setTimeout(() => func.apply(context, args), delay)
+    inDebounce = setTimeout(() => func.apply(null, args), delay)
   }
 }
 
-const throttle = (func, limit) => {
-  let lastFunc
+const throttle = (func, interval) => {
   let lastRan
-  return function() {
-    const context = this
-    const args = arguments
-    if (!lastRan) {
-      func.apply(context, args)
-      lastRan = Date.now()
-    } else {
-      clearTimeout(lastFunc)
-      lastFunc = setTimeout(function() {
-        if (Date.now() - lastRan >= limit) {
-          func.apply(context, args)
-          lastRan = Date.now()
+  let delay
+  return (...args) => {
+    const now = Date.now()
+    if (lastRan) {
+      clearTimeout(delay)
+      delay = setTimeout(() => {
+        const future = Date.now()
+        if (future - lastRan >= interval) {
+          console.log('xxxx')
+          func.apply(null, args)
+          lastRan = future
         }
-      }, limit - (Date.now() - lastRan))
+      }, interval - (now - lastRan))
+    } else {
+      setTimeout(() => {
+        func.apply(null, args)
+        lastRan = now
+      }, 0)
     }
   }
 }
