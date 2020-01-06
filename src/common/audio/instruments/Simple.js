@@ -52,6 +52,17 @@ const filterEventsAtOrAfterTime = (events, time) => {
   )(events)
 }
 
+/*
+options: {
+  volume: 0 .. 1,
+  waveType: 'sine' | 'triangle' | 'square' | 'sawtooth',
+  filter: {
+    lowpass: 20000
+  },
+  pan: -1 .. 1
+}
+*/
+
 class Simple {
   constructor(options = {}) {
     this._ = {
