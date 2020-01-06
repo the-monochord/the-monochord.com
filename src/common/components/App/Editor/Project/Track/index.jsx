@@ -8,7 +8,7 @@ import { useDispatch } from '../../../../../helpers/react'
 import Bar from './Bar'
 
 const DebouncedTextField = DebounceOnChange(300, TextField)
-const DebouncedVolumeControl = DebounceOnChange(100, VolumeControl)
+const DebouncedVolumeControl = DebounceOnChange(200, VolumeControl)
 
 const { setTrackProperty, addBar, removeBar } = draftActions
 
@@ -52,7 +52,7 @@ const Track = props => {
     <div className="Track">
       <DebouncedTextField placeholder="Unnamed track" value={name} onChange={onNameChange} />
       <br />
-      volume: <DebouncedVolumeControl value={volume} onChange={onVolumeChange} />
+      volume: <DebouncedVolumeControl value={volume} onChangeCommitted={onVolumeChange} />
       {bars.map((bar, idx) => (
         <Fragment key={idx}>
           <Bar {...bar} projectIdx={projectIdx} />
