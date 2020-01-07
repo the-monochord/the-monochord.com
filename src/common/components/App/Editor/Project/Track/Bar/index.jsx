@@ -91,18 +91,18 @@ const Bar = props => {
     getNotesFromEvents(events)
   )
   const barWidth = maxAll(pluck('to', notes))
+  const barHeight = 50
 
   return (
     <div className="Bar">
       startTime: <input type="number" min="0" value={startTime} onChange={onStartTimeChange} />
       <br />
       <textarea value={JSON.stringify(events, null, 2)} onChange={onEventChange} />
-      <svg width={barWidth} heigth={50} style={{ position: 'absolute', left: startTime * scale }}>
-        <rect width={barWidth} height={50} style={{ fill: 'lightblue' }} />
+      <svg width={barWidth} height={barHeight} style={{ position: 'absolute', left: startTime * scale }}>
+        <rect width={barWidth} height={barHeight} style={{ fill: 'lightblue' }} />
         {notes.map(({ from, to, pitch }, idx) => {
-          return (
-            <rect key={idx} x={from} y={pitch / (8000 / 50)} width={to - from} height={5} style={{ fill: 'yellow' }} />
-          )
+          const y = barHeight - pitch / (8000 / barHeight)
+          return <rect key={idx} x={from} y={y} width={to - from} height={5} style={{ fill: 'yellow' }} />
         })}
       </svg>
     </div>
