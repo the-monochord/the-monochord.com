@@ -22,7 +22,7 @@ class Midi extends EventEmitter {
   }
 
   async init() {
-    const enableMidiSupport = midiAccess => {
+    const enableMidi = midiAccess => {
       midiAccess.onstatechange = event => {
         initPort(event.port)
       }
@@ -74,7 +74,7 @@ class Midi extends EventEmitter {
     if (this.isSupported()) {
       try {
         const midiAccess = await navigator.requestMIDIAccess()
-        enableMidiSupport(midiAccess)
+        enableMidi(midiAccess)
         this.emit('ready')
       } catch (e) {
         this.emit('blocked')
