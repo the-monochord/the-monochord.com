@@ -1,0 +1,10 @@
+<div id="tutorial-cover" ng-class="{hidden:!ui.tutorial.active}"></div>
+<div id="tutorial-bubble" ng-class="{hidden:!ui.tutorial.active}">
+  <h2>{{ui.tutorial.title}}</h2>
+  <div ng-bind-html="ui.tutorial.text"></div>
+</div>
+
+<div id="wa-unsupported" ng-hide="mctrl.ui.model.webAudioSupported">
+  <h1 class="center"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API">Web Audio API</a> is not supported in this browser!</h1>
+  <div class="center">To see, which browsers support Web Audio API, please visit <a href="http://caniuse.com/#feat=webaudio">http://caniuse.com/#feat=webaudio</a></div>
+</div>

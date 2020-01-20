@@ -1,0 +1,29 @@
+<header>
+  <table class="full">
+    <tr>
+      <td width="80" id="settings">
+        <button type="button" class="icon-cog" ng-class="{active:mctrl.ui.panel.isActive('menu')}" mobile-click="mctrl.ui.panel.toggle('menu')">
+          <span class="label">toggle settings</span>
+        </button>
+      </td>
+      <td width="220">
+        <button id="scaleDesignerButton" type="button" class="icon-tuning-fork" ng-class="{active:mctrl.ui.panel.isActive('scale-designer')}" mobile-click="mctrl.ui.panel.toggle('scale-designer')">
+          <span class="label">scale designer</span>
+        </button>
+        <button type="button" class="icon-scala" ng-class="{active:mctrl.ui.panel.isActive('scala')}" mobile-click="mctrl.ui.panel.toggle('scala')">
+          <span class="label">scala importer</span>
+        </button>
+
+        <button id="pianoButton" type="button" class="icon-piano" ng-class="{active:mctrl.ui.panel.isActive('piano')}" mobile-click="mctrl.ui.panel.toggle('piano')">
+          <span class="label">on-screen keyboard</span>
+        </button>
+
+        <button type="button" class="icon-midi" ng-class="{disabled:!ui.midi.status.supported, active:mctrl.ui.panel.isActive('midi-info')}" mobile-click="ui.midi.status.supported &amp;&amp; mctrl.ui.panel.toggle('midi-info')">
+          <span class="label">MIDI settings</span>
+        </button>
+      </td>
+
+      <td><input class="right hide-if-screen-is-narrow" type="text" placeholder="Unnamed Scale" id="scaleName" ng-model="name" ng-focus="mctrl.ui.scala.exportSessionToEditor()" /></td>
+    </tr>
+  </table>
+</header>

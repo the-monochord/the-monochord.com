@@ -2,6 +2,7 @@ import {
   find,
   test,
   curry,
+  cond,
   compose,
   assoc,
   map,
@@ -35,7 +36,7 @@ import {
 } from 'ramda'
 
 import { mainPath } from '../server/config'
-import { prefixIfNotEmpty } from './helpers/string'
+import { prefixIfNotEmpty } from './helpers'
 
 // ---------------------
 
@@ -73,19 +74,22 @@ const parseCent = curry(({ waveform, id }, cent) => ({
 }))
 
 const parseSet = curry(({ setId, waveform }, set) => {
-  return ifElse(
-    isStringSet,
-    compose(
-      assoc('id', setId),
-      mergeDeepRight(setDefaults),
-      objOf('strings'),
-      map(string => {
-        const id = ++lastElementId
-        return parseString({ waveform, id }, string)
-      }),
-      split(':')
-    ),
-    when(
+  /* eslint-disable */
+  return cond([
+    [
+      isStringSet,
+      compose(
+        assoc('id', setId),
+        mergeDeepRight(setDefaults),
+        objOf('strings'),
+        map(string => {
+          const id = ++lastElementId
+          return parseString({ waveform, id }, string)
+        }),
+        split(':')
+      )
+    ],
+    [
       isCentSet,
       compose(
         assoc('id', setId),
@@ -97,74 +101,44 @@ const parseSet = curry(({ setId, waveform }, set) => {
         }),
         split(':')
       )
-    )
-  )(set)
+    ]
+  ])(set)
+  /* eslint-enable */
 })
 
-const splitSets = compose(
-  unless(
-    isNil,
-    compose(
-      filter(either(isStringSet, isCentSet)),
-      split('-')
-    )
-  ),
-  getSetsArg
-)
+const splitSets = compose(unless(isNil, compose(filter(either(isStringSet, isCentSet)), split('-'))), getSetsArg)
 
 const getSets = curry((waveform, args) =>
   compose(
     defaultTo([]),
-    unless(isNil, addIndex(map)((set, idx) => parseSet({ waveform, setId: idx + 1 })(set))),
+    unless(
+      isNil,
+      addIndex(map)((set, idx) => parseSet({ waveform, setId: idx + 1 })(set))
+    ),
     splitSets
   )(args)
 )
 
-const getSanitizedSets = compose(
-  unless(isNil, join('-')),
-  splitSets
-)
+const getSanitizedSets = compose(unless(isNil, join('-')), splitSets)
 
 const isValidWaveform = includes(__, validWaveforms)
 const isDefaultWaveform = equals(defaultWaveform)
 
 const getWaveformArg = find(isValidWaveform)
 
-const getWaveform = compose(
-  defaultTo(defaultWaveform),
-  getWaveformArg
-)
+const getWaveform = compose(defaultTo(defaultWaveform), getWaveformArg)
 
-const findSmallestMultiplier = compose(
-  reduce(min, Infinity),
-  pluck('multiplier')
-)
+const findSmallestMultiplier = compose(reduce(min, Infinity), pluck('multiplier'))
 
-const areAllTheSame = compose(
-  equals(1),
-  length,
-  uniq
-)
+const areAllTheSame = compose(equals(1), length, uniq)
 
 const muteDuplicateFundamentals = map(set => {
   const type = length(set.strings) ? 'strings' : 'cents'
 
   return evolve({
     [type]: ifElse(
-      compose(
-        areAllTheSame,
-        pluck('multiplier')
-      ),
-      converge(concat, [
-        compose(
-          map(assoc('muted', true)),
-          init
-        ),
-        compose(
-          of,
-          last
-        )
-      ]),
+      compose(areAllTheSame, pluck('multiplier')),
+      converge(concat, [compose(map(assoc('muted', true)), init), compose(of, last)]),
       map(when(propEq('multiplier', findSmallestMultiplier(set[type])), assoc('muted', true)))
     )
   })(set)
@@ -172,10 +146,7 @@ const muteDuplicateFundamentals = map(set => {
 
 const grammaticallyJoinArrayValues = when(
   test(/-/),
-  compose(
-    values => `${join(', ', init(values))} and ${last(values)}`,
-    split('-')
-  )
+  compose(values => `${join(', ', init(values))} and ${last(values)}`, split('-'))
 )
 
 const getLastElementId = () => lastElementId

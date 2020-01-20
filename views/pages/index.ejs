@@ -1,46 +1,24 @@
-<!DOCTYPE html>
-<html lang="<%= appData.settings.language %>">
-<head>
-  <title><%= seo.title.length === 0 ? '' : seo.title + ' - ' %><%= appData.seo.brand %></title>
-  
-  <meta charset="utf-8" />
-  <meta name="description" content="<%= seo.description %>" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  
-  <meta property="og:url" content="<%= seo.url %>" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="<%= seo.title %>" />
-  
-  <meta property="og:description" content="<%= seo.description %>" />
-
-  <meta property="og:image" content="<%= appData.constants.staticPath %>/img/monochord-logo.png" />
-  <meta property="og:image:type" content="image/png" />
-  <meta property="og:image:width" content="1024" />
-  <meta property="og:image:height" content="1024" />
-
-  <link rel="preconnect" href="<%= appData.constants.staticPath %>" crossorigin />
-
-  <link rel="canonical" href="<%= seo.url %>" />
-
-  <link rel="apple-touch-icon" sizes="180x180" href="<%= appData.constants.staticPath %>/img/apple-touch-icon.png" />
-  <link rel="icon" type="image/png" sizes="32x32" href="<%= appData.constants.staticPath %>/img/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="<%= appData.constants.staticPath %>/img/favicon-16x16.png" />
-  <link rel="manifest" href="<%= appData.constants.staticPath %>/img/manifest.json" />
-  <link rel="mask-icon" href="<%= appData.constants.staticPath %>/img/safari-pinned-tab.svg" color="<%= appData.seo.themeColor %>" />
-  <link rel="shortcut icon" href="<%= appData.constants.staticPath %>/img/favicon.ico" />
-  <meta name="apple-mobile-web-app-title" content="<%= appData.seo.brand %>" />
-  <meta name="application-name" content="<%= appData.seo.brand %>" />
-  <meta name="msapplication-config" content="<%= appData.constants.staticPath %>/img/browserconfig.xml" />
-  <meta name="theme-color" content="<%= appData.seo.themeColor %>" />
-  
-  <link rel="stylesheet" href="<%= appData.constants.staticPath %>/css/monochord.css" />
+<%- include('../partials/head') %>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700,700i" />
+  <link rel="stylesheet" href="<%= path.static %>/css/monochord.min.css" />
 </head>
-<body>
-  <div id="app"><%- markup %></div>
-  <script id="initialData">window.appData = <%- JSON.stringify(appData) %></script>
-  <script async src="<%= appData.constants.staticPath %>/js/monochord.js"></script>
-  <% if(mode === 'development'){ %>
-    <script async src="/reload/reload.js"></script>
-  <% } %>
+<body class="theme-<%= theme %>">
+  <div class="wrapper" ng-app="Monochord" ng-controller="MonochordCtrl as mctrl" pointer-press="mctrl.ui.mouseDown()" pointer-release="mctrl.ui.mouseUp()">
+    <%- include('../partials/loading') %>
+    <%- include('../partials/header') %>
+    <%- include('../partials/settings') %>
+
+    <%- include('../partials/scale-designer') %>
+    <%- include('../partials/scala') %>
+    <%- include('../partials/piano') %>
+    <%- include('../partials/dashboard') %>
+    <%- include('../partials/midi-info') %>
+
+    <%- include('../partials/footer') %>
+    <%- include('../partials/tutorial') %>
+  </div>
+  <script>const __settings = <%- JSON.stringify(__settings) %></script>
+  <script src="<%= path.static %>/js/monochord.min.js"></script>
+  <%- include('../partials/page-end') %>
 </body>
 </html>

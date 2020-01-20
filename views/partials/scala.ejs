@@ -1,0 +1,54 @@
+<section id="scala" ng-class="{active:mctrl.ui.panel.isActive('scala')}">
+  <h2>Generate a scale &hellip;</h2>
+
+  <div>
+    Divide the ratio (
+      <input autosize class="center" type="number" min="1" step="1" ng-model="ui.scala.EDx.x.first" ng-focus="mctrl.ui.scala.generateEDxToEditor()" />
+      :
+      <input autosize class="center" type="number" min="1" step="1" ng-model="ui.scala.EDx.x.second" ng-focus="mctrl.ui.scala.generateEDxToEditor()" />
+    ) into
+    <input autosize class="center" type="number" min="1" step="1" ng-model="ui.scala.EDx.n" ng-focus="mctrl.ui.scala.generateEDxToEditor()" />
+    equal parts
+  </div>
+
+  <p>Click/Tap on any of the inputs or change their values to display the generated scale</p>
+
+  <hr />
+
+  <h2>&hellip; or load an existing one &hellip;</h2>
+
+  <table>
+    <tr ng-repeat="(label, filename) in ui.scala.presetList">
+      <td>{{label}}</td>
+      <td><button type="button" autosize mobile-click="mctrl.ui.scala.loadSclToEditor(filename)">open in editor</button></td>
+    </tr>
+  </table>
+
+  <p>Select any of the presets to display them</p>
+
+  <hr />
+
+  <h2>&hellip; or export your current session</h2>
+
+  <p>Click/Tap the scale in the header or change it's value or change any of the notes in the scale editor to generate a scale from the current session</p>
+
+  <hr />
+  
+  <label class="labelled-button">
+    <button type="button" class="icon-import" ng-class="{disabled:!ui.scala.importTextField.length}" mobile-click="mctrl.ui.scala.importSCL()"></button>
+    Import scale
+  </label>
+
+  <h2 class="success" ng-show="ui.scala.success === true">
+    <i class="icon-good"></i> Scale successfully imported!
+  </h2>
+
+  <h2 class="fail" ng-show="ui.scala.success === false">
+    {{e=ui.scala.error;''}}
+    <div ng-show="e.atLine"><i class="icon-bad"></i> Parse error at line {{e.atLine}}!</div>
+    <div ng-show="e.expected"><b>expected</b>: {{e.expected}}</div>
+    <div ng-show="e.got"><b>got</b>: {{e.got}}</div>
+  </h2>
+
+  <div ui-codemirror="{onLoad: ui.scala.onEditorLoaded}" ui-codemirror-opts="ui.scala.editorOptions" ng-model="ui.scala.importTextField"></div>
+</section>

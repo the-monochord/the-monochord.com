@@ -1,136 +1,65 @@
-import React, { useContext, createRef } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import cn from 'classnames'
-import { isEmpty } from 'ramda'
-import { Route, Switch } from 'react-router-dom'
-import useRouter from 'use-react-router'
-import routes from '../../config/routes'
-import { actions as stateActions } from '../../reducers/state'
-import { actions as midiActions } from '../../reducers/midi'
-import { actions as historyActions } from '../../reducers/history'
-import { actions as seoActions } from '../../reducers/seo'
-import MidiContext from '../../contexts/MidiContext'
-import AudioContext from '../../contexts/AudioContext'
-import { useEffectOnce, useNamespaceSelector, useSelector, useDispatch, useEffectSkipFirst } from '../../helpers/react'
-import Settings from './Settings'
-import Notifications from './Notifications'
-import Navigation from './Navigation'
-import Button from './Button'
-import { audioNotSupported, midiNotSupported } from './messages'
-import s from './style.scss'
-import Header from './Header'
+import Loading, { LOADING_STATES } from '../Loading'
+import './style.scss'
 
-const { addNotification, pressHotkey, setSocketReconnectTime } = stateActions
-const { noteOn, noteOff, sustainOn, sustainOff } = midiActions
-const { undo, redo } = historyActions
-const { setStatus } = seoActions
+class App extends Component {
+  constructor(props) {
+    super(props)
 
-const App = props => {
-  const { theme } = useNamespaceSelector('settings', ['theme'])
-  const { socketReconnectTime, isPlaying } = useNamespaceSelector('state', ['socketReconnectTime', 'isPlaying'])
-  const { canUndo, canRedo } = useSelector(state => ({
-    canUndo: !isEmpty(state.history.prevs),
-    canRedo: !isEmpty(state.history.nexts)
-  }))
+    const { data } = props
 
-  const dispatch = useDispatch()
-
-  const midi = useContext(MidiContext)
-  const audio = useContext(AudioContext)
-
-  const {
-    location: { pathname }
-  } = useRouter()
-
-  useEffectSkipFirst(() => {
-    dispatch({
-      type: 'feedback/locationChanged',
-      payload: {}
-    })
-  }, [pathname])
-
-  useEffectOnce(() => {
-    if (midi.isSupported()) {
-      midi
-        .on('note on', note => dispatch(noteOn({ noteIdx: note })))
-        .on('note off', note => dispatch(noteOff({ noteIdx: note })))
-        .on('sustain on', () => dispatch(sustainOn()))
-        .on('sustain off', () => dispatch(sustainOff()))
-    } else {
-      dispatch(addNotification(midiNotSupported))
+    this.state = {
+      ...data,
+      loading: LOADING_STATES.LOADING
     }
 
-    if (!audio.isSupported()) {
-      dispatch(addNotification(audioNotSupported))
-    }
-  })
+    this.handleLoadingClick = this.handleLoadingClick.bind(this)
+  }
 
-  useEffectSkipFirst(() => {
-    if (socketReconnectTime > 0) {
-      const t = setTimeout(() => {
-        dispatch(
-          setSocketReconnectTime({
-            socketReconnectTime: socketReconnectTime - 1
+  componentDidMount() {
+    setTimeout(() => {
+      if (this.state.loading !== LOADING_STATES.LOADED) {
+        this.setState({
+          loading: LOADING_STATES.FADING
+        })
+
+        setTimeout(() => {
+          this.setState({
+            loading: LOADING_STATES.LOADED
           })
-        )
-      }, 1000)
-
-      return () => {
-        clearTimeout(t)
+        }, 1000)
       }
-    }
-  }, [socketReconnectTime])
+    }, 1000)
+  }
 
-  useEffectSkipFirst(() => {
-    dispatch(
-      setStatus({
-        status: isPlaying ? '▶' : ''
+  handleLoadingClick() {
+    if (this.state.loading === LOADING_STATES.FADING) {
+      this.setState({
+        loading: LOADING_STATES.LOADED
       })
-    )
-  }, [isPlaying])
+    }
+  }
 
-  const AppRef = createRef()
-
-  return (
-    <div
-      className={cn(s.App, `theme-${theme}`)}
-      tabIndex={0}
-      ref={AppRef}
-      onKeyDown={e => {
-        if (!e.repeat && e.target === AppRef.current) {
-          dispatch(
-            pressHotkey({
-              key: e.key,
-              shift: e.shiftKey,
-              alt: e.altKey,
-              ctrlOrCmd: e.ctrlKey || e.metaKey
-            })
-          )
-        }
-      }}
-    >
-      <div>
-        <Header />
-        <Navigation />
-        <Switch>
-          {routes.map(({ path, exact, component: Component, ...rest }) => (
-            <Route
-              key={path}
-              path={path}
-              exact={exact}
-              render={({ match: { params } }) => {
-                return <Component {...rest} {...params} />
-              }}
-            />
-          ))}
-        </Switch>
-        <hr />
-        <Button disabled={!canUndo} label="UNDO" onClick={() => dispatch(undo())} />
-        <Button disabled={!canRedo} label="REDO" onClick={() => dispatch(redo())} />
-        <Settings />
-        <Notifications />
+  render() {
+    // theme should be in redux
+    return (
+      <div className={cn(`theme-${this.state.theme}`)}>
+        The Monochord - now with react
+        <Loading
+          loadingState={this.state.loading}
+          brand={this.state._.seo.brand}
+          splash={this.state._.seo.splash}
+          onClick={this.handleLoadingClick}
+        />
       </div>
-    </div>
-  )
+    )
+  }
+}
+
+App.propTypes = {
+  data: PropTypes.object.isRequired // TODO: turn this into a shape
 }
 
 export default App

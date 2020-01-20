@@ -1,0 +1,27 @@
+.selectwrapper {
+  border: 1px solid $color2;
+
+  &::after {
+    border-color: $color2 transparent transparent transparent;
+  }
+
+  &.disabled {
+    border-color: $disabled;
+
+    select {
+      color: $disabled;
+    }
+
+    &::after {
+      border-top-color: $disabled;
+    }
+  }
+}
+
+select {
+  color: $color;
+
+  option {
+    color: $color;
+  }
+}

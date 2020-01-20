@@ -6,9 +6,6 @@ import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import autoprefixer from 'autoprefixer'
 import webpack from 'webpack'
 import nodeExternals from 'webpack-node-externals'
-import CopyPlugin from 'copy-webpack-plugin'
-
-const minifyJSON = rawJSON => JSON.stringify(JSON.parse(rawJSON))
 
 const mode = process.env.NODE_ENV === 'development' ? 'development' : 'production'
 
@@ -17,7 +14,7 @@ const common = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.js(on|x)?$/,
         loader: 'babel-loader',
         query: {
           compact: false
@@ -82,10 +79,10 @@ const common = {
 
 const clientConfig = {
   entry: {
-    monochord: [
-      'regenerator-runtime/runtime',
-      'audioparam-getvalueattime',
-      'cancelandholdattime-polyfill',
+    'monochord.min': [
+      '@babel/polyfill',
+      './src/client/js/lib/webkit-audio-context-patch.min.js',
+      // './src/client/js/lib/cancelandholdattime-polyfill.min.js',
       './src/client/index.jsx'
     ]
   },
@@ -104,24 +101,17 @@ const clientConfig = {
     new webpack.EnvironmentPlugin(['NODE_ENV']),
     new webpack.DefinePlugin({
       __isBrowser__: 'true'
-    }),
-    new CopyPlugin([
-      {
-        from: './src/common/i18n/*.json',
-        to: path.resolve(__dirname, 'static-cdn/i18n/[name].json'),
-        toType: 'template',
-        transform: contentBuffer => minifyJSON(contentBuffer.toString())
-      }
-    ])
+    })
   ],
   ...common
 }
 
 const serverConfig = {
+  mode,
   target: 'node',
   externals: [nodeExternals()],
   entry: {
-    server: ['regenerator-runtime/runtime', './src/server/index.js']
+    'server.min': ['./src/server/index.jsx']
   },
   output: {
     path: path.resolve(__dirname, 'app'),

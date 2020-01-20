@@ -1,79 +1,225 @@
-import React from 'react'
-import { hydrate } from 'react-dom'
-import { Provider } from 'react-redux'
-import { I18nextProvider } from 'react-i18next'
-import { createStore, applyMiddleware } from 'redux'
-import { BrowserRouter } from 'react-router-dom'
-import i18n from 'i18next'
-import { values, forEach, compose, when, append, apply } from 'ramda'
-import logger from 'redux-logger'
-import App from '../common/components/App'
-import combinedReducers from '../common/reducers'
-import watchForHover from '../common/helpers/watchForHover'
-import { removeElement } from '../common/helpers/dom'
-import { loadLanguageFile, initI18n } from '../common/helpers/i18n'
-import * as middlewares from '../common/middlewares'
-import { postfixIfNeeded } from '../common/helpers/string'
-import { createSocketClient } from './websocket'
+/* global window, __settings, location, fetch */
 
-const container = document.getElementById('app')
-const mode = window.appData.constants.mode
-/* eslint-disable no-undef, no-global-assign, camelcase */
-__webpack_public_path__ = postfixIfNeeded('/', window.appData.constants.staticPath)
-/* eslint-enable no-undef, no-global-assign, camelcase */
+import angular from 'angular'
+import ngSanitize from 'angular-sanitize'
 
-if (container) {
-  ;(async () => {
-    const appliedMiddlewares = compose(
-      apply(applyMiddleware),
-      when(() => mode === 'development', append(logger)),
-      values
-    )(middlewares)
-    const store = createStore(combinedReducers, window.appData, appliedMiddlewares)
-    const {
-      settings: { language: currentLanguage },
-      constants: { staticPath }
-    } = store.getState()
+import './js/Directive'
+import {
+  compose,
+  forEach,
+  toPairs,
+  mergeDeepLeft,
+  omit,
+  split,
+  replace,
+  reject,
+  isEmpty,
+  length,
+  ifElse,
+  always,
+  pathOr,
+  reduce,
+  unapply,
+  includes,
+  has
+} from 'ramda'
+// import React from 'react'
+// import { hydrate } from 'react-dom'
+import { getParametersFromArgs, getLastElementId } from '../common/listen'
+// import App from '../common/components/App'
+import AudioModel from './js/AudioModel'
+import Model from './js/Model'
+import UI from './js/Ui'
+import { getSEOData, setSEOData, generateUrlFromState } from './js/seo'
+import { safeApply, NOP, watchForHover } from './js/helpers'
 
-    watchForHover(container)
+import './scss/index.scss'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/mbo.css'
+import PolySynth from './js/synth/gate-controllers/PolySynth'
 
-    await initI18n(i18n)
-    await loadLanguageFile(currentLanguage, staticPath, i18n)
+const parsePath = compose(reject(isEmpty), split('/'), replace(/^listen\//, ''), replace(/^\//, ''), replace(/\/$/, ''))
 
-    if (i18n.language !== currentLanguage) {
-      await i18n.changeLanguage(currentLanguage)
+const scopeToPath = (sets, waveform) => ifElse(length, generateUrlFromState(waveform), always(''))(sets)
+
+const pathToSEOData = compose(getSEOData, parsePath)
+
+const updateSetsAndWaveform = ($scope, model, { lastSetId, lastElementId, sets, waveform, onUpdate = NOP }) => {
+  $scope.sets = sets
+  $scope.waveform = waveform
+  model._lastSetId = lastSetId
+  model._lastElementId = lastElementId
+  safeApply($scope)
+  if (sets.length) {
+    setTimeout(onUpdate, 100)
+  }
+}
+
+const defaultDatas = {
+  loadingState: 'loading',
+  baseVolume: 30,
+  baseFrequency: 262,
+  waveform: 'sine',
+  sets: [],
+  name: '',
+  retune: {
+    default: 'off',
+    defaultForNew: 'inherit'
+  },
+  synth: {
+    voices: 4,
+    notePriority: PolySynth.NOTE_PRIORITY.LAST
+  },
+  displayMode: 'normal',
+  playbackMode: AudioModel.MODES.NORMAL
+}
+
+const mergeDeepLeftAll = unapply(reduce(mergeDeepLeft, {}))
+
+angular
+  .module('Monochord', ['Directive', ngSanitize, 'ui.codemirror'])
+  .config([
+    '$compileProvider',
+    function($compileProvider) {
+      $compileProvider.debugInfoEnabled(false)
     }
+  ])
+  .controller('MonochordCtrl', [
+    '$scope',
+    function($scope) {
+      const settings = mergeDeepLeftAll(__settings, defaultDatas)
 
-    hydrate(
-      <Provider store={store}>
-        <I18nextProvider i18n={i18n}>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </I18nextProvider>
-      </Provider>,
-      container
-    )
+      delete window.__settings
 
-    createSocketClient(store, actions => {
-      forEach(action => {
-        store.dispatch(action)
-      }, actions)
-    })
-  })()
+      const model = new Model($scope, settings.path.static)
+
+      compose(
+        forEach(([key, value]) => {
+          $scope[key] = value
+        }),
+        toPairs,
+        omit(['_', 'sets', 'waveform'])
+      )(settings)
+
+      updateSetsAndWaveform($scope, model, {
+        lastSetId: pathOr(0, ['_', 'lastSetId'], settings),
+        lastElementId: pathOr(0, ['_', 'lastElementId'], settings),
+        sets: settings.sets,
+        waveform: settings.waveform,
+        onUpdate: () => {
+          model._forceUpdate()
+        }
+      })
+
+      let seo = pathToSEOData(location.pathname)
+
+      const handleChange = () => {
+        const newSeo = pathToSEOData(scopeToPath($scope.sets, $scope.waveform))
+        $scope.hashOfSet = JSON.stringify($scope.sets)
+
+        if (newSeo.url !== seo.url) {
+          setSEOData(newSeo)
+          seo = newSeo
+        }
+      }
+      $scope.$watch('sets', handleChange, true)
+      $scope.$watch('waveform', handleChange)
+
+      const updateSettings = async data => {
+        const rawResponse = await fetch('/settings', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+        return rawResponse.json()
+      }
+
+      $scope.$watch('theme', async (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          const result = await updateSettings({ theme: newValue })
+          if (result.theme === newValue) {
+            document.body.classList.remove(`theme-${oldValue}`)
+            document.body.classList.add(`theme-${newValue}`)
+          }
+        }
+      })
+      $scope.$watch('language', async (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          await updateSettings({ language: newValue })
+          /*
+          const result = await updateSettings({ language: newValue })
+          if (result.language === newValue) {
+            // TODO: implement client side language change
+            console.log('language changed to ' + $scope.languages[newValue] + '(' + newValue + ')')
+          }
+          */
+        }
+      })
+      $scope.$watch('displayMode', async (newValue, oldValue) => {
+        if (newValue !== oldValue) {
+          await updateSettings({ displayMode: newValue })
+        }
+      })
+
+      window.addEventListener('popstate', () => {
+        const newSeo = pathToSEOData(location.pathname)
+        if (newSeo.url !== seo.url) {
+          setSEOData(newSeo, false)
+          seo = newSeo
+          const { sets, waveform } = getParametersFromArgs(parsePath(location.pathname))
+
+          updateSetsAndWaveform($scope, model, {
+            lastSetId: length(sets),
+            lastElementId: getLastElementId(),
+            sets,
+            waveform
+          })
+        }
+      })
+
+      // --------------
+
+      this.ui = new UI($scope, model)
+
+      if (settings._ && settings._.isSettingsVisible) {
+        $scope.ui.panel.isSidebarVisible = true
+        $scope.ui.panel.main = settings._.mainWindow
+      }
+
+      if ($scope.loadingState === 'loading') {
+        $scope.loadingState = 'fadeout'
+        setTimeout(() => {
+          $scope.loadingState = 'loaded'
+          safeApply($scope)
+          document.body.classList.add('background-transition')
+        }, 2000)
+      }
+
+      this.setTheme = theme => {
+        if (includes(theme, $scope.themes)) {
+          $scope.theme = theme
+        }
+      }
+      this.setLanguage = language => {
+        if (has(language, $scope.languages)) {
+          $scope.language = language
+        }
+      }
+
+      watchForHover(document.querySelector('.wrapper'))
+    }
+  ])
+
+// ------------------
+
+/*
+const container = document.getElementById('app')
+if (container) {
+  const settings = mergeDeepLeftAll(__INITIAL_DATA__, defaultDatas)
+  delete window.__INITIAL_DATA__
+  hydrate(<App data={settings} />, container)
 }
-
-delete window.appData
-removeElement(document.getElementById('initialData'))
-
-if (mode === 'production') {
-  console.log(
-    `%c
-Interested in how the monochord works?
-
-Check out https://github.com/the-monochord/the-monochord.com for the source code,
-or check https://trello.com/b/SxXkNXkB/monochord to see what features are coming up next.
-`,
-    'color:red;font-size:1.2em'
-  )
-}
+*/

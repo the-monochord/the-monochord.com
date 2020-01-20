@@ -1,0 +1,846 @@
+:global {
+  // ----- setup, fonts, icons ----- //
+
+  $sizeA : 30px;
+  $sizeB : 30px;
+  $sizeN : 40px;
+
+  @import './mixins.scss';
+  @import './ui-range.scss';
+  @import './ui-select.scss';
+
+  // $font: Tahoma, Geneva, sans-serif;
+  $font: 'Source Sans Pro', sans-serif;
+
+  @mixin icon-add { content: '\e800'; }
+
+  @mixin icon-bad { content: '\e801'; }
+
+  @mixin icon-cog { content: '\e802'; }
+
+  @mixin icon-copy { content: '\e803'; }
+
+  @mixin icon-decrease { content: '\e804'; }
+
+  @mixin icon-delete { content: '\e805'; }
+
+  @mixin icon-dice { content: '\e806'; }
+
+  @mixin icon-double { content: '\e807'; }
+
+  @mixin icon-ear { content: '\e808'; }
+
+  @mixin icon-export { content: '\e809'; }
+
+  @mixin icon-good { content: '\e80a'; }
+
+  @mixin icon-halve { content: '\e80b'; }
+
+  @mixin icon-import { content: '\e80c'; }
+
+  @mixin icon-increase { content: '\e80d'; }
+
+  @mixin icon-info { content: '\e80e'; }
+
+  @mixin icon-midi { content: '\e80f'; }
+
+  @mixin icon-normalise { content: '\e810'; }
+
+  @mixin icon-piano { content: '\e811'; }
+
+  @mixin icon-redo { content: '\e812'; }
+
+  @mixin icon-remove { content: '\e813'; }
+
+  @mixin icon-scala { content: '\e814'; }
+
+  @mixin icon-sequencer { content: '\e815'; }
+
+  @mixin icon-speaker-off { content: '\e816'; }
+
+  @mixin icon-speaker-on { content: '\e817'; }
+
+  @mixin icon-tuning-fork { content: '\e818'; }
+
+  @mixin icon-undo { content: '\e819'; }
+
+  // ----- mixins ----- //
+
+  [class*="icon-"] {
+    $size : $sizeN;
+
+    font-size: 0;
+    height: $size;
+    line-height: $size;
+    min-width: $size;
+    display: inline-block;
+    vertical-align: top;
+
+    &::before {
+      @include icon;
+
+      height: $size;
+      line-height: $size;
+      width: $size;
+      font-size: $size / 2;
+      display: inline-block;
+      font-style: normal;
+    }
+  }
+  .icon-add::before { @include icon-add; }
+  .icon-bad::before { @include icon-bad; }
+  .icon-cog::before { @include icon-cog; }
+  .icon-copy::before { @include icon-copy; }
+  .icon-decrease::before { @include icon-decrease; }
+  .icon-delete::before { @include icon-delete; }
+  .icon-dice::before { @include icon-dice; }
+  .icon-double::before { @include icon-double; }
+  .icon-export::before { @include icon-export; }
+  .icon-good::before { @include icon-good; }
+  .icon-halve::before { @include icon-halve; }
+  .icon-import::before { @include icon-import; }
+  .icon-increase::before { @include icon-increase; }
+
+  .icon-midi::before {
+    @include icon-midi;
+
+    font-size: 34px !important;
+  }
+  .icon-normalise::before { @include icon-normalise; }
+  .icon-piano::before { @include icon-piano; }
+  .icon-redo::before { @include icon-redo; }
+  .icon-remove::before { @include icon-remove; }
+  .icon-scala::before { @include icon-scala; }
+  .icon-speaker-off::before { @include icon-speaker-off; }
+  .icon-speaker-on::before { @include icon-speaker-on; }
+  .icon-tuning-fork::before { @include icon-tuning-fork; }
+  .icon-undo::before { @include icon-undo; }
+  .icon-ear::before { @include icon-ear; }
+  .icon-sequencer::before { @include icon-sequencer; }
+  .icon-info::before { @include icon-info; }
+
+  // ----- angular ----- //
+
+  [ng\:cloak],
+  [ng-cloak],
+  [data-ng-cloak],
+  [x-ng-cloak],
+  .ng-cloak,
+  .x-ng-cloak {
+    display: none !important;
+  }
+
+  // ----- reset ----- //
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  body {
+    font-family: $font;
+    font-size: 18px;
+    min-width: 320px;
+
+    &.background-transition {
+      transition: background-color 1s ease-in;
+    }
+  }
+
+  .fleft {
+    float: left;
+  }
+
+  .fright {
+    float: right;
+  }
+
+  .left {
+    text-align: left;
+  }
+
+  @mixin center {
+    text-align: center;
+  }
+
+  .center {
+    @include center;
+  }
+
+  .right {
+    text-align: right;
+  }
+
+  .vmiddle {
+    vertical-align: middle;
+  }
+
+  @mixin smaller {
+    font-size: 14px;
+  }
+
+  .smaller {
+    @include smaller;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .nowrap {
+    white-space: nowrap;
+  }
+
+  // ----- build ----- //
+
+  .wrapper {
+    height: 100%;
+
+    section,
+    aside {
+      min-height: calc(100% - (#{$sizeN} * 2 + 30px + 1px));
+      margin-left: $sizeA;
+      margin-right: $sizeA;
+      display: none;
+      box-sizing: border-box;
+      padding-left: 8px;
+
+      &.active {
+        display: block;
+      }
+    }
+
+    header,
+    footer {
+      margin-left: $sizeA;
+      margin-right: $sizeA;
+      font-size: 14px;
+    }
+
+    footer {
+      clear: both;
+    }
+  }
+
+  #loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 200;
+    opacity: 1;
+
+    .logo {
+      width: 320px;
+      height: 100px;
+      top: 50%;
+      left: 50%;
+      position: relative;
+      margin-top: -50px;
+      margin-left: -160px;
+
+      & > * {
+        text-align: center;
+      }
+
+      h1 {
+        padding-bottom: 30px;
+        margin: 0;
+        font-weight: normal;
+      }
+    }
+
+    &.fading {
+      opacity: 0;
+      transition: 2s opacity;
+    }
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  footer a {
+    line-height: $sizeN;
+    height: $sizeN;
+    display: inline-block;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 14px;
+  }
+
+  h2,
+  h3 {
+    margin: 0;
+    padding: 0;
+    height: $sizeN;
+    line-height: $sizeN;
+
+    &.success,
+    &.fail {
+      padding-left: $sizeN;
+      position: relative;
+      vertical-align: middle;
+      margin-left: -8px;
+      height: auto;
+      line-height: 40px;
+      padding-top: ($sizeN - 20px) / 2;
+      padding-bottom: ($sizeN - 20px) / 2;
+      font-size: 16px;
+
+      &::first-line {
+        font-weight: bold;
+      }
+    }
+
+    &.fail {
+      font-weight: normal;
+    }
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+
+    td {
+      vertical-align: top;
+      line-height: $sizeN;
+      height: $sizeN;
+      padding: 0;
+
+      input[type="number"],
+      input[type="text"] {
+        width: 100%;
+      }
+    }
+  }
+
+  #scaleName {
+    background: none;
+    border: none;
+    height: $sizeN + 30px;
+    line-height: $sizeN + 30px;
+    font-size: 18px;
+    display: block;
+    padding: 0 8px;
+    width: calc(100% - 16px);
+  }
+
+  #donate {
+    height: $sizeN;
+    display: inline-block;
+
+    input {
+      vertical-align: top;
+      padding: ($sizeN - 21px) / 2 0;
+    }
+  }
+
+  .fb-like span {
+    vertical-align: middle !important;
+    margin-top: -2px;
+  }
+
+  p {
+    @include smaller;
+
+    margin: 0;
+    padding: 7px 0;
+  }
+
+  #dashboard {
+    h2 {
+      text-align: center;
+      line-height: 60pt;
+      height: 60pt;
+      font-size: 16pt;
+      font-weight: normal;
+    }
+
+    #tiles {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-around;
+
+      button {
+        width: 150pt;
+        height: 150pt;
+        border-radius: 4pt;
+        margin: 0 10pt 10pt 10pt;
+
+        & > * {
+          display: block;
+        }
+      }
+
+      [class^="icon"],
+      [class^="icon"]::before {
+        font-size: 50pt;
+        line-height: 55pt;
+        height: 55pt;
+        width: 100%;
+      }
+
+      label {
+        font-size: 15pt;
+        line-height: 30pt;
+        height: 30pt;
+      }
+    }
+  }
+
+  #scala {
+    overflow: hidden;
+    padding-right: 0;
+
+    .full-height {
+      padding-bottom: 2000px;
+      margin-bottom: -2000px;
+    }
+
+    & > ul {
+      li {
+        font-size: 14px;
+        display: block;
+      }
+    }
+  }
+
+  button,
+  input[type="number"],
+  input[type="text"] {
+    border: 0;
+    margin: 0;
+    height: $sizeN;
+    line-height: $sizeN;
+    display: inline-block;
+    font-family: inherit;
+    font-size: 20px;
+    background: transparent;
+    outline: none;
+    transition: color 0.2s;
+    cursor: pointer;
+    position: relative;
+
+    &[disabled],
+    &.disabled {
+      cursor: default;
+
+      @include unselectable;
+    }
+
+    &[autosize] {
+      padding: 0 ($sizeN - 30px) / 2;
+      min-width: 30px;
+    }
+
+    .label {
+      font-size: 10px;
+      line-height: 12px;
+      position: absolute;
+      left: 0;
+      top: $sizeN;
+      width: 100%;
+      text-align: center;
+      vertical-align: top;
+    }
+  }
+
+  input[type="number"],
+  input[type="text"] {
+    padding: 0;
+  }
+
+  button {
+    @include unselectable;
+
+    text-align: center;
+    vertical-align: top;
+    position: relative;
+    box-sizing: content-box;
+
+    &:not([autosize]) {
+      padding: 0;
+      width: $sizeN;
+    }
+
+    &.set-selector {
+      $size : $sizeN / 5 * 2;
+
+      width: $size;
+      font-size: 0;
+      position: relative;
+      padding-left: 10px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: calc(50% - #{$size} / 2);
+        left: calc(50% - #{$size} / 2 + 5px);
+        width: $size;
+        height: $size;
+        border-radius: $size / 2;
+      }
+
+      &.disabled,
+      &[disabled] {
+        cursor: default;
+      }
+    }
+
+    &.element {
+      &::after {
+        $size : 4px;
+
+        content: '';
+        display: block;
+        width: $size * 2;
+        height: $size * 2;
+        border-radius: $size;
+        position: absolute;
+        top: 3px;
+        left: calc(50% - #{$size});
+      }
+
+      &.disabled::after,
+      &[disabled]::after,
+      &.muted::after {
+        background: none !important;
+      }
+    }
+  }
+
+  input[type="number"] {
+    appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+      margin: 0;
+    }
+  }
+
+  .ulreset {
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: 0;
+      height: $sizeN;
+      display: inline-block;
+      vertical-align: top;
+
+      li {
+        margin: 0;
+        padding: 0;
+        display: inline-block;
+        height: $sizeN;
+
+        input[type="text"],
+        input[type="number"] {
+          vertical-align: top;
+          text-align: right;
+
+          &:not([autosize]) {
+            width: $sizeN;
+          }
+        }
+      }
+
+      &.railed {
+        $size : 14px;
+        $bumperSize : floor($size/3);
+        $bumperPos : floor($bumperSize + $bumperSize / 3);
+
+        padding-right: $bumperSize;
+
+        li {
+          position: relative;
+          padding-right: $size;
+
+          &::before {
+            content: '';
+            right: 0;
+            top: 0;
+            position: absolute;
+            width: $size;
+            height: $sizeN;
+          }
+
+          &.type {
+            cursor: default;
+            font-size: 14px;
+            line-height: $sizeN;
+            vertical-align: top;
+            width: 20px;
+            text-align: center;
+          }
+        }
+      }
+    }
+  }
+
+  aside.active ~ section.active {
+    display: none;
+  }
+
+  #wa-unsupported {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+
+    h1 {
+      font-weight: normal;
+      margin-top: 100px;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    $sidebarWidth : 33%;
+
+    .wrapper {
+      section.active {
+        display: block !important;
+      }
+
+      aside {
+        float: right;
+        width: $sidebarWidth;
+        padding-left: 0;
+
+        & ~ section.active {
+          padding-right: 0;
+        }
+
+        &.active ~ section.active {
+          padding-right: calc(#{$sidebarWidth} + #{$sizeA});
+        }
+      }
+    }
+
+    #scaleName {
+      font-size: 24px;
+    }
+  }
+
+  @media (max-width: 600pt) {
+    .wrapper {
+      section,
+      aside {
+        min-height: calc(100% - (#{$sizeN} * 2 + 30px + 1px));
+        margin-left: $sizeA / 4;
+        margin-right: $sizeA / 4;
+      }
+
+      header,
+      footer {
+        margin-left: $sizeA / 4;
+        margin-right: $sizeA / 4;
+      }
+    }
+
+    .hide-if-screen-is-narrow {
+      display: none !important;
+    }
+
+    footer .brand {
+      font-size: 0 !important;
+    }
+  }
+
+  // ------------------
+
+  .tutorial {
+    z-index: 50;
+    position: relative;
+  }
+
+  #tutorial-cover {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+  }
+
+  #tutorial-bubble {
+    position: absolute;
+    z-index: 51;
+    border-radius: 10px;
+    min-width: 520px;
+    width: calc(100% - 100px);
+    box-sizing: border-box;
+    max-width: 800px;
+    padding: 0 10px;
+    cursor: default;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    bottom: 2 * $sizeN;
+
+    h2 {
+      @include center;
+
+      font-size: 1.2em;
+      height: 30px;
+      line-height: 30px;
+      margin: 0;
+    }
+
+    div {
+      padding: 10px 0;
+      font-size: 0.9em;
+
+      @include center;
+    }
+
+    hr {
+      border: 0;
+      height: 1px;
+      width: 50%;
+      margin: 20px auto;
+    }
+  }
+
+  #piano {
+    box-sizing: border-box;
+
+    .row-of-keys {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .key {
+      border-radius: 3px;
+      margin-top: 6px;
+      margin-right: 6px;
+      font-size: 16px;
+      flex-grow: 1;
+      overflow: hidden;
+      text-align: center;
+
+      &.muted {
+        background: transparent !important;
+      }
+    }
+  }
+
+  #sets {
+    margin-left: -8px;
+    width: calc(100% + 8px);
+    padding-top: 10px;
+  }
+
+  .scale-row {
+    height: $sizeN;
+    overflow: hidden;
+  }
+
+  * {
+    outline: none;
+  }
+
+  button::-moz-focus-inner,
+  input[type="reset"]::-moz-focus-inner,
+  input[type="button"]::-moz-focus-inner,
+  input[type="submit"]::-moz-focus-inner,
+  input[type="file"] > input[type="button"]::-moz-focus-inner {
+    border: none;
+  }
+
+  .interval-name {
+    font-size: 0.8em;
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 10px;
+    font-style: italic;
+  }
+
+  // -----------------
+
+  // overriding sharethis design
+  .st-btn[data-network] {
+    background: none !important;
+    opacity: 0.7;
+    display: inline-block !important;
+  }
+
+  .hasHover {
+    .st-btn[data-network] {
+      &:hover {
+        opacity: 1 !important;
+        top: 0 !important;
+      }
+    }
+  }
+
+  .CodeMirror {
+    height: auto !important;
+  }
+
+  header {
+    button {
+      padding-bottom: 30px !important;
+      width: 50px !important;
+    }
+
+    [class*="icon"].active {
+      width: auto;
+
+      &::before {
+        min-width: 40px;
+        width: auto;
+      }
+    }
+  }
+
+  footer {
+    height: 40px;
+    overflow: hidden;
+
+    .brand {
+      font-size: 18px;
+      font-weight: bold;
+      white-space: nowrap;
+      text-align: center;
+    }
+  }
+
+  hr {
+    border: 0;
+    height: 1px;
+  }
+
+  .labelled-button {
+    @include unselectable;
+
+    height: 40px;
+    line-height: 40px;
+    display: inline-block;
+    padding-right: 10px;
+    font-size: 14px;
+    cursor: pointer;
+
+    button {
+      padding: 0;
+    }
+  }
+}
+
+@import './themes/dark/index.scss';
+@import './themes/light/index.scss';

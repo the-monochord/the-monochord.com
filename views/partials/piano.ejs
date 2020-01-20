@@ -1,0 +1,37 @@
+<section id="piano" ng-class="{active:mctrl.ui.panel.isActive('piano')}">
+  <label class="labelled-button">
+    <button style="margin-right:10px;" type="button" class="set-selector" ng-class="{on: ui.midi.sustainOn}" mobile-click="ui.midi.sustainOn = !ui.midi.sustainOn"></button>
+    Sustain
+  </label>
+
+  <label class="labelled-button">
+    <button style="margin-right:10px;" type="button" class="set-selector" ng-class="{on: ui.midi.sustainToggle}" mobile-click="ui.midi.sustainToggle = !ui.midi.sustainToggle"></button>
+    Pressing the same note acts as a toggle switch
+  </label>
+  
+  <div class="row-of-keys" ng-repeat="row in mctrl.ui.piano.getNotes()">
+    <button
+      class="key"
+      ng-repeat="id in row"
+      ng-class="{active:mctrl.ui.piano.isNoteOn(id), muted:mctrl.ui.piano.isMuted(id)}"
+      
+      pointer-press="mctrl.ui.piano.noteOn(id)"
+      pointer-release="mctrl.ui.piano.noteOff(id)"
+      pointer-over="mctrl.ui.piano.noteOver(id)"
+      pointer-leave="mctrl.ui.piano.noteOut(id)"
+    >{{mctrl.ui.piano.getLabel(id)}}</button>
+  </div>
+
+  <div class="row-of-keys" style="margin-top:50px;">
+    <button
+      class="key"
+      type="button"
+      ng-repeat="index in mctrl.ui.piano.getChordKeys()"
+
+      pointer-press="mctrl.ui.piano.chordOn(index)"
+      pointer-release="mctrl.ui.piano.chordOff(index)"
+      pointer-over="mctrl.ui.piano.chordOver(index)"
+      pointer-leave="mctrl.ui.piano.chordOut(index)"
+    >{{index}}</button>
+  </div>
+</section>

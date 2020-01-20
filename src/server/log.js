@@ -3,9 +3,9 @@ import expressWinston from 'express-winston'
 
 const config = {
   levels: {
-    info: 2,
+    info: 0,
     warn: 1,
-    error: 0
+    error: 2
   },
   colors: {
     info: 'green',

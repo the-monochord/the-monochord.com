@@ -1,0 +1,53 @@
+<section id="midi-info" ng-class="{active:mctrl.ui.panel.isActive('midi-info')}">
+  <h2>INPUT ports of attached MIDI devices</h2>
+
+  <table style="margin-bottom: 40px; width: auto;" ng-hide="!mctrl.ui.piano.hasMIDIInputs()">
+    <tr>
+      <td colspan="2" width="340" class="smaller center">device name</td>
+      <td class="smaller center">channels</td>
+    </tr>
+    <tr ng-repeat="(name, data) in ui.midi.status.devices.inputs track by $index">
+      <td width="40" ng-class="{even : $index % 2 === 1, odd : $index % 2 === 0}">
+        <button type="button" class="set-selector" ng-class="{on : data.enabled && data.connected}" mobile-click="mctrl.ui.piano.toggleDevice('input', name)"></button>
+      </td>
+      <td class="smaller" width="300" ng-class="{even : $index % 2 === 1, odd : $index % 2 === 0}">
+        <b>{{name}}</b>
+      </td>
+      <td class="center" ng-class="{even : $index % 2 === 1, odd : $index % 2 === 0}">
+        <button type="button" class="element" autosize ng-repeat="channel in data.channels" ng-class="{muted:!channel.enabled, disabled:!data.enabled}" mobile-click="mctrl.ui.piano.toggleChannel('input', name, channel.id)">
+          <span class="smaller">{{channel.id}}</span>
+        </button>
+      </td>
+    </tr>
+  </table>
+  
+  <h2>OUTPUT ports of attached MIDI devices</h2>
+  
+  <table style="margin-bottom: 40px; width: auto;" ng-hide="!mctrl.ui.piano.hasMIDIOutputs()">
+    <tr>
+      <td colspan="2" width="340" class="smaller center">device name</td>
+      <td class="smaller center">channels</td>
+    </tr>
+    <tr ng-repeat="(name, data) in ui.midi.status.devices.outputs track by $index">
+      <td width="40" ng-class="{even : $index % 2 === 1, odd : $index % 2 === 0}">
+        <button type="button" class="set-selector" ng-class="{on : data.enabled && data.connected}" mobile-click="mctrl.ui.piano.toggleDevice('output', name)"></button>
+      </td>
+      <td class="smaller" width="300" ng-class="{even : $index % 2 === 1, odd : $index % 2 === 0}">
+        <b>{{name}}</b>
+      </td>
+      <td class="center" ng-class="{even : $index % 2 === 1, odd : $index % 2 === 0}">
+        <button type="button" class="element" autosize ng-repeat="channel in data.channels" ng-class="{muted:!channel.enabled, disabled:!data.enabled}" mobile-click="mctrl.ui.piano.toggleChannel('output', name, channel.id)">
+          <span class="smaller">{{channel.id}}</span>
+        </button>
+      </td>
+    </tr>
+  </table>
+  
+  <h2>Options</h2>
+
+  <label class="labelled-button">
+    <button style="margin-right:10px;" type="button" class="set-selector" ng-class="{on : ui.midi.whiteOnly}" mobile-click="ui.midi.whiteOnly = !ui.midi.whiteOnly;$event.stopPropagation()"></button>
+    Ignore black keys
+  </label>
+  </table>
+</section>

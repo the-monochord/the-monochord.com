@@ -1,0 +1,26 @@
+@import '../../../../common/hsva.scss';
+
+// SCSS:
+$background:               hsva-to-color(200deg, 15%, 8%, 1);
+$color:                    hsva-to-color(200deg, 8%, 100%, 1);
+$color2:                   hsva-to-color(200deg, 8%, 80%, 1);
+$disabled:                 hsva-to-color(200deg, 30%, 40%, 1);
+
+$active:                   hsva-to-color(60deg, 60%, 100%, 1); // yellow
+$bad:                      hsva-to-color(0deg, 100%, 100%, 1); // red
+$good:                     hsva-to-color(120deg, 100%, 70%, 1); // green
+
+$separator:                $disabled;
+$tableRowBgOdd:            transparent;
+$tableRowBgEven:           hsva-to-color(0deg, 0%, 100%, 0.1);
+$tableRowBgHighlighted:    hsva-to-color(60deg, 22%, 100%, 0.3);
+$highlightedDisabled:      lighten($disabled, 20%);
+$unsupportedBg:            hsva-to-color(0deg, 100%, 20%, 0.8);
+$tutorialCoverBg:          hsva-to-color(0deg, 0%, 0%, 0.75);
+$tutorialBubbleBg:         hsva-to-color(0deg, 0%, 0%, 0.5);
+
+$pianoButtonActiveBg:      darken($active, 50%);
+
+$thumb-color:              $background;
+$thumb-border-color:       $color;
+$track-color:              $color2;

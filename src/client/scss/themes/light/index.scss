@@ -1,0 +1,284 @@
+:global .theme-light {
+  @import './palette.scss';
+  @import './ui-range.scss';
+  @import './ui-select.scss';
+
+  [disabled],
+  .disabled {
+    color: $disabled !important;
+  }
+
+  // ----- build ----- //
+
+  background: $background;
+
+  .wrapper {
+    color: $color2;
+
+    header {
+      box-shadow: 0 -1px 0 0 $separator inset;
+    }
+
+    footer {
+      box-shadow: 0 1px 0 0 $separator inset;
+    }
+  }
+
+  #loading {
+    background: $background;
+  }
+
+  a.active {
+    color: $active;
+  }
+
+  a[href] {
+    color: $color;
+  }
+
+  h2,
+  h3 {
+    color: $color2;
+
+    &.success {
+      color: $good;
+    }
+
+    &.fail {
+      color: $bad;
+    }
+  }
+
+  table {
+    td {
+      background: $tableRowBgOdd;
+
+      &.even {
+        background: $tableRowBgEven;
+      }
+
+      &.highlighted {
+        background: $tableRowBgHighlighted;
+
+        .interval-name {
+          color: $highlightedDisabled;
+        }
+
+        [disabled],
+        .disabled {
+          color: $highlightedDisabled !important;
+        }
+      }
+    }
+  }
+
+  #scaleName {
+    color: $color;
+
+    &::-webkit-input-placeholder {
+      color: fade($color, 50%);
+    }
+
+    &::-moz-placeholder {
+      color: $color;
+    }
+
+    &:focus {
+      color: $active;
+    }
+  }
+
+  button,
+  input[type="number"],
+  input[type="text"] {
+    color: $color;
+
+    &:invalid {
+      color: $bad;
+    }
+
+    &.active {
+      color: $active;
+    }
+  }
+
+  button {
+    &.set-selector {
+      &::before {
+        box-shadow: 0 0 0 1px $color inset;
+      }
+
+      &.active {
+        &:not([disabled])::before {
+          box-shadow: 0 0 0 1px $active inset;
+        }
+      }
+
+      &.on::before {
+        background: $good;
+      }
+    }
+
+    &.element {
+      &::after {
+        box-shadow: 0 0 0 1px $color2 inset;
+        background: $good;
+      }
+
+      &[disabled]::after,
+      &.disabled::after {
+        box-shadow: 0 0 0 1px $disabled inset;
+      }
+    }
+  }
+
+  input[type="number"] :focus {
+    color: $active;
+  }
+
+  .ulreset {
+    ul {
+      &.railed {
+        $size : 14px;
+        $bumperSize : floor($size/3);
+        $bumperPos : floor($bumperSize + $bumperSize / 3);
+
+        background: radial-gradient(circle at calc(100% - #{$bumperPos}) 50%, $color2 $bumperSize, transparent 0%);
+
+        li {
+          &::before {
+            background: linear-gradient(to bottom, transparent calc(50% - 1px), $color2 calc(50% - 1px), $color2 calc(50%), transparent calc(50%));
+          }
+        }
+      }
+    }
+  }
+
+  #wa-unsupported {
+    background: $unsupportedBg;
+  }
+
+  // ------------------
+
+  #tutorial-cover {
+    background: $tutorialCoverBg;
+  }
+
+  #tutorial-bubble {
+    background: $tutorialBubbleBg;
+    border: 1px solid $color2;
+
+    .warning {
+      color: $active;
+    }
+
+    hr {
+      background: $color2;
+    }
+  }
+
+  #piano {
+    div {
+      button {
+        border: 1px solid $color2;
+
+        &.active {
+          background: $pianoButtonActiveBg;
+          color: $active;
+          border-color: $active;
+        }
+
+        &.muted {
+          color: $disabled !important;
+          border-color: $disabled;
+        }
+      }
+    }
+  }
+
+  .interval-name {
+    color: $disabled;
+  }
+
+  h2.special {
+    color: $active;
+  }
+
+  // -----------------
+
+  // overriding sharethis design
+  .st-btn[data-network] {
+    color: $color2;
+    border: 1px solid $color2;
+
+    svg {
+      fill: $color2;
+    }
+
+    .st-label {
+      color: $color2 !important;
+    }
+  }
+
+  header [class*="icon"].active {
+    box-shadow: 0 -2px 0 0 $active inset;
+  }
+
+  hr {
+    background: $separator;
+  }
+
+  #dashboard {
+    h2 {
+      color: $color;
+    }
+
+    #tiles button {
+      box-shadow: 0 0 0 1pt $color;
+    }
+  }
+
+  .has-hover {
+    button:hover,
+    a:hover {
+      color: $active;
+    }
+
+    button {
+      &.set-selector {
+        &:hover {
+          &:not([disabled])::before {
+            box-shadow: 0 0 0 1px $active inset;
+          }
+        }
+      }
+    }
+
+    #piano div button:hover {
+      color: $color;
+    }
+
+    .st-btn[data-network] {
+      &:hover {
+        color: $color;
+        border: 1px solid $color;
+
+        svg {
+          fill: $color;
+        }
+
+        .st-label {
+          color: $color !important;
+        }
+      }
+    }
+
+    .labelled-button:hover {
+      color: $active;
+    }
+
+    #dashboard #tiles button:hover {
+      box-shadow: 0 0 0 1pt $active;
+    }
+  }
+}

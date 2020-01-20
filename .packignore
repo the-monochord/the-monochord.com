@@ -10,5 +10,3 @@ README.md
 package-lock.json
 webpack.config.babel.js
 .DS_Store
-.env
-security/**/*
