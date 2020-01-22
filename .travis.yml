@@ -7,9 +7,9 @@ node_js:
   - 10
 
 before_install:
-  - yes | apt-get update
-  - yes | apt-get install python-dev python-pip
-  - pip install awscli
+  - yes | sudo apt-get update
+  - yes | sudo apt-get install python-dev python-pip
+  - sudo pip install awscli
 
 install:
   - npm ci
