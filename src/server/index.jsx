@@ -4,6 +4,7 @@ import i18n from 'i18n'
 import session from 'express-session'
 import sessionFileStore from 'session-file-store'
 import bodyParser from 'body-parser'
+import cors from 'cors'
 
 // import { renderToString } from 'react-dom/server'
 // import React from 'react'
@@ -141,6 +142,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(minifyHTML(minifyHTMLConfig))
 app.use(i18n.init)
+app.use(cors())
 app.use(express.static('static-root'))
 if (mode === 'development') {
   app.use(express.static('static-cdn'))

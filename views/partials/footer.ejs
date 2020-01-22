@@ -4,7 +4,7 @@
       <td width="40" id="add-set" ng-hide="mctrl.ui.model.canCopySet() || !mctrl.ui.panel.isActive('scale-designer')">
         <button title="Add a new set" type="button" class="icon-add" mobile-click="mctrl.ui.model.addSet()"></button>
       </td>
-      <td width="160" id="add-set-type" ng-hide="mctrl.ui.model.canCopySet() || !mctrl.ui.panel.isActive('scale-designer')">
+      <td width="110" id="add-set-type" ng-hide="mctrl.ui.model.canCopySet() || !mctrl.ui.panel.isActive('scale-designer')">
         <label class="selectwrapper">
           <select ng-options="item.type as item.label for item in mctrl.ui.model.getSetTypes()" ng-model="ui.model.newSetType"></select>
         </label>

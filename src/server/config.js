@@ -1,20 +1,24 @@
 import path from 'path'
-import { slice, includes, compose, keys } from 'ramda'
+import { slice, includes, compose, keys, endsWith } from 'ramda'
 import moment from 'moment'
+
+const mainDomain = 'the-monochord.com'
+const staticDomain = `cdn.${mainDomain}`
+const localDomain = '192.168.1.102' // localhost - this should be configured for every req
 
 const isLocal = () => {
   if (typeof window === 'undefined') {
     return compose(includes('--local'), slice(2, Infinity))(process.argv)
   } else {
-    return window.location.origin === 'http://localhost:3000'
+    return !endsWith(mainDomain, window.location.hostname)
   }
 }
 
 const mode = process.env.NODE_ENV || 'production'
 const ipaddress = process.env.NODE_IP || '0.0.0.0'
 const port = process.env.NODE_PORT || 3000
-const staticPath = isLocal() ? 'http://localhost:3000' : 'https://cdn.the-monochord.com'
-const mainPath = isLocal() ? 'http://localhost:3000' : 'https://the-monochord.com'
+const staticPath = isLocal() ? `http://${localDomain}:3000` : `https://${staticDomain}`
+const mainPath = isLocal() ? `http://${localDomain}:3000` : `https://${mainDomain}`
 const languages = {
   en: 'English',
   hu: 'Magyar'
@@ -33,7 +37,8 @@ const splashes = [
   'Yes, there are also undertones',
   'All waveforms can be synthesized from sine waves!',
   'Supports both MIDI IN and MIDI OUT',
-  'Music is just organized noise'
+  'Music is just organized noise',
+  'Now with HTTPS'
 ]
 
 const defaultSessionData = {
