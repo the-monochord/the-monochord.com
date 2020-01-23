@@ -1,10 +1,11 @@
 import path from 'path'
 import { slice, includes, compose, keys, endsWith } from 'ramda'
 import moment from 'moment'
+import { getLocalIP } from './helpers'
 
 const mainDomain = 'the-monochord.com'
 const staticDomain = `cdn.${mainDomain}`
-const localDomain = '192.168.1.102' // localhost - this should be configured for every req
+const localDomain = getLocalIP()
 
 const isLocal = () => {
   if (typeof window === 'undefined') {
