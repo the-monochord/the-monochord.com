@@ -1,5 +1,4 @@
 import path from 'path'
-
 import TerserPlugin from 'terser-webpack-plugin'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import OptimizeCSSAssetsPlugin from 'optimize-css-assets-webpack-plugin'
@@ -74,7 +73,7 @@ const common = {
       new OptimizeCSSAssetsPlugin({})
     ]
   },
-  devtool: mode === 'production' ? 'none' : 'cheap-module-eval-source-map'
+  devtool: mode === 'production' ? 'source-map' : 'cheap-module-eval-source-map'
 }
 
 const clientConfig = {
