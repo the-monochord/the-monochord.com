@@ -39,7 +39,8 @@ const splashes = [
   'All waveforms can be synthesized from sine waves!',
   'Supports both MIDI IN and MIDI OUT',
   'Music is just organized noise',
-  'Now with HTTPS'
+  'Now with HTTPS',
+  'We miss you, Joakim!'
 ]
 
 const defaultSessionData = {
