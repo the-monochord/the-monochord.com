@@ -22,20 +22,14 @@
     "commit:again": "git-cz --retry",
     "pack-resources-for-ec2": "pack-zip",
     "ssh": "ssh -i '~/.ssh/the-monochord-ec2-key.pem' ec2-user@ec2-18-224-93-16.us-east-2.compute.amazonaws.com",
-    "lint-staged": "lint-staged"
+    "lint:staged": "lint-staged"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/the-monochord/the-monochord.com.git"
   },
   "lint-staged": {
-    "src/server/**/*.{js,jsx}": [
-      "eslint --fix"
-    ],
-    "src/client/**/*.{js,jsx}": [
-      "eslint --fix"
-    ],
-    "src/common/**/*.{js,jsx}": [
+    "src/**/*.{js,jsx}": [
       "eslint --fix"
     ],
     "src/**/*.scss": [
@@ -96,7 +90,7 @@
     "eslint-plugin-react": "^7.18.0",
     "eslint-plugin-standard": "^4.0.1",
     "eventemitter3": "^4.0.0",
-    "lint-staged": "^10.0.0",
+    "lint-staged": "^10.2.9",
     "mini-css-extract-plugin": "^0.9.0",
     "monochord-core": "^5.5.1",
     "node-sass-chokidar": "^1.4.0",
@@ -115,14 +109,14 @@
     "stylelint": "^13.0.0",
     "stylelint-config-standard": "^19.0.0",
     "stylelint-scss": "^3.13.0",
-    "terser-webpack-plugin": "^2.3.2",
+    "terser-webpack-plugin": "^3.0.3",
     "virtual-webaudio": "^0.21.0",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
     "webpack-node-externals": "^1.7.2"
   },
   "pre-commit": [
-    "lint-staged"
+    "lint:staged"
   ],
   "config": {
     "commitizen": {
