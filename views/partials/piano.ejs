@@ -12,9 +12,10 @@
   <div class="row-of-keys" ng-repeat="row in mctrl.ui.piano.getNotes()">
     <button
       class="key"
+      type="button"
       ng-repeat="id in row"
       ng-class="{active:mctrl.ui.piano.isNoteOn(id), muted:mctrl.ui.piano.isMuted(id), highlighted:mctrl.ui.piano.isHighlighted(id)}"
-      
+
       pointer-press="mctrl.ui.piano.noteOn(id)"
       pointer-release="mctrl.ui.piano.noteOff(id)"
       pointer-over="mctrl.ui.piano.noteOver(id)"
@@ -27,6 +28,7 @@
       class="key"
       type="button"
       ng-repeat="label in mctrl.ui.piano.getChordKeys()"
+      ng-class="{active:mctrl.ui.piano.isChordOn($index), highlighted:mctrl.ui.piano.isChordHighlighted($index)}"
 
       pointer-press="mctrl.ui.piano.chordOn($index)"
       pointer-release="mctrl.ui.piano.chordOff($index)"

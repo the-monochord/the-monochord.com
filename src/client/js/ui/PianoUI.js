@@ -19,7 +19,9 @@ import {
   isNil,
   pluck,
   findIndex,
-  inc
+  inc,
+  propOr,
+  has
 } from 'ramda'
 
 import monochord from 'monochord-core'
@@ -161,6 +163,16 @@ class PianoUI {
         ['6', '12', '15'],
         ['-14', '4', '8'],
         ['5', '8', '13']
+      ],
+      props: [
+        { pressed: false, highlighted: false },
+        { pressed: false, highlighted: false },
+        { pressed: false, highlighted: false },
+        { pressed: false, highlighted: false },
+        { pressed: false, highlighted: false },
+        { pressed: false, highlighted: false },
+        { pressed: false, highlighted: false },
+        { pressed: false, highlighted: false }
       ]
     }
 
@@ -354,28 +366,46 @@ class PianoUI {
     return map(inc, keys(this._.$scope.ui.chords.keys))
   }
 
+  isChordOn(index) {
+    return propOr(false, 'pressed', this._.$scope.ui.chords.props[index])
+  }
+
+  isChordHighlighted(index) {
+    return propOr(false, 'highlighted', this._.$scope.ui.chords.props[index])
+  }
+
   chordOn(index) {
     const { notes, $scope } = this._
-    compose(
-      forEach(note => {
-        const id = getIdByLabel(note, notes)
-        if (!isNil(id)) {
-          this.noteOn(id, 100)
-        }
-      })
-    )($scope.ui.chords.keys[index] || [])
+
+    if (has(index, $scope.ui.chords.keys)) {
+      compose(
+        forEach(note => {
+          const id = getIdByLabel(note, notes)
+          if (!isNil(id)) {
+            this.noteOn(id, 100)
+          }
+        })
+      )($scope.ui.chords.keys[index])
+
+      $scope.ui.chords.props[index].pressed = true
+    }
   }
 
   chordOff(index) {
     const { notes, $scope } = this._
-    compose(
-      forEach(note => {
-        const id = getIdByLabel(note, notes)
-        if (!isNil(id)) {
-          this.noteOff(id, 100)
-        }
-      })
-    )($scope.ui.chords.keys[index] || [])
+
+    if (has(index, $scope.ui.chords.keys)) {
+      compose(
+        forEach(note => {
+          const id = getIdByLabel(note, notes)
+          if (!isNil(id)) {
+            this.noteOff(id, 100)
+          }
+        })
+      )($scope.ui.chords.keys[index])
+
+      $scope.ui.chords.props[index].pressed = false
+    }
   }
 
   chordOver(index) {
@@ -385,14 +415,18 @@ class PianoUI {
       this.chordOn(index)
     }
 
-    compose(
-      forEach(note => {
-        const id = getIdByLabel(note, notes)
-        if (!isNil(id)) {
-          noteTable[id].highlighted = true
-        }
-      })
-    )($scope.ui.chords.keys[index] || [])
+    if (has(index, $scope.ui.chords.keys)) {
+      compose(
+        forEach(note => {
+          const id = getIdByLabel(note, notes)
+          if (!isNil(id)) {
+            noteTable[id].highlighted = true
+          }
+        })
+      )($scope.ui.chords.keys[index])
+
+      $scope.ui.chords.props[index].highlighted = true
+    }
   }
 
   chordOut(index) {
@@ -400,14 +434,18 @@ class PianoUI {
 
     this.chordOff(index)
 
-    compose(
-      forEach(note => {
-        const id = getIdByLabel(note, notes)
-        if (!isNil(id)) {
-          noteTable[id].highlighted = false
-        }
-      })
-    )($scope.ui.chords.keys[index] || [])
+    if (has(index, $scope.ui.chords.keys)) {
+      compose(
+        forEach(note => {
+          const id = getIdByLabel(note, notes)
+          if (!isNil(id)) {
+            noteTable[id].highlighted = false
+          }
+        })
+      )($scope.ui.chords.keys[index])
+
+      $scope.ui.chords.props[index].highlighted = false
+    }
   }
 
   getLabel(rawId) {
