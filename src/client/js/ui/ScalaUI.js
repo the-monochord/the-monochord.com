@@ -35,7 +35,6 @@ function scalaPrintCent(n) {
 function generateEDx(n, harmonicsOfRatio) {
   const step = parseFloat(multiply(fractionToCents(ratioToFraction.apply(null, harmonicsOfRatio)), 1e6 / n).toString())
   const ratio = scalaPrintRatio(harmonicsOfRatio)
-  let i, tmp
 
   let scl = '!\n'
   scl += `! ${generatorBanner}\n`
@@ -43,8 +42,8 @@ function generateEDx(n, harmonicsOfRatio) {
   scl += `${n}ED(${ratio})\n`
   scl += ` ${n}\n`
   scl += '!\n'
-  for (i = 1; i <= n - 1; i++) {
-    tmp = Math.round(i * step) / 1e6
+  for (let i = 1; i <= n - 1; i++) {
+    const tmp = Math.round(i * step) / 1e6
     scl += ` ${scalaPrintCent(tmp)}\n`
   }
   scl += ` ${ratio}`

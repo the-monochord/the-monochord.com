@@ -19,10 +19,8 @@ const getLocalIP = () => {
     )(networkInterfaces())
   } else {
     // we cheat by reading out the value from the DOM
-    return document
-      .querySelector('link[rel="canonical"]')
-      .getAttribute('href')
-      .match(/(?:\d{1,3}\.){3}\d{1,3}/)[0]
+    const canonicalHref = document.querySelector('link[rel="canonical"]').getAttribute('href')
+    return canonicalHref.match(/(?:\d{1,3}\.){3}\d{1,3}/)[0]
   }
 }
 

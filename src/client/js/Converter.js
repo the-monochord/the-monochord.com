@@ -32,16 +32,15 @@ class Converter {
 
   injectIntoModel(data, callback = NOP) {
     const { $scope, model } = this._
-    let set, type, min, allTheSame
 
     $scope.retune.default = 'lowestToBaseFreq'
     $scope.name = data.description
 
     data.notes.forEach(note => {
-      set = model.sets.add()
-      type = note.type === 'ratio' ? 'strings' : 'cents'
-      min = sort(subtract, note.multipliers)[0]
-      allTheSame = !note.multipliers.some(multiplier => multiplier !== min)
+      const set = model.sets.add()
+      const type = note.type === 'ratio' ? 'strings' : 'cents'
+      const min = sort(subtract, note.multipliers)[0]
+      const allTheSame = !note.multipliers.some(multiplier => multiplier !== min)
 
       note.multipliers.forEach((multiplier, index, array) => {
         model[type].add(set, {
