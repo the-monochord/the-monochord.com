@@ -21,7 +21,8 @@ import {
   findIndex,
   inc,
   propOr,
-  has
+  has,
+  clone
 } from 'ramda'
 
 import monochord from 'monochord-core'
@@ -140,6 +141,19 @@ const CHORD_MODE = Object.freeze({
   RECORD: 'record'
 })
 
+const chordPresets = {
+  'Sevish: Sleep deprived and cooked alive (14EDO)': [
+    ['4', '7', '12'],
+    ['5', '10', '13'],
+    ['4', '7', '12'],
+    ['3', '7', '11'],
+    ['4', '8', '14'],
+    ['6', '12', '15'],
+    ['-14', '4', '8'],
+    ['5', '8', '13']
+  ]
+}
+
 class PianoUI {
   constructor($scope, model) {
     midi = model.midi
@@ -153,17 +167,7 @@ class PianoUI {
 
     $scope.ui.chords = {
       mode: CHORD_MODE.PLAY,
-      keys: [
-        // Sevish: Sleep deprived and cooked alive (14EDO)
-        ['4', '7', '12'],
-        ['5', '10', '13'],
-        ['4', '7', '12'],
-        ['3', '7', '11'],
-        ['4', '8', '14'],
-        ['6', '12', '15'],
-        ['-14', '4', '8'],
-        ['5', '8', '13']
-      ],
+      keys: clone(chordPresets['Sevish: Sleep deprived and cooked alive (14EDO)']),
       props: [
         { pressed: false, highlighted: false },
         { pressed: false, highlighted: false },
@@ -292,9 +296,13 @@ class PianoUI {
   }
 
   getNotes() {
-    const { notes } = this._
+    return this._.notes
+  }
 
-    return notes
+  getActiveNotes() {
+    const { noteTable } = this._
+
+    return filter(this.isNoteOn.bind(this), keys(noteTable))
   }
 
   noteOn(id, velocity) {
@@ -386,14 +394,21 @@ class PianoUI {
     const { notes, $scope } = this._
 
     if (has(index, $scope.ui.chords.keys)) {
-      compose(
-        forEach(note => {
-          const id = getIdByLabel(note, notes)
-          if (!isNil(id)) {
-            this.noteOn(id, 100)
-          }
-        })
-      )($scope.ui.chords.keys[index])
+      if ($scope.ui.chords.mode === CHORD_MODE.PLAY) {
+        compose(
+          forEach(note => {
+            const id = getIdByLabel(note, notes)
+            if (!isNil(id)) {
+              this.noteOn(id, 100)
+            }
+          })
+        )($scope.ui.chords.keys[index])
+      } else {
+        // TODO: this would be better off inside chordOff(), but at the moment
+        // there is no way of telling, whether the chordOff was triggered from pointer-release
+        // or via pointer-leave through chordOut()
+        $scope.ui.chords.keys[index] = this.getActiveNotes()
+      }
 
       $scope.ui.chords.props[index].pressed = true
     }
@@ -403,14 +418,16 @@ class PianoUI {
     const { notes, $scope } = this._
 
     if (has(index, $scope.ui.chords.keys)) {
-      compose(
-        forEach(note => {
-          const id = getIdByLabel(note, notes)
-          if (!isNil(id)) {
-            this.noteOff(id, 100)
-          }
-        })
-      )($scope.ui.chords.keys[index])
+      if ($scope.ui.chords.mode === CHORD_MODE.PLAY) {
+        compose(
+          forEach(note => {
+            const id = getIdByLabel(note, notes)
+            if (!isNil(id)) {
+              this.noteOff(id, 100)
+            }
+          })
+        )($scope.ui.chords.keys[index])
+      }
 
       $scope.ui.chords.props[index].pressed = false
     }
@@ -424,14 +441,20 @@ class PianoUI {
     }
 
     if (has(index, $scope.ui.chords.keys)) {
-      compose(
-        forEach(note => {
-          const id = getIdByLabel(note, notes)
-          if (!isNil(id)) {
-            noteTable[id].highlighted = true
-          }
-        })
-      )($scope.ui.chords.keys[index])
+      // TODO: if we enable highlighting while recording, then we might
+      // encounter an issue, when keys will no longer point to the notes,
+      // which are currently highlighted and we would manually have to erase those
+      // might be worth making, though...
+      if ($scope.ui.chords.mode === CHORD_MODE.PLAY) {
+        compose(
+          forEach(note => {
+            const id = getIdByLabel(note, notes)
+            if (!isNil(id)) {
+              noteTable[id].highlighted = true
+            }
+          })
+        )($scope.ui.chords.keys[index])
+      }
 
       $scope.ui.chords.props[index].highlighted = true
     }
@@ -443,14 +466,16 @@ class PianoUI {
     this.chordOff(index)
 
     if (has(index, $scope.ui.chords.keys)) {
-      compose(
-        forEach(note => {
-          const id = getIdByLabel(note, notes)
-          if (!isNil(id)) {
-            noteTable[id].highlighted = false
-          }
-        })
-      )($scope.ui.chords.keys[index])
+      if ($scope.ui.chords.mode === CHORD_MODE.PLAY) {
+        compose(
+          forEach(note => {
+            const id = getIdByLabel(note, notes)
+            if (!isNil(id)) {
+              noteTable[id].highlighted = false
+            }
+          })
+        )($scope.ui.chords.keys[index])
+      }
 
       $scope.ui.chords.props[index].highlighted = false
     }
