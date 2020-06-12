@@ -132,6 +132,11 @@ const labelCalculator = memoizeWith(
 
 let midi
 
+const CHORD_MODE = Object.freeze({
+  PLAY: 'play',
+  RECORD: 'record'
+})
+
 class PianoUI {
   constructor($scope, model) {
     midi = model.midi
@@ -143,12 +148,26 @@ class PianoUI {
       sustainToggle: true
     }
 
+    $scope.ui.chords = {
+      mode: CHORD_MODE.PLAY,
+      notes: [
+        // Sevish: Sleep deprived and cooked alive (14EDO)
+        ['4', '7', '12'],
+        ['5', '10', '13'],
+        ['4', '7', '12'],
+        ['3', '7', '11'],
+        ['4', '8', '14'],
+        ['6', '12', '15'],
+        ['-14', '4', '8'],
+        ['5', '8', '13']
+      ]
+    }
+
     this._ = {
       $scope,
       model,
       noteTable: {},
-      notes: [],
-      chords: {}
+      notes: []
     }
 
     $scope.$watch('playbackMode', value => {
@@ -257,18 +276,6 @@ class PianoUI {
     */
 
     midi.init()
-
-    // Sevish: Sleep deprived and cooked alive (14EDO)
-    this._.chords = {
-      A: ['4', '7', '12'],
-      B: ['5', '10', '13'],
-      C: ['4', '7', '12'],
-      D: ['3', '7', '11'],
-      E: ['4', '8', '14'],
-      F: ['6', '12', '15'],
-      G: ['-14', '4', '8'],
-      H: ['5', '8', '13']
-    }
   }
 
   getNotes() {
@@ -337,11 +344,11 @@ class PianoUI {
   }
 
   getChordKeys() {
-    return keys(this._.chords)
+    return keys(this._.$scope.ui.chords.notes)
   }
 
   chordOn(index) {
-    const { notes } = this._
+    const { notes, $scope } = this._
     compose(
       forEach(note => {
         const id = getIdByLabel(note, notes)
@@ -349,11 +356,11 @@ class PianoUI {
           this.noteOn(id, 100)
         }
       })
-    )(this._.chords[index] || [])
+    )($scope.ui.chords.notes[index] || [])
   }
 
   chordOff(index) {
-    const { notes } = this._
+    const { notes, $scope } = this._
     compose(
       forEach(note => {
         const id = getIdByLabel(note, notes)
@@ -361,7 +368,7 @@ class PianoUI {
           this.noteOff(id, 100)
         }
       })
-    )(this._.chords[index] || [])
+    )($scope.ui.chords.notes[index] || [])
   }
 
   chordOver(index) {
