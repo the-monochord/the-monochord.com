@@ -26,6 +26,6 @@ script:
   - aws s3 mv the-monochord.zip s3://static.the-monochord.com
   - aws s3 cp static-cdn s3://static.the-monochord.com --recursive
 
-  - aws cloudfront create-invalidation --distribution-id E3EK44RFBMKVDR --paths /css/monochord.min.css /js/monochord.min.js
+  - aws cloudfront create-invalidation --distribution-id E3EK44RFBMKVDR --paths /css/monochord.min.css /js/monochord.min.js /js/monochord.min.js.map
 
   - aws deploy create-deployment --application-name the-monochord --deployment-group-name the-monochord --deployment-config-name CodeDeployDefault.OneAtATime --s3-location bucket=static.the-monochord.com,bundleType=zip,key=the-monochord.zip --file-exists-behavior OVERWRITE --ignore-application-stop-failures
