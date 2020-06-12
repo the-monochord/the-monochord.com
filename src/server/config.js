@@ -1,25 +1,18 @@
 import path from 'path'
-import { slice, includes, compose, keys, endsWith } from 'ramda'
+import { keys } from 'ramda'
 import moment from 'moment'
-import { getLocalIP } from './helpers'
+import { getLocalIP, isLocal } from './helpers'
 
 const mainDomain = 'the-monochord.com'
 const staticDomain = `cdn.${mainDomain}`
 const localDomain = getLocalIP()
-
-const isLocal = () => {
-  if (typeof window === 'undefined') {
-    return compose(includes('--local'), slice(2, Infinity))(process.argv)
-  } else {
-    return !endsWith(mainDomain, window.location.hostname)
-  }
-}
+const isRunningLocally = isLocal(mainDomain)
 
 const mode = process.env.NODE_ENV || 'production'
 const ipaddress = process.env.NODE_IP || '0.0.0.0'
 const port = process.env.NODE_PORT || 3000
-const staticPath = isLocal() ? `http://${localDomain}:3000` : `https://${staticDomain}`
-const mainPath = isLocal() ? `http://${localDomain}:3000` : `https://${mainDomain}`
+const staticPath = isRunningLocally ? `http://${localDomain}:3000` : `https://${staticDomain}`
+const mainPath = isRunningLocally ? `http://${localDomain}:3000` : `https://${mainDomain}`
 const languages = {
   en: 'English',
   hu: 'Magyar'

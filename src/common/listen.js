@@ -35,7 +35,6 @@ import {
   converge
 } from 'ramda'
 
-import { mainPath } from '../server/config'
 import { prefixIfNotEmpty } from './helpers'
 
 // ---------------------
@@ -173,12 +172,12 @@ const generateListenTitle = sanitizedSets => {
 }
 
 const generateListenUrl = (sanitizedSets, sanitizedWaveform) => {
-  return `${mainPath}/listen/${sanitizedSets}${prefixIfNotEmpty('/', sanitizedWaveform)}`
+  return `/listen/${sanitizedSets}${prefixIfNotEmpty('/', sanitizedWaveform)}`
 }
 
 const generateMainTitle = () => 'The Monochord'
 
-const generateMainUrl = () => mainPath
+const generateMainUrl = () => '/'
 
 // ---------------------
 

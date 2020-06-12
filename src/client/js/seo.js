@@ -52,19 +52,19 @@ const setSEOData = ({ url, title, description, image }, addToHistory = true) => 
 }
 
 const getSEOData = args => {
-  if (!isEmpty(args)) {
+  if (isEmpty(args)) {
+    return {
+      url: generateMainUrl(),
+      title: generateMainTitle(),
+      description: null,
+      image: getImage()
+    }
+  } else {
     const { sanitizedSets, sanitizedWaveform } = getParametersFromArgs(args)
 
     return {
       url: generateListenUrl(sanitizedSets, sanitizedWaveform),
       title: generateListenTitle(sanitizedSets),
-      description: null,
-      image: getImage()
-    }
-  } else {
-    return {
-      url: generateMainUrl(),
-      title: generateMainTitle(),
       description: null,
       image: getImage()
     }
