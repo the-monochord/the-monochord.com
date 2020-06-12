@@ -18,7 +18,8 @@ import {
   when,
   isNil,
   pluck,
-  findIndex
+  findIndex,
+  inc
 } from 'ramda'
 
 import monochord from 'monochord-core'
@@ -150,7 +151,7 @@ class PianoUI {
 
     $scope.ui.chords = {
       mode: CHORD_MODE.PLAY,
-      notes: [
+      keys: [
         // Sevish: Sleep deprived and cooked alive (14EDO)
         ['4', '7', '12'],
         ['5', '10', '13'],
@@ -177,7 +178,7 @@ class PianoUI {
 
         compose(
           forEach(id => {
-            noteTable[id] = { pressed: false, sustained: false }
+            noteTable[id] = { pressed: false, sustained: false, highlighted: false }
             const prefix = id.match(prefixPattern)[0]
             if (!x[prefix]) {
               x[prefix] = [id]
@@ -321,10 +322,16 @@ class PianoUI {
     return noteTable[id] && (noteTable[id].pressed || noteTable[id].sustained)
   }
 
-  isMuted(rawId) {
+  isMuted(id) {
     const { model } = this._
 
-    return getSetById(rawId, model).muted
+    return getSetById(id, model).muted
+  }
+
+  isHighlighted(id) {
+    const { noteTable } = this._
+
+    return noteTable[id] && noteTable[id].highlighted
   }
 
   noteOver(id) {
@@ -344,7 +351,7 @@ class PianoUI {
   }
 
   getChordKeys() {
-    return keys(this._.$scope.ui.chords.notes)
+    return map(inc, keys(this._.$scope.ui.chords.keys))
   }
 
   chordOn(index) {
@@ -356,7 +363,7 @@ class PianoUI {
           this.noteOn(id, 100)
         }
       })
-    )($scope.ui.chords.notes[index] || [])
+    )($scope.ui.chords.keys[index] || [])
   }
 
   chordOff(index) {
@@ -368,19 +375,39 @@ class PianoUI {
           this.noteOff(id, 100)
         }
       })
-    )($scope.ui.chords.notes[index] || [])
+    )($scope.ui.chords.keys[index] || [])
   }
 
   chordOver(index) {
-    const { $scope } = this._
+    const { notes, noteTable, $scope } = this._
 
     if ($scope.ui.mousedown) {
       this.chordOn(index)
     }
+
+    compose(
+      forEach(note => {
+        const id = getIdByLabel(note, notes)
+        if (!isNil(id)) {
+          noteTable[id].highlighted = true
+        }
+      })
+    )($scope.ui.chords.keys[index] || [])
   }
 
   chordOut(index) {
+    const { notes, noteTable, $scope } = this._
+
     this.chordOff(index)
+
+    compose(
+      forEach(note => {
+        const id = getIdByLabel(note, notes)
+        if (!isNil(id)) {
+          noteTable[id].highlighted = false
+        }
+      })
+    )($scope.ui.chords.keys[index] || [])
   }
 
   getLabel(rawId) {

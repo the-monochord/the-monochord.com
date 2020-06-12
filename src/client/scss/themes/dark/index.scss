@@ -179,18 +179,24 @@
 
   #piano {
     div {
-      button {
+      .key {
         border: 1px solid $color2;
 
         &.active {
-          background: $pianoButtonActiveBg;
-          color: $active;
-          border-color: $active;
+          background: $pianoButtonActiveBg !important;
+          color: $active !important;
+          border-color: $active !important;
         }
 
         &.muted {
           color: $disabled !important;
           border-color: $disabled;
+        }
+
+        &.highlighted {
+          background: desaturate($pianoButtonActiveBg, 50%);
+          color: desaturate($active, 50%);
+          border-color: desaturate($active, 50%);
         }
       }
     }
