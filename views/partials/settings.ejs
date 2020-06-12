@@ -58,14 +58,14 @@
 
   <hr />
 
-  <table id="waveform">
+  <table id="waveform" ng-class={disabled:!mctrl.ui.model.isAudioEnabled()}>
     <tr>
       <td colspan="2">Synth options</td>
     </tr>
     <tr>
       <td width="140">&nbsp;├─ Waveform</td>
       <td>
-        <label class="selectwrapper">
+        <label class="selectwrapper" ng-class={disabled:!mctrl.ui.model.isAudioEnabled()}>
           <select change-on-keypress ng-options="item for item in mctrl.ui.model.getwaveforms()" ng-model="waveform"></select>
         </label>
       </td>
