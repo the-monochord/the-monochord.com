@@ -15,7 +15,10 @@ import {
   ifElse,
   always,
   all,
-  when
+  when,
+  isNil,
+  pluck,
+  findIndex
 } from 'ramda'
 
 import monochord from 'monochord-core'
@@ -49,6 +52,26 @@ const getIdByNote = curry((note, notes) => {
   }
 
   return pathOr(null, [octave, noteIndex])(notes)
+})
+
+const getIdByLabel = curry((label, notes) => {
+  const prefix = label.match(prefixPattern)[0]
+  const prefixes = map(replace(/\d+$/, ''), pluck(0, notes))
+  const octaveIdx = findIndex(equals(prefix), prefixes)
+
+  if (octaveIdx === -1) {
+    return null
+  }
+
+  const noteIdx = parseInt(label.replace(prefixPattern, '')) - 1
+
+  const note = notes[octaveIdx][noteIdx]
+
+  if (isNil(note)) {
+    return null
+  } else {
+    return note
+  }
 })
 
 const updateStatus = curry(($scope, status) => {
@@ -318,19 +341,27 @@ class PianoUI {
   }
 
   chordOn(index) {
+    const { notes } = this._
     compose(
       forEach(note => {
-        this.noteOn(note, 100)
+        const id = getIdByLabel(note, notes)
+        if (!isNil(id)) {
+          this.noteOn(id, 100)
+        }
       })
-    )(this._.chords[`${index}`] || [])
+    )(this._.chords[index] || [])
   }
 
   chordOff(index) {
+    const { notes } = this._
     compose(
       forEach(note => {
-        this.noteOff(note, 100)
+        const id = getIdByLabel(note, notes)
+        if (!isNil(id)) {
+          this.noteOff(id, 100)
+        }
       })
-    )(this._.chords[`${index}`] || [])
+    )(this._.chords[index] || [])
   }
 
   chordOver(index) {
