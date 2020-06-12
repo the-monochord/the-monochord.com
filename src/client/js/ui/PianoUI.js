@@ -349,8 +349,12 @@ class PianoUI {
   noteOver(id) {
     const { $scope, noteTable } = this._
 
-    if ($scope.ui.mousedown && noteTable[id] && !noteTable[id].pressed) {
-      this.noteOn(id, 100)
+    if (noteTable[id]) {
+      if ($scope.ui.mousedown && !noteTable[id].pressed) {
+        this.noteOn(id, 100)
+      }
+
+      noteTable[id].highlighted = true
     }
   }
 
@@ -359,6 +363,10 @@ class PianoUI {
 
     if (!$scope.ui.mousedown || (noteTable[id] && noteTable[id].pressed)) {
       this.noteOff(id)
+    }
+
+    if (noteTable[id]) {
+      noteTable[id].highlighted = false
     }
   }
 
@@ -477,6 +485,18 @@ class PianoUI {
     const { $scope } = this._
     const midiStatus = $scope.ui.midi.status
     return midiStatus.devices && Object.keys(midiStatus.devices.outputs).length > 0
+  }
+
+  canChordsBeRecorded() {
+    return this._.$scope.ui.chords.mode === CHORD_MODE.RECORD
+  }
+
+  toggleChordRecordability() {
+    if (this.canChordsBeRecorded()) {
+      this._.$scope.ui.chords.mode = CHORD_MODE.PLAY
+    } else {
+      this._.$scope.ui.chords.mode = CHORD_MODE.RECORD
+    }
   }
 }
 

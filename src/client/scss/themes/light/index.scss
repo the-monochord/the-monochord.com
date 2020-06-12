@@ -186,6 +186,12 @@
           background: $pianoButtonActiveBg !important;
           color: $active !important;
           border-color: $active !important;
+
+          &.record {
+            background: $pianoButtonBadBg !important;
+            color: $bad !important;
+            border-color: $bad !important;
+          }
         }
 
         &.muted {

@@ -20,6 +20,7 @@ $tutorialCoverBg:          hsva-to-color(0deg, 0%, 0%, 0.75);
 $tutorialBubbleBg:         hsva-to-color(0deg, 0%, 0%, 0.5);
 
 $pianoButtonActiveBg:      darken($active, 50%);
+$pianoButtonBadBg:         darken($bad, 20%);
 
 $thumb-color:              $background;
 $thumb-border-color:       $color;

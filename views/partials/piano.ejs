@@ -25,6 +25,13 @@
 
   <div class="row-of-keys" style="margin-top:70px;">
     <button
+      class="key record"
+      type="button"
+      ng-class="{active:mctrl.ui.piano.canChordsBeRecorded()}"
+
+      ng-click="mctrl.ui.piano.toggleChordRecordability()"
+    >rec</button>
+    <button
       class="key"
       type="button"
       ng-repeat="label in mctrl.ui.piano.getChordKeys()"
