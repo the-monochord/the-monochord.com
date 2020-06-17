@@ -6,8 +6,8 @@ import sessionFileStore from 'session-file-store'
 import bodyParser from 'body-parser'
 import cors from 'cors'
 
-// import { renderToString } from 'react-dom/server'
-// import React from 'react'
+import { renderToString } from 'react-dom/server'
+import React from 'react'
 
 import minifyHTML from 'express-minify-html-2'
 
@@ -25,7 +25,7 @@ import {
   compose,
   includes
 } from 'ramda'
-// import App from '../common/components/App'
+import App from '../common/components/App'
 
 import {
   getParametersFromArgs,
@@ -38,7 +38,7 @@ import {
 import { pickRandom } from '../common/helpers'
 import {
   mode,
-  ipaddress,
+  host,
   port,
   languages,
   staticPath,
@@ -50,10 +50,13 @@ import {
   minifyHTMLConfig,
   i18nConfig,
   themes,
-  displayModes
+  displayModes,
+  terminateSignals
 } from './config'
 
 import { logger, expressLogger } from './log'
+
+// import { getHttpsOptions } from './helpers'
 
 // -----------
 
@@ -201,7 +204,6 @@ app.get('/thank-you', (req, res) => {
   })
 })
 
-/*
 app.get('/react-poc', (req, res) => {
   const settings = renderSEO(req, getDefaultParams(req))
 
@@ -209,7 +211,6 @@ app.get('/react-poc', (req, res) => {
 
   res.render('pages/react-poc', mergeDeepRight(settings, { markup }))
 })
-*/
 
 const updateSession = curry((key, validValues, req) => {
   if (has(key, req.body) && includes(req.body[key], validValues)) {
@@ -246,8 +247,8 @@ if (mode === 'development') {
   const server = http.createServer(app)
   reload(app)
 
-  server.listen(port, ipaddress, () => {
-    logger.info(`Server started @ ${ipaddress}:${port}`)
+  server.listen(port, host, () => {
+    logger.info(`Server started @ ${host}:${port}`)
   })
 } else {
   const greenlock = require('greenlock-express')
@@ -264,30 +265,18 @@ if (mode === 'development') {
 
 // --------------
 
-const isRunningOnMac = process.platform === 'darwin'
-
-const terminateSignals = [
-  'SIGHUP',
-  'SIGINT',
-  'SIGQUIT',
-  'SIGILL',
-  'SIGTRAP',
-  'SIGABRT',
-  'SIGBUS',
-  'SIGFPE',
-  'SIGUSR1',
-  'SIGSEGV',
-  'SIGTERM'
-].concat(isRunningOnMac ? [] : ['SIGUSR2'])
-
-const onTerminateSignal = reason => () => {
-  if (reason) {
-    logger.info(`recieved ${reason}`)
+const onTerminateSignal = (terminateSignal = null) => () => {
+  if (terminateSignal) {
+    logger.info(`recieved ${terminateSignal}`)
     process.exit(0)
   }
 
   logger.info('server stopped')
 }
 
-process.on('exit', onTerminateSignal(null))
-forEach(reason => process.on(reason, onTerminateSignal(reason)), terminateSignals)
+;(async () => {
+  // const httpsOptions = await getHttpsOptions()
+
+  process.on('exit', onTerminateSignal())
+  forEach(terminateSignal => process.on(terminateSignal, onTerminateSignal(terminateSignal)), terminateSignals)
+})()

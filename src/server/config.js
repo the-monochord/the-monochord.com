@@ -1,18 +1,26 @@
 import path from 'path'
-import { keys } from 'ramda'
+import { keys, unless, always, append } from 'ramda'
 import moment from 'moment'
 import { getLocalIP, isLocal } from './helpers'
+
+const mode = process.env.NODE_ENV || 'production'
 
 const mainDomain = 'the-monochord.com'
 const staticDomain = `cdn.${mainDomain}`
 const localDomain = getLocalIP()
-const isRunningLocally = isLocal(mainDomain)
 
-const mode = process.env.NODE_ENV || 'production'
-const ipaddress = process.env.NODE_IP || '0.0.0.0'
-const port = process.env.NODE_PORT || 3000
-const staticPath = isRunningLocally ? `http://${localDomain}:3000` : `https://${staticDomain}`
-const mainPath = isRunningLocally ? `http://${localDomain}:3000` : `https://${mainDomain}`
+const isRunningLocally = isLocal(mainDomain)
+const isRunningOnMac = process.platform === 'darwin'
+
+const host = '0.0.0.0'
+const hostSecure = host
+const port = mode === 'development' ? 3000 : 80
+const portSecure = mode === 'development' ? 3443 : 443
+const staticPath = isRunningLocally ? `http://${localDomain}:${port}` : `http://${staticDomain}`
+const staticPathSecure = isRunningLocally ? `https://${localDomain}:${portSecure}` : `https://${staticDomain}`
+const mainPath = isRunningLocally ? `http://${localDomain}:${port}` : `http://${mainDomain}`
+const mainPathSecure = isRunningLocally ? `https://${localDomain}:${portSecure}` : `https://${mainDomain}`
+
 const languages = {
   en: 'English',
   hu: 'Magyar'
@@ -98,12 +106,30 @@ const i18nConfig = {
   updateFiles: false
 }
 
+const terminateSignals = unless(always(isRunningOnMac), append('SIGUSR2'), [
+  'SIGHUP',
+  'SIGINT',
+  'SIGQUIT',
+  'SIGILL',
+  'SIGTRAP',
+  'SIGABRT',
+  'SIGBUS',
+  'SIGFPE',
+  'SIGUSR1',
+  'SIGSEGV',
+  'SIGTERM'
+])
+
 export {
   mode,
-  ipaddress,
+  host,
+  hostSecure,
   port,
-  staticPath,
+  portSecure,
   mainPath,
+  mainPathSecure,
+  staticPath,
+  staticPathSecure,
   languages,
   splashes,
   defaultSessionData,
@@ -112,5 +138,6 @@ export {
   minifyHTMLConfig,
   i18nConfig,
   themes,
-  displayModes
+  displayModes,
+  terminateSignals
 }

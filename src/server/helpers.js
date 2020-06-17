@@ -1,5 +1,8 @@
+import path from 'path'
+import fs from 'fs'
 import { networkInterfaces } from 'os'
 import { compose, values, flatten, find, both, propEq, prop, slice, includes, endsWith } from 'ramda'
+import { mainPathSecure } from './config'
 
 const isLocal = mainDomain => {
   if (typeof window === 'undefined') {
@@ -24,4 +27,26 @@ const getLocalIP = () => {
   }
 }
 
-export { isLocal, getLocalIP }
+const redirectToHttps = (req, res, next) => {
+  if (req.secure) {
+    next()
+  } else {
+    res.redirect(mainPathSecure + req.url)
+  }
+}
+
+const getHttpsOptions = async () => {
+  const key = await fs.promises.readFile(path.resolve(__dirname, '../../security/localhost.key'))
+  const cert = await fs.promises.readFile(path.resolve(__dirname, '../../security/localhost.crt'))
+  const ca = await fs.promises.readFile(path.resolve(__dirname, '../../security/rootCA.crt'))
+
+  return {
+    key,
+    cert,
+    ca,
+    requestCert: false,
+    rejectUnauthorized: true
+  }
+}
+
+export { isLocal, getLocalIP, redirectToHttps, getHttpsOptions }

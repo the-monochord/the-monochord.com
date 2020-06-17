@@ -1,4 +1,4 @@
-/* global window, __settings, location, fetch */
+/* global window, __settings, location, fetch, __INITIAL_DATA__ */
 
 import angular from 'angular'
 import ngSanitize from 'angular-sanitize'
@@ -23,10 +23,10 @@ import {
   includes,
   has
 } from 'ramda'
-// import React from 'react'
-// import { hydrate } from 'react-dom'
+import React from 'react'
+import { hydrate } from 'react-dom'
 import { getParametersFromArgs, getLastElementId } from '../common/listen'
-// import App from '../common/components/App'
+import App from '../common/components/App'
 import AudioModel from './js/AudioModel'
 import Model from './js/Model'
 import UI from './js/Ui'
@@ -215,11 +215,9 @@ angular
 
 // ------------------
 
-/*
 const container = document.getElementById('app')
 if (container) {
   const settings = mergeDeepLeftAll(__INITIAL_DATA__, defaultDatas)
   delete window.__INITIAL_DATA__
   hydrate(<App data={settings} />, container)
 }
-*/
