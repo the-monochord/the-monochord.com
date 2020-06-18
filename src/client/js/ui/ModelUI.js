@@ -96,10 +96,10 @@ class ModelUI {
   async fetchIntervals() {
     const {
       $scope: {
-        path: { static: staticPath }
+        path: { static: staticPathSecure }
       }
     } = this._
-    const response = await fetch(`${staticPath}/resources/intervals.json`)
+    const response = await fetch(`${staticPathSecure}/resources/intervals.json`)
     const contentType = response.headers.get('content-type')
 
     if (contentType && contentType.includes('application/json')) {

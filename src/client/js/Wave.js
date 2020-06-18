@@ -25,18 +25,18 @@ const waveFactories = {
 const waveTables = {}
 
 class Wave {
-  constructor(ctx, staticPath) {
+  constructor(ctx, staticPathSecure) {
     this._ = {
       ctx,
-      staticPath
+      staticPathSecure
     }
 
     this.fetchWaveTables()
   }
 
   async fetchWaveTables() {
-    const { ctx, staticPath } = this._
-    const response = await fetch(`${staticPath}/resources/wave-tables.json`)
+    const { ctx, staticPathSecure } = this._
+    const response = await fetch(`${staticPathSecure}/resources/wave-tables.json`)
     const data = await response.json()
 
     compose(

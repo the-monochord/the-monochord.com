@@ -31,10 +31,10 @@ $scope.sets = [{
 */
 
 class Model {
-  constructor($scope, staticPath) {
+  constructor($scope, staticPathSecure) {
     const self = this
 
-    const audioModel = new AudioModel(staticPath)
+    const audioModel = new AudioModel(staticPathSecure)
     let _oldValue = NOP
 
     let webAudioEnabled = false

@@ -98,7 +98,7 @@ const getOctaveRatio = (virtual, setOrder) => {
   return _last / _first
 }
 
-const AudioModel = function(staticPath) {
+const AudioModel = function(staticPathSecure) {
   let ctx = null
   let wave = null
 
@@ -349,7 +349,7 @@ const AudioModel = function(staticPath) {
     getWave: () => wave,
     enableAudio: function() {
       ctx = new AudioContext()
-      wave = new Wave(ctx, staticPath)
+      wave = new Wave(ctx, staticPathSecure)
 
       gate = ctx.createGain()
       gate.connect(ctx.destination)

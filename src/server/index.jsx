@@ -41,7 +41,7 @@ import {
   host,
   port,
   languages,
-  staticPath,
+  staticPathSecure,
   mainPath,
   splashes,
   defaultSessionData,
@@ -72,7 +72,7 @@ const getDefaultParams = req => {
     url: '',
     theme: session.theme,
     path: {
-      static: staticPath,
+      static: staticPathSecure,
       main: mainPath
     },
     seo: {
@@ -174,19 +174,19 @@ app.get('/', (req, res) => {
 
 app.get('/presetlist', (req, res) => {
   const {
-    path: { static: staticPath }
+    path: { static: staticPathSecure }
   } = getDefaultParams(req)
   res.json({
-    'Bohlen-Pierce': `${staticPath}/resources/scala-scales/bohlen-p.scl`,
-    'Carlos Alpha': `${staticPath}/resources/scala-scales/carlos_alpha.scl`,
-    'Carlos Beta': `${staticPath}/resources/scala-scales/carlos_beta.scl`,
-    'Carlos Gamma': `${staticPath}/resources/scala-scales/carlos_gamma.scl`,
-    '7 tone just intonation': `${staticPath}/resources/scala-scales/ji_7.scl`,
-    '11 tone just intonation': `${staticPath}/resources/scala-scales/ji_11.scl`,
-    '12 tone just intonation': `${staticPath}/resources/scala-scales/ji_12.scl`,
-    '13 tone just intonation': `${staticPath}/resources/scala-scales/ji_13.scl`,
-    '17 tone just intonation': `${staticPath}/resources/scala-scales/ji_17.scl`,
-    '19 tone just intonation': `${staticPath}/resources/scala-scales/ji_19.scl`
+    'Bohlen-Pierce': `${staticPathSecure}/resources/scala-scales/bohlen-p.scl`,
+    'Carlos Alpha': `${staticPathSecure}/resources/scala-scales/carlos_alpha.scl`,
+    'Carlos Beta': `${staticPathSecure}/resources/scala-scales/carlos_beta.scl`,
+    'Carlos Gamma': `${staticPathSecure}/resources/scala-scales/carlos_gamma.scl`,
+    '7 tone just intonation': `${staticPathSecure}/resources/scala-scales/ji_7.scl`,
+    '11 tone just intonation': `${staticPathSecure}/resources/scala-scales/ji_11.scl`,
+    '12 tone just intonation': `${staticPathSecure}/resources/scala-scales/ji_12.scl`,
+    '13 tone just intonation': `${staticPathSecure}/resources/scala-scales/ji_13.scl`,
+    '17 tone just intonation': `${staticPathSecure}/resources/scala-scales/ji_17.scl`,
+    '19 tone just intonation': `${staticPathSecure}/resources/scala-scales/ji_19.scl`
   })
 })
 
@@ -199,7 +199,7 @@ app.get('/thank-you', (req, res) => {
       description: '',
       url: mainPath,
       title: 'Thank you for your donation! - The Monochord',
-      image: `${staticPath}/img/monochord-logo.png`
+      image: `${staticPathSecure}/img/monochord-logo.png`
     }
   })
 })
