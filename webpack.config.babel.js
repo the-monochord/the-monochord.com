@@ -79,7 +79,8 @@ const common = {
 const clientConfig = {
   entry: {
     'monochord.min': [
-      '@babel/polyfill',
+      'core-js/stable',
+      'regenerator-runtime/runtime',
       './src/client/js/lib/webkit-audio-context-patch.min.js',
       // './src/client/js/lib/cancelandholdattime-polyfill.min.js',
       './src/client/index.jsx'
@@ -110,7 +111,7 @@ const serverConfig = {
   target: 'node',
   externals: [nodeExternals()],
   entry: {
-    'server.min': ['./src/server/index.jsx']
+    'server.min': ['core-js/stable', 'regenerator-runtime/runtime', './src/server/index.jsx']
   },
   output: {
     path: path.resolve(__dirname, 'app'),

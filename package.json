@@ -45,6 +45,7 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "classnames": "^2.2.6",
+    "core-js": "^3.6.5",
     "cors": "^2.8.5",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
@@ -57,6 +58,7 @@
     "ramda": "^0.26.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "regenerator-runtime": "^0.13.5",
     "session-file-store": "^1.3.1",
     "winston": "^3.2.1"
   },
@@ -64,7 +66,6 @@
     "@babel/cli": "^7.8.3",
     "@babel/core": "^7.8.3",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/polyfill": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
     "@babel/preset-react": "^7.8.3",
     "@babel/register": "^7.8.3",
