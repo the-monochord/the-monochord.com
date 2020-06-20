@@ -2,7 +2,6 @@ import {
   find,
   test,
   curry,
-  cond,
   compose,
   assoc,
   map,
@@ -73,36 +72,28 @@ const parseCent = curry(({ waveform, id }, cent) => ({
 }))
 
 const parseSet = curry(({ setId, waveform }, set) => {
-  /* eslint-disable */
-  return cond([
-    [
-      isStringSet,
+  return compose(
+    assoc('id', setId),
+    mergeDeepRight(setDefaults),
+    ifElse(
+      () => isStringSet(set),
       compose(
-        assoc('id', setId),
-        mergeDeepRight(setDefaults),
         objOf('strings'),
         map(string => {
           const id = ++lastElementId
           return parseString({ waveform, id }, string)
-        }),
-        split(':')
-      )
-    ],
-    [
-      isCentSet,
+        })
+      ),
       compose(
-        assoc('id', setId),
-        mergeDeepRight(setDefaults),
         objOf('cents'),
         map(cent => {
           const id = ++lastElementId
           return parseCent({ waveform, id }, cent)
-        }),
-        split(':')
+        })
       )
-    ]
-  ])(set)
-  /* eslint-enable */
+    ),
+    split(':')
+  )(set)
 })
 
 const splitSets = compose(unless(isNil, compose(filter(either(isStringSet, isCentSet)), split('-'))), getSetsArg)
