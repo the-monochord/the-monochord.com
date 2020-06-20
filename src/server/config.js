@@ -1,7 +1,10 @@
 import path from 'path'
 import { keys, unless, always, append } from 'ramda'
 import moment from 'moment'
+import dotenv from 'dotenv'
 import { getLocalIP, isLocal } from './helpers'
+
+dotenv.config()
 
 const mode = process.env.NODE_ENV || 'production'
 
@@ -16,10 +19,10 @@ const host = '0.0.0.0'
 const hostSecure = host
 const port = mode === 'development' ? 3000 : 80
 const portSecure = mode === 'development' ? 3443 : 443
-const staticPath = isRunningLocally ? `http://${localDomain}:${port}` : `http://${staticDomain}`
-const staticPathSecure = isRunningLocally ? `https://${localDomain}:${portSecure}` : `https://${staticDomain}`
-const mainPath = isRunningLocally ? `http://${localDomain}:${port}` : `http://${mainDomain}`
-const mainPathSecure = isRunningLocally ? `https://${localDomain}:${portSecure}` : `https://${mainDomain}`
+const staticPath = isRunningLocally ? `http://${localDomain}:${port}` : `http://${staticDomain}${port}`
+const staticPathSecure = isRunningLocally ? `http://${localDomain}:${port}` : `https://${staticDomain}${portSecure}`
+const mainPath = isRunningLocally ? `http://${localDomain}:${port}` : `http://${mainDomain}${port}`
+const mainPathSecure = isRunningLocally ? `http://${localDomain}:${port}` : `https://${mainDomain}${portSecure}`
 
 const languages = {
   en: 'English',
@@ -84,7 +87,7 @@ const sessionConfig = {
   name: 'monochord.sid',
   resave: false,
   saveUninitialized: false,
-  secret: 'tüdőszűrés'
+  secret: process.env.SESSION_SECRET
 }
 
 const minifyHTMLConfig = {
