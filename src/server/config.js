@@ -73,8 +73,8 @@ const settings = {
   themes,
   languages,
   path: {
-    static: staticPath,
-    main: mainPath
+    static: staticPathSecure,
+    main: mainPathSecure
   },
   ...defaultSessionData
 }

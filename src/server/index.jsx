@@ -42,7 +42,7 @@ import {
   port,
   languages,
   staticPathSecure,
-  mainPath,
+  mainPathSecure,
   splashes,
   defaultSessionData,
   settings,
@@ -73,7 +73,7 @@ const getDefaultParams = req => {
     theme: session.theme,
     path: {
       static: staticPathSecure,
-      main: mainPath
+      main: mainPathSecure
     },
     seo: {
       brand: 'The Monochord',
@@ -197,7 +197,7 @@ app.get('/thank-you', (req, res) => {
     url: '',
     seo: {
       description: '',
-      url: mainPath,
+      url: mainPathSecure,
       title: 'Thank you for your donation! - The Monochord',
       image: `${staticPathSecure}/img/monochord-logo.png`
     }
