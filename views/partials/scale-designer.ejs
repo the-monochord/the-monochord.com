@@ -8,7 +8,6 @@
         title="Halve values of all elements in set"
         type="button"
         class="icon-halve"
-        ng-class="{disabled:!_set || !mctrl.ui.model.canHalve(_set)}"
         ng-disabled="!_set || !mctrl.ui.model.canHalve(_set)"
         mobile-click="mctrl.ui.model.halve(_set);$event.stopPropagation()"
       ></button>
@@ -19,7 +18,6 @@
         type="button"
         class="icon-decrease"
         ng-disabled="!_set || !mctrl.ui.model.canLower(_set)"
-        ng-class="{disabled:!_set || !mctrl.ui.model.canLower(_set)}"
         hold-click="mctrl.ui.model.lower(_set)"
         mobile-click="$event.stopPropagation()"
       ></button>
@@ -29,7 +27,6 @@
         title="Raise values of all elements in set"
         type="button"
         class="icon-increase"
-        ng-class="{disabled:!_set || !mctrl.ui.model.canRaise(_set)}"
         ng-disabled="!_set || !mctrl.ui.model.canRaise(_set)"
         hold-click="mctrl.ui.model.raise(_set)"
         mobile-click="$event.stopPropagation()"
@@ -40,7 +37,6 @@
         title="Double values of all elements in set"
         type="button"
         class="icon-double"
-        ng-class="{disabled:!_set || !mctrl.ui.model.canDouble(_set)}"
         ng-disabled="!_set || !mctrl.ui.model.canDouble(_set)"
         mobile-click="mctrl.ui.model.double(_set);$event.stopPropagation()"
       ></button>
@@ -50,7 +46,6 @@
         title="Normalize values of all elements in set (simplify ratios)"
         type="button"
         class="icon-normalise"
-        ng-class="{disabled:!_set || !mctrl.ui.model.canNormalize(_set)}"
         ng-disabled="!_set || !mctrl.ui.model.canNormalize(_set)"
         mobile-click="mctrl.ui.model.normalise(_set);$event.stopPropagation()"
       ></button>
@@ -59,9 +54,46 @@
       <button
         title="Mute/unmute the whole set"
         type="button"
-        ng-class="{'icon-speaker-on': !_set.muted, 'icon-speaker-off': _set.muted, disabled: !_set}"
+        ng-class="{'icon-speaker-on': !_set.muted, 'icon-speaker-off': _set.muted}"
         ng-disabled="!_set"
         mobile-click="_set.muted = !_set.muted;$event.stopPropagation()"
+      ></button>
+    </li>
+    <li class="separator"></li>
+    <li>
+      <button
+        title="Add a new element to the set"
+        type="button"
+        class="icon-add"
+        ng-disabled="!_set"
+        mobile-click="mctrl.ui.model.addElement(_set);$event.stopPropagation()"
+      ></button>
+    </li>
+    <li id="duplicate-set">
+      <button
+        title="Duplicate selected set"
+        type="button"
+        class="icon-copy"
+        ng-disabled="!_set || !mctrl.ui.model.canCopySet()"
+        mobile-click="mctrl.ui.model.copySet()"
+      ></button>
+    </li>
+    <li>
+      <button
+        title="Move selected set down"
+        type="button"
+        class="icon-decrease"
+        ng-disabled="!_set || !mctrl.ui.model.canMoveDownSet()"
+        mobile-click="mctrl.ui.model.moveDownSet()"
+      ></button>
+    </li>
+    <li>
+      <button
+        title="Move selected set up"
+        type="button"
+        class="icon-increase"
+        ng-disabled="!_set || !mctrl.ui.model.canMoveUpSet()"
+        mobile-click="mctrl.ui.model.moveUpSet()"
       ></button>
     </li>
     <li>
@@ -121,9 +153,6 @@
                 <span class="smaller" ng-if="displayMode === 'normal' || displayMode === 'cents' || displayMode === 'pitches'">{{cent.multiplier}} ¢</span>
                 <span class="smaller" ng-if="displayMode === 'frequency'">{{mctrl.ui.calculateCentFrequency(cent) | number:2}} Hz</span>
               </button>
-            </li>
-            <li>
-              <button title="Add a new element to the set" type="button" class="icon-add" mobile-click="mctrl.ui.model.addElement(set);$event.stopPropagation()"></button>
             </li>
           </ul>
 

@@ -136,24 +136,6 @@
     color: $active;
   }
 
-  .ulreset {
-    ul {
-      &.railed {
-        $size : 14px;
-        $bumperSize : floor($size/3);
-        $bumperPos : floor($bumperSize + $bumperSize / 3);
-
-        background: radial-gradient(circle at calc(100% - #{$bumperPos}) 50%, $color2 $bumperSize, transparent 0%);
-
-        li {
-          &::before {
-            background: linear-gradient(to bottom, transparent calc(50% - 1px), $color2 calc(50% - 1px), $color2 calc(50%), transparent calc(50%));
-          }
-        }
-      }
-    }
-  }
-
   #wa-unsupported {
     background: $unsupportedBg;
   }
@@ -292,5 +274,9 @@
     #dashboard #tiles button:hover {
       box-shadow: 0 0 0 1pt $active;
     }
+  }
+
+  #scale-designer .actions .separator::before {
+    background: $disabled;
   }
 }

@@ -484,13 +484,12 @@
       width: $size;
       font-size: 0;
       position: relative;
-      padding-left: 10px;
 
       &::before {
         content: '';
         position: absolute;
         top: calc(50% - #{$size} / 2);
-        left: calc(50% - #{$size} / 2 + 5px);
+        left: calc(50% - #{$size} / 2);
         width: $size;
         height: $size;
         border-radius: $size / 2;
@@ -562,24 +561,9 @@
       }
 
       &.railed {
-        $size : 14px;
-        $bumperSize : floor($size/3);
-        $bumperPos : floor($bumperSize + $bumperSize / 3);
-
-        padding-right: $bumperSize;
-
         li {
           position: relative;
-          padding-right: $size;
-
-          &::before {
-            content: '';
-            right: 0;
-            top: 0;
-            position: absolute;
-            width: $size;
-            height: $sizeN;
-          }
+          padding-left: 10px;
 
           &.type {
             cursor: default;
@@ -588,6 +572,7 @@
             vertical-align: top;
             width: 20px;
             text-align: center;
+            padding-left: 20px;
           }
         }
       }
@@ -854,6 +839,20 @@
       margin: 0;
       padding: 0;
       display: inline-block;
+      vertical-align: middle;
+
+      &.separator {
+        padding: 0 3px;
+
+        &::before {
+          content: '';
+          display: inline-block;
+          width: 1px;
+          height: $sizeN / 4 * 3;
+          line-height: $sizeN;
+          vertical-align: top;
+        }
+      }
     }
   }
 }
