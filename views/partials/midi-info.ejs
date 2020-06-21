@@ -1,7 +1,7 @@
 <section id="midi-info" ng-class="{active:mctrl.ui.panel.isActive('midi-info')}">
   <h2>INPUT ports of attached MIDI devices</h2>
 
-  <table style="margin-bottom: 40px; width: auto;" ng-hide="!mctrl.ui.piano.hasMIDIInputs()">
+  <table style="margin-bottom: 40px; width: auto;" ng-show="mctrl.ui.piano.hasMIDIInputs()">
     <tr>
       <td colspan="2" width="340" class="smaller center">device name</td>
       <td class="smaller center">channels</td>
@@ -20,10 +20,14 @@
       </td>
     </tr>
   </table>
+
+  <div ng-hide="mctrl.ui.piano.hasMIDIInputs()">none</div>
+
+  <br />
   
   <h2>OUTPUT ports of attached MIDI devices</h2>
   
-  <table style="margin-bottom: 40px; width: auto;" ng-hide="!mctrl.ui.piano.hasMIDIOutputs()">
+  <table style="margin-bottom: 40px; width: auto;" ng-show="mctrl.ui.piano.hasMIDIOutputs()">
     <tr>
       <td colspan="2" width="340" class="smaller center">device name</td>
       <td class="smaller center">channels</td>
@@ -42,7 +46,11 @@
       </td>
     </tr>
   </table>
+
+  <div ng-hide="mctrl.ui.piano.hasMIDIOutputs()">none</div>
   
+  <br />
+
   <h2>Options</h2>
 
   <label class="labelled-button">
