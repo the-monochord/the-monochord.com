@@ -2,6 +2,81 @@
 {{_set = ui.model.selectedSet;''}}
 
 <section id="scale-designer" ng-class="{active:mctrl.ui.panel.isActive('scale-designer')}" mobile-click="$event.target.id === 'scale-designer' && mctrl.ui.model.clearSelection()">
+  <ul class="actions">
+    <li class="hide-if-screen-is-narrow">
+      <button
+        title="Halve values of all elements in set"
+        type="button"
+        class="icon-halve"
+        ng-class="{disabled:!_set || !mctrl.ui.model.canHalve(_set)}"
+        ng-disabled="!_set || !mctrl.ui.model.canHalve(_set)"
+        mobile-click="mctrl.ui.model.halve(_set);$event.stopPropagation()"
+      ></button>
+    </li>
+    <li>
+      <button
+        title="Lower values of all elements in set"
+        type="button"
+        class="icon-decrease"
+        ng-disabled="!_set || !mctrl.ui.model.canLower(_set)"
+        ng-class="{disabled:!_set || !mctrl.ui.model.canLower(_set)}"
+        hold-click="mctrl.ui.model.lower(_set)"
+        mobile-click="$event.stopPropagation()"
+      ></button>
+    </li>
+    <li>
+      <button
+        title="Raise values of all elements in set"
+        type="button"
+        class="icon-increase"
+        ng-class="{disabled:!_set || !mctrl.ui.model.canRaise(_set)}"
+        ng-disabled="!_set || !mctrl.ui.model.canRaise(_set)"
+        hold-click="mctrl.ui.model.raise(_set)"
+        mobile-click="$event.stopPropagation()"
+      ></button>
+    </li>
+    <li class="hide-if-screen-is-narrow">
+      <button
+        title="Double values of all elements in set"
+        type="button"
+        class="icon-double"
+        ng-class="{disabled:!_set || !mctrl.ui.model.canDouble(_set)}"
+        ng-disabled="!_set || !mctrl.ui.model.canDouble(_set)"
+        mobile-click="mctrl.ui.model.double(_set);$event.stopPropagation()"
+      ></button>
+    </li>
+    <li class="hide-if-screen-is-narrow">
+      <button
+        title="Normalize values of all elements in set (simplify ratios)"
+        type="button"
+        class="icon-normalise"
+        ng-class="{disabled:!_set || !mctrl.ui.model.canNormalize(_set)}"
+        ng-disabled="!_set || !mctrl.ui.model.canNormalize(_set)"
+        mobile-click="mctrl.ui.model.normalise(_set);$event.stopPropagation()"
+      ></button>
+    </li>
+    <li>
+      <button
+        title="Mute/unmute the whole set"
+        type="button"
+        ng-class="{'icon-speaker-on': !_set.muted, 'icon-speaker-off': _set.muted, disabled: !_set}"
+        ng-disabled="!_set"
+        mobile-click="_set.muted = !_set.muted;$event.stopPropagation()"
+      ></button>
+    </li>
+    <li>
+      <button
+        title="Remove the whole set"
+        type="button"
+        class="icon-delete"
+        ng-disabled="!_set"
+        mobile-click="mctrl.ui.model.deleteSet(_set);$event.stopPropagation()"
+      ></button>
+    </li>
+  </ul>
+
+  <h2>Notes of the scale</h2>
+
   <p class="disabled" ng-hide="sets.length">
     The scale is empty<br />
     To get started click the [+] icon in the bottom of the screen and add your first note or go to the scala page and import a preset.
@@ -25,16 +100,6 @@
             <li><input autosize type="number" min="{{mctrl.ui.model['lowest' + (elementSelectedIsString ? 'Harmonic' : 'Cent')]}}" max="{{mctrl.ui.model['highest' + (elementSelectedIsString ? 'Harmonic' : 'Cent')]}}" ng-model="_element.multiplier" mobile-click="$event.stopPropagation()" step="{{elementSelectedIsString ? 1 : 0.01}}" /></li>
             <li><button title="Mute/unmute element" type="button" ng-class="'icon-speaker-o' + (_element.muted ? 'ff' : 'n')" mobile-click="_element.muted = !_element.muted;$event.stopPropagation()"></button></li>
             <li><button title="Remove element" type="button" class="icon-delete" mobile-click="mctrl.ui.model.removeElement(_element);$event.stopPropagation()"></button></li>
-          </ul>
-
-          <ul class="fright set" ng-hide="elementSelected">
-            <li class="hide-if-screen-is-narrow"><button title="Halve values of all elements in set" type="button" class="icon-halve" ng-class="{disabled:!mctrl.ui.model.canHalve(set)}" mobile-click="mctrl.ui.model.halve(set);$event.stopPropagation()"></button></li>
-            <li><button title="Lower values of all elements in set" type="button" class="icon-decrease" ng-class="{disabled:!mctrl.ui.model.canLower(set)}" hold-click="mctrl.ui.model.lower(set)" mobile-click="$event.stopPropagation()"></button></li>
-            <li><button title="Raise values of all elements in set" type="button" class="icon-increase" ng-class="{disabled:!mctrl.ui.model.canRaise(set)}" hold-click="mctrl.ui.model.raise(set)" mobile-click="$event.stopPropagation()"></button></li>
-            <li class="hide-if-screen-is-narrow"><button title="Double values of all elements in set" type="button" class="icon-double" ng-class="{disabled:!mctrl.ui.model.canDouble(set)}" mobile-click="mctrl.ui.model.double(set);$event.stopPropagation()"></button></li>
-            <li class="hide-if-screen-is-narrow"><button title="Normalize values of all elements in set (simplify ratios)" type="button" class="icon-normalise" ng-class="{disabled:!mctrl.ui.model.canNormalize(set)}" mobile-click="mctrl.ui.model.normalise(set);$event.stopPropagation()"></button></li>
-            <li><button title="Mute/unmute the whole set" type="button" ng-class="'icon-speaker-' + (set.muted ? 'off' : 'on')" mobile-click="set.muted = !set.muted;$event.stopPropagation()"></button></li>
-            <li><button title="Remove the whole set" type="button" class="icon-delete" mobile-click="mctrl.ui.model.deleteSet(set);$event.stopPropagation()"></button></li>
           </ul>
 
           <ul class="railed">

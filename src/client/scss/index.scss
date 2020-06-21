@@ -206,6 +206,7 @@
       display: none;
       box-sizing: border-box;
       padding-left: 8px;
+      padding-top: 10px;
 
       &.active {
         display: block;
@@ -839,6 +840,20 @@
 
     button {
       padding: 0;
+    }
+  }
+
+  #scale-designer .actions {
+    float: right;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0;
+
+    li {
+      margin: 0;
+      padding: 0;
+      display: inline-block;
     }
   }
 }
