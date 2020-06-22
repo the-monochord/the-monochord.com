@@ -9,12 +9,17 @@
   ],
   "parser": "babel-eslint",
   "rules": {
+    "curly": ["error", "all"],
     "prefer-template": "error",
     "react/prop-types": "off",
     "prettier/prettier": [
       "error",
       {
-        "printWidth": 120
+        "semi": false,
+        "singleQuote": true,
+        "printWidth": 120,
+        "trailingComma": "none",
+        "arrowParens": "avoid"
       }
     ],
     "no-var": "error",
