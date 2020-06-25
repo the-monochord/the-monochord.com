@@ -39,6 +39,7 @@
     window.dataLayer = window.dataLayer || [];
     function gtag() {
       dataLayer.push(arguments)
+      console.log('stats:', ...arguments)
     }
 
     gtag('js', new Date())
@@ -47,7 +48,7 @@
 <% } else { %>
   <script>
     function gtag() {
-      console.log('gtag', ...arguments)
+      console.log('stats:', ...arguments)
     }
   </script>
 <% } %>
