@@ -5,7 +5,10 @@ const onScaleImport = (description, raw) => {
 }
 
 const onPageSelect = pageID => {
-  gtag('event', 'page select', { pageID })
+  gtag('event', 'screen_view', {
+    app_name: 'monochord',
+    screen_name: pageID
+  })
 }
 
 export { onScaleImport, onPageSelect }

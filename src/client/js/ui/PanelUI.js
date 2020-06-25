@@ -18,6 +18,8 @@ class PanelUI extends EventEmitter {
       main: defaultPage,
       isSidebarVisible: false
     }
+
+    stats.onPageSelect(defaultPage)
   }
 
   toggle(what) {
