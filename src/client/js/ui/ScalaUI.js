@@ -11,6 +11,7 @@ import Model from '../Model'
 
 import Converter from '../Converter'
 import { safeApply } from '../helpers'
+import * as stats from '../stats'
 
 const {
   convert: { fractionToCents, ratioToFraction },
@@ -341,6 +342,7 @@ class ScalaUI {
       converter
         .load(raw, Converter.types.SCALA, true)
         .then(data => {
+          stats.onScaleImport(data.description, raw)
           $scope.ui.scala.success = true
           $scope.ui.scala.parsedData = data
           $scope.ui.scala.error = {}

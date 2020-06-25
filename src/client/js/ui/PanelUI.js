@@ -1,5 +1,6 @@
 import EventEmitter from 'eventemitter3'
 import AudioModel from '../AudioModel'
+import * as stats from '../stats'
 
 const defaultPage = 'scale-designer'
 
@@ -35,6 +36,7 @@ class PanelUI extends EventEmitter {
         ? AudioModel.MODES.PIANO
         : AudioModel.MODES.NORMAL
       this.emit('change', what)
+      stats.onPageSelect($scope.ui.panel.main)
     }
   }
 
