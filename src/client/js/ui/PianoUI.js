@@ -22,7 +22,8 @@ import {
   inc,
   propOr,
   has,
-  clone
+  clone,
+  isEmpty
 } from 'ramda'
 
 import monochord from 'monochord-core'
@@ -192,17 +193,15 @@ class PianoUI {
         const { noteTable, notes, model } = this._
         const x = {}
 
-        compose(
-          forEach(id => {
-            noteTable[id] = { pressed: false, sustained: false, highlighted: false }
-            const prefix = id.match(prefixPattern)[0]
-            if (!x[prefix]) {
-              x[prefix] = [id]
-            } else {
-              x[prefix].push(id)
-            }
-          })
-        )(model.piano.getNotes())
+        forEach(id => {
+          noteTable[id] = { pressed: false, sustained: false, highlighted: false }
+          const prefix = id.match(prefixPattern)[0]
+          if (!x[prefix]) {
+            x[prefix] = [id]
+          } else {
+            x[prefix].push(id)
+          }
+        }, model.piano.getNotes())
 
         const prefixes = Object.keys(x)
         const negatives = prefixes.filter(key => key[0] === '-').sort((a, b) => b.length - a.length)
@@ -212,13 +211,22 @@ class PianoUI {
         const order = model.getOrder()
 
         forEach(prefix => {
-          notes.push(order.map(value => prefix + value).filter(value => x[prefix].includes(value)))
+          const row = order.map(value => prefix + value).filter(value => x[prefix].includes(value))
+          if (!isEmpty(row)) {
+            notes.push(row)
+          }
         }, negatives)
 
-        notes.push(order.filter(value => x[''].includes(value)))
+        const row = order.filter(value => x[''].includes(value))
+        if (!isEmpty(row)) {
+          notes.push(row)
+        }
 
         forEach(prefix => {
-          notes.push(order.map(value => prefix + value).filter(value => x[prefix].includes(value)))
+          const row = order.map(value => prefix + value).filter(value => x[prefix].includes(value))
+          if (!isEmpty(row)) {
+            notes.push(row)
+          }
         }, positives)
       } else if (value === AudioModel.MODES.NORMAL) {
         this._.noteTable = {}
