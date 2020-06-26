@@ -45,10 +45,18 @@ const getImage = () => {
 }
 
 const setSEOData = ({ url, title, description, image }, addToHistory = true) => {
-  if (url) setUrl(url, addToHistory)
-  if (title) setTitle(title)
-  if (description) setDescription(description)
-  if (image) setImage(image)
+  if (url) {
+    setUrl(url, addToHistory)
+  }
+  if (title) {
+    setTitle(title)
+  }
+  if (description) {
+    setDescription(description)
+  }
+  if (image) {
+    setImage(image)
+  }
 }
 
 const getSEOData = args => {
