@@ -32,6 +32,7 @@ import Model from './js/Model'
 import UI from './js/Ui'
 import { getSEOData, setSEOData, generateUrlFromState } from './js/seo'
 import { safeApply, NOP, watchForHover } from './js/helpers'
+import * as stats from './js/stats'
 
 import './scss/index.scss'
 import 'codemirror/lib/codemirror.css'
@@ -75,6 +76,8 @@ const defaultDatas = {
 }
 
 const mergeDeepLeftAll = unapply(reduce(mergeDeepLeft, {}))
+
+stats.init()
 
 angular
   .module('Monochord', ['Directive', ngSanitize, 'ui.codemirror'])
