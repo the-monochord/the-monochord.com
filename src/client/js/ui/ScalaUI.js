@@ -342,7 +342,7 @@ class ScalaUI {
       converter
         .load(raw, Converter.types.SCALA, true)
         .then(data => {
-          stats.onScaleImport(data.description, raw)
+          stats.onScaleImport(data.description)
           $scope.ui.scala.success = true
           $scope.ui.scala.parsedData = data
           $scope.ui.scala.error = {}
