@@ -1,0 +1,3 @@
+const NOP = () => {}
+
+export { NOP }
