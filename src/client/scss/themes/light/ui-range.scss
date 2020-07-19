@@ -1,5 +1,5 @@
-$width : 1px;
-$size : 14px;
+$width: 1px;
+$size: 14px;
 
 $thumb-radius: 8px + $width;
 $thumb-size: $size;
@@ -8,18 +8,18 @@ $thumb-border-width: $width;
 $track-width: 100%;
 $track-height: $width;
 
-@mixin track($background: $track-color) {
+@mixin track($background: $color2) {
   background: $background;
 }
 
-@mixin thumb($border-color: $thumb-border-color) {
+@mixin thumb($border-color: $color) {
   border: $thumb-border-width solid $border-color;
-  background: $thumb-color;
+  background: $background;
 }
 
 input[type=range] {
-  $bumperSize : floor($size / 3);
-  $bumperPos : floor($bumperSize + $bumperSize / 3);
+  $bumperSize: floor($size / 3);
+  $bumperPos: floor($bumperSize + $bumperSize / 3);
 
   background:
     radial-gradient(circle at $bumperPos 50%, $color2 $bumperSize, transparent 0%),
