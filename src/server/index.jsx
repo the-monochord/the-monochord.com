@@ -122,7 +122,9 @@ const renderSEO = (req, config) => {
   const newConfig = evolve({
     seo: mergeDeepLeft({
       url: config.url ? config.url : config.path.main,
-      title: config.title ? i18n.__({ phrase: config.title, locale: session.language }) : generateMainTitle(),
+      title: config.title
+        ? i18n.__({ phrase: config.title, locale: session.language })
+        : generateMainTitle(),
       description: i18n.__({ phrase: config.seo.description, locale: session.language }),
       image: `${config.path.static}/img/monochord-logo.png`
     })
@@ -164,7 +166,10 @@ app.use(expressLogger)
 app.get('/listen/*', (req, res) => {
   res.render(
     'pages/index',
-    renderSEO(req, mergeDeepRight(getDefaultParams(req), getListenParametersFromArgs(split('/', req.params[0]))))
+    renderSEO(
+      req,
+      mergeDeepRight(getDefaultParams(req), getListenParametersFromArgs(split('/', req.params[0])))
+    )
   )
 })
 
@@ -278,5 +283,8 @@ const onTerminateSignal = (terminateSignal = null) => () => {
   // const httpsOptions = await getHttpsOptions()
 
   process.on('exit', onTerminateSignal())
-  forEach(terminateSignal => process.on(terminateSignal, onTerminateSignal(terminateSignal)), terminateSignals)
+  forEach(
+    terminateSignal => process.on(terminateSignal, onTerminateSignal(terminateSignal)),
+    terminateSignals
+  )
 })()

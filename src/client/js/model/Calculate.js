@@ -44,7 +44,9 @@ class Calculate {
     model[isCentType ? 'cents' : 'strings'].findById(id, (element, index, array, set) => {
       freq =
         this.baseFrequency(set, type) *
-        (isCentType ? parseFloat(centsToFraction(element.multiplier).toString()) : element.multiplier)
+        (isCentType
+          ? parseFloat(centsToFraction(element.multiplier).toString())
+          : element.multiplier)
     })
 
     return freq
@@ -59,10 +61,14 @@ class Calculate {
     if (set.strings.length > 1) {
       const baseFreq = this.baseFrequency(set, Model.TYPE.STRING)
 
-      const centValue = fractionToCents(ratioToFraction(baseFreq, baseFreq * element.multiplier)).toString()
+      const centValue = fractionToCents(
+        ratioToFraction(baseFreq, baseFreq * element.multiplier)
+      ).toString()
 
       const lowestMultiplier = model.harmonics.getLowest(set, Model.TYPE.STRING)
-      const lowestCentValue = fractionToCents(ratioToFraction(baseFreq, baseFreq * lowestMultiplier)).toString()
+      const lowestCentValue = fractionToCents(
+        ratioToFraction(baseFreq, baseFreq * lowestMultiplier)
+      ).toString()
 
       return parseFloat(subtract(centValue, lowestCentValue).toString())
     } else {

@@ -34,7 +34,9 @@ function scalaPrintCent(n) {
 }
 
 function generateEDx(n, harmonicsOfRatio) {
-  const step = parseFloat(multiply(fractionToCents(ratioToFraction.apply(null, harmonicsOfRatio)), 1e6 / n).toString())
+  const step = parseFloat(
+    multiply(fractionToCents(ratioToFraction.apply(null, harmonicsOfRatio)), 1e6 / n).toString()
+  )
   const ratio = scalaPrintRatio(harmonicsOfRatio)
 
   let scl = '!\n'
@@ -170,7 +172,9 @@ function exportSession($scope, model) {
               row.transformed = scalaPrintRatio(multipliers)
             } else {
               row.multipliers = [
-                -parseFloat(fractionToCents(ratioToFraction(multipliers[0], multipliers[1])).toString())
+                -parseFloat(
+                  fractionToCents(ratioToFraction(multipliers[0], multipliers[1])).toString()
+                )
               ]
             }
           } else {
@@ -190,7 +194,12 @@ function exportSession($scope, model) {
               row.transformed = scalaPrintRatio(multipliers)
             } else {
               row.multipliers = [
-                parseFloat(add(fractionToCents(ratioToFraction(multipliers[0], multipliers[1])), prev).toString())
+                parseFloat(
+                  add(
+                    fractionToCents(ratioToFraction(multipliers[0], multipliers[1])),
+                    prev
+                  ).toString()
+                )
               ]
               row.transformed = scalaPrintRatio(multipliers)
             }
@@ -210,7 +219,11 @@ function exportSession($scope, model) {
 
       row.cents =
         row.type === 'ratio'
-          ? parseFloat(fractionToCents(ratioToFraction(row.multipliers[0], row.multipliers[1] || 1)).toString())
+          ? parseFloat(
+              fractionToCents(
+                ratioToFraction(row.multipliers[0], row.multipliers[1] || 1)
+              ).toString()
+            )
           : row.multipliers[0]
 
       return row
@@ -228,7 +241,8 @@ function exportSession($scope, model) {
   scl += compose(
     join('\n'),
     map(row => {
-      let str = row.type === 'ratio' ? scalaPrintRatio(row.multipliers) : scalaPrintCent(row.multipliers[0])
+      let str =
+        row.type === 'ratio' ? scalaPrintRatio(row.multipliers) : scalaPrintCent(row.multipliers[0])
 
       const comment = []
 
@@ -413,7 +427,10 @@ class ScalaUI {
 
   generateEDxToEditor() {
     const { $scope } = this._
-    if (Number.isInteger($scope.ui.scala.EDx.x.first) && Number.isInteger($scope.ui.scala.EDx.x.second)) {
+    if (
+      Number.isInteger($scope.ui.scala.EDx.x.first) &&
+      Number.isInteger($scope.ui.scala.EDx.x.second)
+    ) {
       $scope.ui.scala.importTextField = generateEDx($scope.ui.scala.EDx.n, [
         $scope.ui.scala.EDx.x.first,
         $scope.ui.scala.EDx.x.second

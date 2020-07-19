@@ -38,13 +38,24 @@ import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/mbo.css'
 import PolySynth from './js/synth/gate-controllers/PolySynth'
 
-const parsePath = compose(reject(isEmpty), split('/'), replace(/^listen\//, ''), replace(/^\//, ''), replace(/\/$/, ''))
+const parsePath = compose(
+  reject(isEmpty),
+  split('/'),
+  replace(/^listen\//, ''),
+  replace(/^\//, ''),
+  replace(/\/$/, '')
+)
 
-const scopeToPath = (sets, waveform) => ifElse(length, generateUrlFromState(waveform), always(''))(sets)
+const scopeToPath = (sets, waveform) =>
+  ifElse(length, generateUrlFromState(waveform), always(''))(sets)
 
 const pathToSEOData = compose(getSEOData, parsePath)
 
-const updateSetsAndWaveform = ($scope, model, { lastSetId, lastElementId, sets, waveform, onUpdate = NOP }) => {
+const updateSetsAndWaveform = (
+  $scope,
+  model,
+  { lastSetId, lastElementId, sets, waveform, onUpdate = NOP }
+) => {
   $scope.sets = sets
   $scope.waveform = waveform
   model._lastSetId = lastSetId

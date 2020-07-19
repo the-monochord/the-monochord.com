@@ -323,7 +323,10 @@ class ModelUI {
   canNormalize(set) {
     const { model } = this._
 
-    return model.harmonics.canBeNormalized(set, Model.TYPE[model.harmonics.isStringSet(set) ? 'STRING' : 'CENT'])
+    return model.harmonics.canBeNormalized(
+      set,
+      Model.TYPE[model.harmonics.isStringSet(set) ? 'STRING' : 'CENT']
+    )
   }
 
   normalise(set) {
@@ -445,13 +448,20 @@ class ModelUI {
       const names = propOr(
         [],
         'names',
-        find(this.isStringSet(setCopy) ? propEq('ratio', [smaller, bigger]) : propEq('cents', bigger - smaller), ratios)
+        find(
+          this.isStringSet(setCopy)
+            ? propEq('ratio', [smaller, bigger])
+            : propEq('cents', bigger - smaller),
+          ratios
+        )
       )
 
       ret = names.length
         ? `[ ${names.join(', ')} ]${
             this.canNormalize(set)
-              ? ` ( ${this.isStringSet(setCopy) ? `${bigger} : ${smaller}` : `${bigger - smaller}¢`} )`
+              ? ` ( ${
+                  this.isStringSet(setCopy) ? `${bigger} : ${smaller}` : `${bigger - smaller}¢`
+                } )`
               : ''
           }`
         : ''

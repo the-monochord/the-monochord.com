@@ -96,7 +96,10 @@ const parseSet = curry(({ setId, waveform }, set) => {
   )(set)
 })
 
-const splitSets = compose(unless(isNil, compose(filter(either(isStringSet, isCentSet)), split('-'))), getSetsArg)
+const splitSets = compose(
+  unless(isNil, compose(filter(either(isStringSet, isCentSet)), split('-'))),
+  getSetsArg
+)
 
 const getSets = curry((waveform, args) =>
   compose(

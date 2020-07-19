@@ -49,7 +49,9 @@ const capitalize = compose(join(''), adjust(0, toUpper))
 const copyProp = curry((fromName, toName, data) => assoc(toName, prop(fromName, data), data))
 
 // renameProp :: String -> String -> Object -> Object
-const renameProp = curry((fromName, toName, data) => dissoc(fromName, copyProp(fromName, toName, data)))
+const renameProp = curry((fromName, toName, data) =>
+  dissoc(fromName, copyProp(fromName, toName, data))
+)
 
 // promiseAll :: Array Function -> Array Promise
 const promiseAll = Promise.all.bind(Promise)

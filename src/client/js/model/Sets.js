@@ -133,7 +133,10 @@ class Sets {
   findByElement(element) {
     const { $scope } = this._
 
-    return $scope.sets.find(_set => _set.strings.includes(element) || _set.cents.includes(element)) || null
+    return (
+      $scope.sets.find(_set => _set.strings.includes(element) || _set.cents.includes(element)) ||
+      null
+    )
   }
 }
 

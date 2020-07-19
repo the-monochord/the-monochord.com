@@ -119,7 +119,11 @@ class Harmonics {
     const canLowerString = lString !== null && lString - by >= model._lowestHarmonic
     const canLowerCent = lCent !== null && lCent - by >= model._lowestCent
 
-    return (lString === null && canLowerCent) || (canLowerString && lCent === null) || (canLowerString && canLowerCent)
+    return (
+      (lString === null && canLowerCent) ||
+      (canLowerString && lCent === null) ||
+      (canLowerString && canLowerCent)
+    )
   }
 
   canHalve(target) {
@@ -139,7 +143,9 @@ class Harmonics {
     const canHalveCent = !set.cents.some(cent => cent.multiplier / 2 < model._lowestCent)
 
     return (
-      (!set.strings.length && canHalveCent) || (canHalveString && !set.cents.length) || (canHalveString && canHalveCent)
+      (!set.strings.length && canHalveCent) ||
+      (canHalveString && !set.cents.length) ||
+      (canHalveString && canHalveCent)
     )
   }
 
@@ -183,7 +189,11 @@ class Harmonics {
     const canRaiseString = hString !== null && hString + by <= model._highestHarmonic
     const canRaiseCent = hCent !== null && hCent + by <= model._highestCent
 
-    return (hString === null && canRaiseCent) || (canRaiseString && hCent === null) || (canRaiseString && canRaiseCent)
+    return (
+      (hString === null && canRaiseCent) ||
+      (canRaiseString && hCent === null) ||
+      (canRaiseString && canRaiseCent)
+    )
   }
 
   canDouble(target) {
@@ -199,7 +209,9 @@ class Harmonics {
     const canDoubleCent = hCent !== null && hCent * 2 <= model._highestCent
 
     return (
-      (hString === null && canDoubleCent) || (canDoubleString && hCent === null) || (canDoubleString && canDoubleCent)
+      (hString === null && canDoubleCent) ||
+      (canDoubleString && hCent === null) ||
+      (canDoubleString && canDoubleCent)
     )
   }
 
@@ -231,7 +243,10 @@ class Harmonics {
       return this.getLowest(target, type) > model._lowestCent
     } else {
       const multipliers = this.getMultipliers(target, type)
-      return multipliers.length > 1 && parseInt(findGreatestCommonDivisorArray(multipliers).toString()) > 1
+      return (
+        multipliers.length > 1 &&
+        parseInt(findGreatestCommonDivisorArray(multipliers).toString()) > 1
+      )
     }
   }
 
@@ -248,7 +263,9 @@ class Harmonics {
             decreaseBy(lowest)
           )(set.cents)
         } else {
-          const gcd = parseInt(findGreatestCommonDivisorArray(this.getMultipliers(set, type)).toString())
+          const gcd = parseInt(
+            findGreatestCommonDivisorArray(this.getMultipliers(set, type)).toString()
+          )
           set.strings = divideBy(gcd, set.strings)
         }
       }

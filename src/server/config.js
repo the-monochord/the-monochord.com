@@ -19,10 +19,16 @@ const host = '0.0.0.0'
 const hostSecure = host
 const port = mode === 'development' ? 3000 : 80
 const portSecure = mode === 'development' ? 3443 : 443
-const staticPath = isRunningLocally ? `http://${localDomain}:${port}` : `http://${staticDomain}:${port}`
-const staticPathSecure = isRunningLocally ? `http://${localDomain}:${port}` : `https://${staticDomain}:${portSecure}`
+const staticPath = isRunningLocally
+  ? `http://${localDomain}:${port}`
+  : `http://${staticDomain}:${port}`
+const staticPathSecure = isRunningLocally
+  ? `http://${localDomain}:${port}`
+  : `https://${staticDomain}:${portSecure}`
 const mainPath = isRunningLocally ? `http://${localDomain}:${port}` : `http://${mainDomain}:${port}`
-const mainPathSecure = isRunningLocally ? `http://${localDomain}:${port}` : `https://${mainDomain}:${portSecure}`
+const mainPathSecure = isRunningLocally
+  ? `http://${localDomain}:${port}`
+  : `https://${mainDomain}:${portSecure}`
 
 const languages = {
   en: 'English',

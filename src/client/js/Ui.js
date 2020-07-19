@@ -30,7 +30,10 @@ class UI {
     this.calculateCentFrequency = function(cent) {
       return model.calculate.frequency(cent, Model.TYPE.CENT)
     }
-    this.stringToCent = memoizeWith(JSON.stringify, string => Math.round(model.calculate.cent(string) * 100) / 100)
+    this.stringToCent = memoizeWith(
+      JSON.stringify,
+      string => Math.round(model.calculate.cent(string) * 100) / 100
+    )
 
     this.mouseDown = function() {
       $scope.ui.mousedown = true

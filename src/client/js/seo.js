@@ -1,6 +1,19 @@
 /* global history */
 
-import { map, toString, compose, prop, join, ifElse, length, when, unless, always, isEmpty, curry } from 'ramda'
+import {
+  map,
+  toString,
+  compose,
+  prop,
+  join,
+  ifElse,
+  length,
+  when,
+  unless,
+  always,
+  isEmpty,
+  curry
+} from 'ramda'
 
 import {
   getParametersFromArgs,
@@ -96,7 +109,10 @@ const setsToString = compose(
   )
 )
 
-const waveformToString = compose(when(isDefaultWaveform, always('')), unless(isValidWaveform, always('sine')))
+const waveformToString = compose(
+  when(isDefaultWaveform, always('')),
+  unless(isValidWaveform, always('sine'))
+)
 
 const generateUrlFromState = curry((waveform, sets) => {
   const setsString = setsToString(sets)
@@ -105,4 +121,13 @@ const generateUrlFromState = curry((waveform, sets) => {
   return prefix(setsString, prefixIfNotEmpty('/', waveformString))
 })
 
-export { setUrl, setTitle, setDescription, setImage, getImage, setSEOData, getSEOData, generateUrlFromState }
+export {
+  setUrl,
+  setTitle,
+  setDescription,
+  setImage,
+  getImage,
+  setSEOData,
+  getSEOData,
+  generateUrlFromState
+}

@@ -21,7 +21,14 @@ import monochord from 'monochord-core'
 
 const {
   midi: {
-    constants: { whiteOnlyMap, commands, cc, defaultInputData, defaultOutputData, maxBendingDistanceInSemitones },
+    constants: {
+      whiteOnlyMap,
+      commands,
+      cc,
+      defaultInputData,
+      defaultOutputData,
+      maxBendingDistanceInSemitones
+    },
     commands: { setPitchBendLimit, bendPitch, noteOn, noteOff },
     helpers: { getNameFromPort, getAllKeys, getWhiteKeys },
     math: { getNoteId, getNoteFrequency, getBendingDistance }
@@ -279,7 +286,9 @@ class MIDI extends EventEmitter {
           }
         } else {
           const noteId = parseInt(getNoteId(frequency).toString())
-          const pitchbendAmount = parseFloat(getBendingDistance(frequency, getNoteFrequency(noteId)).toString())
+          const pitchbendAmount = parseFloat(
+            getBendingDistance(frequency, getNoteFrequency(noteId)).toString()
+          )
 
           port.send(noteOn(channel, noteId, pitchbendAmount))
           demoData[portName][channel].pressedNoteIds.push(noteId)

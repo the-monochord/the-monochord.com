@@ -1,4 +1,17 @@
-import { forEach, includes, evolve, pluck, concat, append, either, __, compose, prop, map, toString } from 'ramda'
+import {
+  forEach,
+  includes,
+  evolve,
+  pluck,
+  concat,
+  append,
+  either,
+  __,
+  compose,
+  prop,
+  map,
+  toString
+} from 'ramda'
 import Calculate from './model/Calculate'
 import Element from './model/Elements'
 import Harmonics from './model/Harmonics'
@@ -126,13 +139,17 @@ class Model {
 
         forEach(newString => {
           strings[
-            group !== 'added' && oldSet.strings.some(oldString => oldString.id === newString.id) ? 'changed' : 'added'
+            group !== 'added' && oldSet.strings.some(oldString => oldString.id === newString.id)
+              ? 'changed'
+              : 'added'
           ].push(newString.id)
         })(newSet.strings)
 
         forEach(newCent => {
           cents[
-            group !== 'added' && oldSet.cents.some(oldCent => oldCent.id === newCent.id) ? 'changed' : 'added'
+            group !== 'added' && oldSet.cents.some(oldCent => oldCent.id === newCent.id)
+              ? 'changed'
+              : 'added'
           ].push(newCent.id)
         })(newSet.cents)
       })
@@ -140,7 +157,10 @@ class Model {
       forEach(oldSet => {
         if (either(includes(__, sets.added), includes(__, sets.changed))(oldSet.id)) {
           forEach(oldString => {
-            if (!includes(oldString.id, strings.added) && !includes(oldString.id, strings.changed)) {
+            if (
+              !includes(oldString.id, strings.added) &&
+              !includes(oldString.id, strings.changed)
+            ) {
               strings.removed.push(oldString.id)
             }
           })(oldSet.strings)

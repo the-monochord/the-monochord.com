@@ -1,7 +1,18 @@
 import path from 'path'
 import fs from 'fs'
 import { networkInterfaces } from 'os'
-import { compose, values, flatten, find, both, propEq, prop, slice, includes, endsWith } from 'ramda'
+import {
+  compose,
+  values,
+  flatten,
+  find,
+  both,
+  propEq,
+  prop,
+  slice,
+  includes,
+  endsWith
+} from 'ramda'
 import { mainPathSecure } from './config'
 
 const isLocal = mainDomain => {
