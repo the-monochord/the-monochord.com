@@ -1,27 +1,22 @@
 @import '../../../../common/hsva.scss';
 
-// SCSS:
-$background:               hsva-to-color(200deg, 15%, 8%, 1);
-$color:                    hsva-to-color(200deg, 8%, 100%, 1);
-$color2:                   hsva-to-color(200deg, 8%, 80%, 1);
-$disabled:                 hsva-to-color(200deg, 30%, 40%, 1);
+$background:               #0b0c0b;
+$color:                    #ebf8f7;
+$color2:                   #bcc6c5;
+$disabled:                 #3f4f51;
 
-$active:                   hsva-to-color(60deg, 60%, 100%, 1); // yellow
+$active:                   #ff1f31;
 $bad:                      hsva-to-color(0deg, 100%, 100%, 1); // red
-$good:                     hsva-to-color(120deg, 100%, 70%, 1); // green
+$good:                     #1d9c04;
 
 $separator:                $disabled;
-$tableRowBgOdd:            transparent;
-$tableRowBgEven:           hsva-to-color(0deg, 0%, 100%, 0.1);
-$tableRowBgHighlighted:    hsva-to-color(60deg, 22%, 100%, 0.3);
-$highlightedDisabled:      lighten($disabled, 20%);
+$tableRowBgOdd:            $background;
+$tableRowBgEven:           #1b1b1b;
+$tableRowBgHighlighted:    #484644;
+$highlightedDisabled:      #434b4c;
 $unsupportedBg:            hsva-to-color(0deg, 100%, 20%, 0.8);
 $tutorialCoverBg:          hsva-to-color(0deg, 0%, 0%, 0.75);
 $tutorialBubbleBg:         hsva-to-color(0deg, 0%, 0%, 0.5);
 
 $pianoButtonActiveBg:      darken($active, 50%);
 $pianoButtonBadBg:         darken($bad, 20%);
-
-$thumb-color:              $background;
-$thumb-border-color:       $color;
-$track-color:              $color2;
