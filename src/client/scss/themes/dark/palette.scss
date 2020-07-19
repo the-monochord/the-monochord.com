@@ -10,7 +10,7 @@ $bad:                      hsva-to-color(0deg, 100%, 100%, 1); // red
 $good:                     #1d9c04;
 
 $separator:                $disabled;
-$tableRowBgOdd:            $background;
+$tableRowBgOdd:            transparent;
 $tableRowBgEven:           #1b1b1b;
 $tableRowBgHighlighted:    #484644;
 $highlightedDisabled:      #434b4c;
