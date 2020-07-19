@@ -37,8 +37,14 @@ class PolySynth {
   }
 
   _noteDiff() {
-    const lastActiveNotes = takeLast(this._.voices, prioritize(this._.notePriority, this._.lastPressedNotes))
-    const activeNotes = takeLast(this._.voices, prioritize(this._.notePriority, this._.pressedNotes))
+    const lastActiveNotes = takeLast(
+      this._.voices,
+      prioritize(this._.notePriority, this._.lastPressedNotes)
+    )
+    const activeNotes = takeLast(
+      this._.voices,
+      prioritize(this._.notePriority, this._.pressedNotes)
+    )
 
     if (!equals(lastActiveNotes, activeNotes)) {
       const notesToTurnOff = without(activeNotes, lastActiveNotes)

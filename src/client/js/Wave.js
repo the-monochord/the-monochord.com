@@ -1,6 +1,19 @@
 /* global fetch */
 
-import { toPairs, forEach, compose, omit, map, adjust, keys, cond, T, propEq, update, curry } from 'ramda'
+import {
+  toPairs,
+  forEach,
+  compose,
+  omit,
+  map,
+  adjust,
+  keys,
+  cond,
+  T,
+  propEq,
+  update,
+  curry
+} from 'ramda'
 
 import { toDashCase } from './helpers'
 
