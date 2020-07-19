@@ -73,7 +73,8 @@ const getPlusPrefixes = (id = '') =>
 
 const concatAll = unapply(reduce(concat, []))
 
-const generatePrefixedIds = (id = '') => converge(concatAll, [getMinusPrefixes, of, getPlusPrefixes])(id)
+const generatePrefixedIds = (id = '') =>
+  converge(concatAll, [getMinusPrefixes, of, getPlusPrefixes])(id)
 
 const getFirstGainIdInSet = (virtual, setId) =>
   compose(
@@ -152,7 +153,10 @@ const AudioModel = function(staticPathSecure) {
           compose(
             forEach(gStringId => {
               // if string oscillator is connected to current string gain, then record it and we're done
-              const oStringId = find(id => isConnectedTo(gStringId, virtual.oscillators[id]), properOscillatorIds)
+              const oStringId = find(
+                id => isConnectedTo(gStringId, virtual.oscillators[id]),
+                properOscillatorIds
+              )
 
               if (oStringId !== undefined) {
                 parsedVirtual.oscillators[oStringId] = clone(virtual.oscillators[oStringId])
@@ -478,7 +482,11 @@ const AudioModel = function(staticPathSecure) {
       }
     },
     getGateIds: function() {
-      return ifElse(isEmpty, always([]), compose(flatten, map(generatePrefixedIds), keys))(virtual.setGains)
+      return ifElse(
+        isEmpty,
+        always([]),
+        compose(flatten, map(generatePrefixedIds), keys)
+      )(virtual.setGains)
     },
     getPianoKeyFrequencies: rawId => {
       const prefix = replace(/c?\d+$/, '', rawId)
@@ -495,7 +503,9 @@ const AudioModel = function(staticPathSecure) {
 
       return compose(
         reject(isOutsideOfHearingRange),
-        map(([stringId]) => compose(roundTo2Decimals, adjustOctave)(virtual.oscillators[stringId].frequency)),
+        map(([stringId]) =>
+          compose(roundTo2Decimals, adjustOctave)(virtual.oscillators[stringId].frequency)
+        ),
         filter(([stringId, gain]) => gain.connectTo === id && gain.gain > 0),
         toPairs
       )(virtual.elementGains)
@@ -506,7 +516,10 @@ const AudioModel = function(staticPathSecure) {
     },
     updateSynth: settings => {
       if (ctx !== null) {
-        timbre.update(settings)
+        timbre.update({
+          mainVolume: settings.baseVolume / 100,
+          waveform: settings.waveform
+        })
         gateController.update(settings.synth)
       }
     }
