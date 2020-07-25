@@ -88,7 +88,7 @@ const steps = [
   {
     title: 'The right part of a set',
     text:
-      'This allows you to change the values of a set for a single element or for the set as a whole.||By clicking on the single arrows you can raise or lower all element values by 1.||Clicking on the double arrows will double or halve all the values.||The icon with the vertical bars "normalise" the harmonic ratio, converting the values to it\'s simplest form, e.g. 60:20 will become 3:1.||There is a speaker icon allowing you to change the muted state of a complete set.||Finally there is an icon to delete the set.||NOTE: when you mute a set, it will not make any sound, even when it has elements, which do make sound.---Click "next step" to continue.',
+      'This allows you to change the values of a set for a single element or for the set as a whole.||By clicking on the single arrows you can raise or lower all element values by 1.||Clicking on the double arrows will double or halve all the values.||The icon with the vertical bars "normalize" the harmonic ratio, converting the values to it\'s simplest form, e.g. 60:20 will become 3:1.||There is a speaker icon allowing you to change the muted state of a complete set.||Finally there is an icon to delete the set.||NOTE: when you mute a set, it will not make any sound, even when it has elements, which do make sound.---Click "next step" to continue.',
     hide: [e.firstSetLeft],
     show: [e.firstSetRight, e.tutorialNext],
     unbind: [[e.firstSetAdd, 'click', 'next']]

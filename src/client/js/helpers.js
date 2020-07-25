@@ -8,7 +8,6 @@ import {
   toPairs,
   fromPairs,
   curry,
-  memoizeWith,
   split,
   toLower,
   reduce,
@@ -21,7 +20,6 @@ import {
   complement,
   lt,
   always,
-  toString,
   gt
 } from 'ramda'
 
@@ -40,7 +38,10 @@ function safeApply(scope, callback = NOP) {
   }
 }
 
-const roundTo2Decimals = memoizeWith(toString, number => Math.round(number * 100) / 100)
+const roundToNDecimals = curry(
+  (decimals, number) => Math.round(number * Math.pow(10, decimals)) / Math.pow(10, decimals)
+)
+const roundTo2Decimals = roundToNDecimals(2)
 
 const toDashCase = compose(toLower, join('-'), split(/(?=[A-Z])/))
 
@@ -82,6 +83,7 @@ export {
   corrigateNumber,
   angularToNormalJSON,
   safeApply,
+  roundToNDecimals,
   roundTo2Decimals,
   toDashCase,
   NOP,

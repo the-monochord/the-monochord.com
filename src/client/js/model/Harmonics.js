@@ -13,43 +13,48 @@ import {
   none,
   ifElse,
   length,
-  always
+  always,
+  curry
 } from 'ramda'
 import monochord from 'monochord-core'
 import Model from '../Model'
-import { minAll, maxAll, isOdd, clampToPositiveInt } from '../helpers'
+import { minAll, maxAll, isOdd, clampToPositiveInt, roundToNDecimals } from '../helpers'
 
 const {
   math: { findGreatestCommonDivisorArray }
 } = monochord
 
-const divideBy = (by, elements) =>
+const divideBy = curry((by, elements) =>
   map(
     evolve({
       multiplier: divide(__, by)
     })
   )(elements)
+)
 
-const multiplyBy = (by, elements) =>
+const multiplyBy = curry((by, elements) =>
   map(
     evolve({
       multiplier: multiply(__, by)
     })
   )(elements)
+)
 
-const decreaseBy = (by, elements) =>
+const decreaseBy = curry((by, elements) =>
   map(
     evolve({
       multiplier: subtract(__, by)
     })
   )(elements)
+)
 
-const increaseBy = (by, elements) =>
+const increaseBy = curry((by, elements) =>
   map(
     evolve({
       multiplier: add(__, by)
     })
   )(elements)
+)
 
 class Harmonics {
   constructor(model) {
@@ -250,18 +255,15 @@ class Harmonics {
     }
   }
 
-  normalise(target, type) {
+  normalize(target, type) {
     const { model } = this._
 
     if (this.canBeNormalized(target, type)) {
       const set = Number.isInteger(target) ? model.sets.findById(target) : target
       if (set) {
         if (type === Model.TYPE.CENT) {
-          const lowest = this.getLowest(target, type)
-          set.cents = compose(
-            map(x => Math.round(x * 10000) / 10000),
-            decreaseBy(lowest)
-          )(set.cents)
+          const lowest = this.getLowest(set, type)
+          set.cents = compose(map(roundToNDecimals(5)), decreaseBy(lowest))(set.cents)
         } else {
           const gcd = parseInt(
             findGreatestCommonDivisorArray(this.getMultipliers(set, type)).toString()

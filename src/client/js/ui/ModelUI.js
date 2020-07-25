@@ -40,9 +40,11 @@ const displayModes = [
   'normal',
   'frequency',
   'cents',
-  'pitches'
+  'pitches',
   // 'tredeks', // http://www.tonalsoft.com/enc/t/tredek.aspx
-  // 'tinas' // http://www.tonalsoft.com/enc/t/tina.aspx
+  // 'tinas', // http://www.tonalsoft.com/enc/t/tina.aspx
+  'alphabetical',
+  'solfeggio'
 ]
 
 class ModelUI {
@@ -329,10 +331,10 @@ class ModelUI {
     )
   }
 
-  normalise(set) {
+  normalize(set) {
     const { model } = this._
 
-    model.harmonics.normalise(set, Model.TYPE[model.harmonics.isStringSet(set) ? 'STRING' : 'CENT'])
+    model.harmonics.normalize(set, Model.TYPE[model.harmonics.isStringSet(set) ? 'STRING' : 'CENT'])
   }
 
   deleteSet(set) {
@@ -434,7 +436,7 @@ class ModelUI {
     const { ratios } = this._
 
     const setCopy = clone(set)
-    this.normalise(setCopy)
+    this.normalize(setCopy)
 
     const [smaller, bigger] = compose(
       // TODO: filter out muted sounds

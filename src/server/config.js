@@ -35,7 +35,7 @@ const languages = {
   hu: 'Magyar'
 }
 const themes = ['dark', 'light']
-const displayModes = ['normal', 'frequency', 'cents', 'pitches']
+const displayModes = ['normal', 'frequency', 'cents', 'pitches', 'alphabetical', 'solfeggio']
 const splashes = [
   'All pianos are out of tune',
   'Oh, the joy of hearing a justly tuned chord...',

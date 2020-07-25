@@ -31,7 +31,10 @@ import {
   ifElse,
   concat,
   of,
-  converge
+  converge,
+  prepend,
+  startsWith,
+  replace
 } from 'ramda'
 
 import { prefixIfNotEmpty } from './helpers'
@@ -52,10 +55,10 @@ let lastElementId = 0
 
 // ---------------------
 
-const getSetsArg = find(test(/^\d+(\.\d+)*(:\d+(\.\d+)*)*(-\d+(\.\d+)*(:\d+(\.\d+)*)*)*$/))
+const getSetsArg = find(test(/^~?\d+(\.\d+)*(:\d+(\.\d+)*)*(-~?\d+(\.\d+)*(:\d+(\.\d+)*)*)*$/))
 
-const isStringSet = test(/^\d+(:\d+)*$/)
-const isCentSet = test(/^\d+\.\d+(:\d+\.\d+)*$/)
+const isStringSet = test(/^~?\d+(:\d+)*$/)
+const isCentSet = test(/^~?\d+\.\d+(:\d+\.\d+)*$/)
 
 const parseString = curry(({ waveform, id }, string) => ({
   id,
@@ -72,8 +75,11 @@ const parseCent = curry(({ waveform, id }, cent) => ({
 }))
 
 const parseSet = curry(({ setId, waveform }, set) => {
+  const isMuted = startsWith('~', set)
+
   return compose(
     assoc('id', setId),
+    assoc('muted', isMuted),
     mergeDeepRight(setDefaults),
     ifElse(
       () => isStringSet(set),
@@ -89,10 +95,12 @@ const parseSet = curry(({ setId, waveform }, set) => {
         map(cent => {
           const id = ++lastElementId
           return parseCent({ waveform, id }, cent)
-        })
+        }),
+        when(compose(equals(1), length), prepend('0.0'))
       )
     ),
-    split(':')
+    split(':'),
+    replace(/^~/, '')
   )(set)
 })
 

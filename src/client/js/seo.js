@@ -12,7 +12,9 @@ import {
   unless,
   always,
   isEmpty,
-  curry
+  curry,
+  reject,
+  equals
 } from 'ramda'
 
 import {
@@ -94,19 +96,23 @@ const getSEOData = args => {
 
 const centSetToString = compose(
   join(':'),
+  unless(compose(equals(1), length), reject(equals('0.0'))),
   map(compose(ifElse(hasFraction, toString, postfix('.0')), parseFloat, prop('multiplier')))
 )
 const stringSetToString = compose(join(':'), map(compose(toString, parseInt, prop('multiplier'))))
 
 const setsToString = compose(
   join('-'),
-  map(
-    ifElse(
-      compose(length, prop('cents')),
-      compose(centSetToString, prop('cents')),
-      compose(stringSetToString, prop('strings'))
-    )
-  )
+  map(set => {
+    return compose(
+      when(() => prop('muted', set), prefix('~')),
+      ifElse(
+        compose(length, prop('cents')),
+        compose(centSetToString, prop('cents')),
+        compose(stringSetToString, prop('strings'))
+      )
+    )(set)
+  })
 )
 
 const waveformToString = compose(

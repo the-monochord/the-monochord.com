@@ -128,6 +128,16 @@ const labelCalculator = memoizeWith(
             )
           )(multipliers)
           break
+        case 'alphabetical':
+          {
+            const id = parseInt(rawId.replace(prefixPattern, ''))
+            console.log(id)
+            label = 'C#'
+          }
+          break
+        case 'solfeggio':
+          label = 'sol'
+          break
       }
     }
 

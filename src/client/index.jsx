@@ -32,11 +32,11 @@ import Model from './js/Model'
 import UI from './js/Ui'
 import { getSEOData, setSEOData, generateUrlFromState } from './js/seo'
 import { safeApply, NOP, watchForHover } from './js/helpers'
+import PolySynth from './js/synth/gate-controllers/PolySynth'
 
 import './scss/index.scss'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/mbo.css'
-import PolySynth from './js/synth/gate-controllers/PolySynth'
 
 const parsePath = compose(
   reject(isEmpty),

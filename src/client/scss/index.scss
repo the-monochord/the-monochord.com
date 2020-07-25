@@ -44,7 +44,7 @@
 
   @mixin icon-midi { content: '\e80f'; }
 
-  @mixin icon-normalise { content: '\e810'; }
+  @mixin icon-normalize { content: '\e810'; }
 
   @mixin icon-piano { content: '\e811'; }
 
@@ -106,7 +106,7 @@
 
     font-size: 34px !important;
   }
-  .icon-normalise::before { @include icon-normalise; }
+  .icon-normalize::before { @include icon-normalize; }
   .icon-piano::before { @include icon-piano; }
   .icon-redo::before { @include icon-redo; }
   .icon-remove::before { @include icon-remove; }

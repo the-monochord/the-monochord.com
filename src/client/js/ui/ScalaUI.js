@@ -60,7 +60,7 @@ function removeMessages($scope) {
   $scope.ui.scala.success = null
 }
 
-function normaliseMultipliers(multipliers, type, model) {
+function normalizeMultipliers(multipliers, type, model) {
   if (type === Model.TYPE.CENT) {
     const lowest = Math.min.apply(null, multipliers)
     if (lowest > model._lowestCent) {
@@ -106,7 +106,7 @@ function exportSession($scope, model) {
 
         if (multipliers.length > 1) {
           // try simplification
-          multipliers = normaliseMultipliers(multipliers, type, model)
+          multipliers = normalizeMultipliers(multipliers, type, model)
 
           // should reduce to 2
           if (multipliers.length > 2) {
