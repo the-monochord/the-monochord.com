@@ -32,8 +32,8 @@ const retuneMethods = [
 ]
 
 const setTypes = [
-  { type: 'strings', label: 'harmonics' },
-  { type: 'cents', label: 'cents' }
+  { type: Model.TYPE.STRING, label: 'harmonics' },
+  { type: Model.TYPE.CENT, label: 'cents' }
 ]
 
 const displayModes = [
@@ -56,7 +56,7 @@ class ModelUI {
     }
 
     $scope.ui.model = {
-      newSetType: 'strings',
+      newSetType: Model.TYPE.STRING,
       selectedElement: null,
       selectedSet: null,
       prev: {
@@ -123,9 +123,22 @@ class ModelUI {
   addSet() {
     const { $scope, model } = this._
 
-    model[$scope.ui.model.newSetType].add(model.sets.add({ muted: false }), {
-      wave: $scope.waveform
-    })
+    const set = model.sets.add({ muted: false })
+
+    if ($scope.ui.model.newSetType === Model.TYPE.CENT) {
+      model.cents.add(set, {
+        wave: $scope.waveform,
+        multiplier: 0,
+        muted: true
+      })
+      model.cents.add(set, {
+        wave: $scope.waveform
+      })
+    } else {
+      model.strings.add(set, {
+        wave: $scope.waveform
+      })
+    }
   }
 
   canCopySet() {

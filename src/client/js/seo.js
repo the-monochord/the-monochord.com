@@ -14,7 +14,8 @@ import {
   isEmpty,
   curry,
   reject,
-  equals
+  equals,
+  append
 } from 'ramda'
 
 import {
@@ -96,6 +97,7 @@ const getSEOData = args => {
 
 const centSetToString = compose(
   join(':'),
+  when(isEmpty, append('0.0')),
   unless(compose(equals(1), length), reject(equals('0.0'))),
   map(compose(ifElse(hasFraction, toString, postfix('.0')), parseFloat, prop('multiplier')))
 )
