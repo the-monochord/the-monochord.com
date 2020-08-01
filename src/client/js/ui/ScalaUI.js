@@ -4,7 +4,7 @@ import CodeMirror from 'codemirror'
 import 'codemirror/addon/mode/simple'
 import 'codemirror/theme/mbo.css'
 
-import { subtract, flip, sort, join, compose, map, filter, forEach, has } from 'ramda'
+import { subtract, flip, sort, join, compose, map, filter, forEach, has, isEmpty } from 'ramda'
 
 import monochord from 'monochord-core'
 import Model from '../Model'
@@ -266,6 +266,19 @@ function exportSession($scope, model) {
   return scl
 }
 
+const fetchSCL = (() => {
+  const cache = {}
+
+  return async filename => {
+    if (!cache[filename]) {
+      const response = await fetch(filename)
+      cache[filename] = response.text()
+    }
+
+    return cache[filename]
+  }
+})()
+
 // ------------------------------
 
 class ScalaUI {
@@ -275,10 +288,10 @@ class ScalaUI {
       model,
       editorRef: null,
       converter: new Converter($scope, model),
-      presetCache: {},
       watchGuards: {
-        sets: false,
-        name: false
+        sets: true,
+        name: true,
+        edx: true
       }
     }
 
@@ -311,6 +324,13 @@ class ScalaUI {
       }
     }
 
+    $scope.$watchGroup(['ui.scala.EDx.n', 'ui.scala.EDx.x.first', 'ui.scala.EDx.x.second'], () => {
+      if (this._.watchGuards.edx) {
+        this._.watchGuards.edx = false
+      } else {
+        this.generateEDxToEditor()
+      }
+    })
     $scope.$watchGroup(['name', 'retune.default'], () => {
       if (this._.watchGuards.name) {
         this._.watchGuards.name = false
@@ -330,9 +350,17 @@ class ScalaUI {
       true
     )
 
-    $scope.$watchGroup(['ui.scala.EDx.n', 'ui.scala.EDx.x.first', 'ui.scala.EDx.x.second'], () =>
+    if (isEmpty($scope.sets)) {
       this.generateEDxToEditor()
-    )
+    } else {
+      // TODO: we need setTimeout(), because exportSessionToEditor() relies on
+      // watchGuards.sets and watchGuards.name to be false
+      // we set those initially true, because the watches above will always run in the beginning
+      // but they work in an async fashion and we don't track when their 1st run finishes
+      setTimeout(() => {
+        this.exportSessionToEditor()
+      }, 100)
+    }
 
     this.fetchPresetList($scope)
   }
@@ -345,8 +373,13 @@ class ScalaUI {
     safeApply($scope)
   }
 
-  importSCL() {
+  async importSCL(filename = null) {
     const { $scope, converter } = this._
+
+    if (filename !== null) {
+      await this.loadSclToEditor(filename)
+    }
+
     const raw = $scope.ui.scala.importTextField
       .replace(/<div[^>]*>/g, '\n')
       .replace(/<br>/g, '\n')
@@ -392,27 +425,16 @@ class ScalaUI {
     }
   }
 
-  loadSclToEditor(fileName) {
-    const { $scope, presetCache } = this._
-    if (fileName !== null && fileName !== 'custom') {
-      if (!presetCache[fileName]) {
-        fetch(fileName)
-          .then(response => response.text())
-          .then(data => {
-            presetCache[fileName] = data
-            $scope.ui.scala.importTextField = data
-            removeMessages($scope)
-          })
-          .catch(() => {
-            this.generalError(`Failed to load ${fileName}`)
-          })
-          .finally(() => {
-            safeApply($scope)
-          })
-      } else {
-        $scope.ui.scala.importTextField = presetCache[fileName]
+  async loadSclToEditor(filename) {
+    const { $scope } = this._
+    if (filename !== null && filename !== 'custom') {
+      try {
+        $scope.ui.scala.importTextField = await fetchSCL(filename)
         removeMessages($scope)
+      } catch (e) {
+        this.generalError(`Failed to load ${filename}`)
       }
+      safeApply($scope)
     }
   }
 

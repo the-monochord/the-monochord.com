@@ -20,11 +20,11 @@
   <table>
     <tr ng-repeat="(label, filename) in ui.scala.presetList">
       <td>{{label}}</td>
-      <td><button type="button" autosize mobile-click="mctrl.ui.scala.loadSclToEditor(filename)">open in editor</button></td>
+      <td>
+        <button type="button" autosize mobile-click="mctrl.ui.scala.importSCL(filename)">import</button>
+      </td>
     </tr>
   </table>
-
-  <p>Select any of the presets to display them</p>
 
   <hr />
 

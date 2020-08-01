@@ -27,6 +27,7 @@ import React from 'react'
 import { hydrate } from 'react-dom'
 import { getParametersFromArgs, getLastElementId } from '../common/listen'
 import App from '../common/components/App'
+import { sleep } from '../common/helpers/function'
 import AudioModel from './js/AudioModel'
 import Model from './js/Model'
 import UI from './js/Ui'
@@ -51,7 +52,7 @@ const scopeToPath = (sets, waveform) =>
 
 const pathToSEOData = compose(getSEOData, parsePath)
 
-const updateSetsAndWaveform = (
+const updateSetsAndWaveform = async (
   $scope,
   model,
   { lastSetId, lastElementId, sets, waveform, onUpdate = NOP }
@@ -62,7 +63,8 @@ const updateSetsAndWaveform = (
   model._lastElementId = lastElementId
   safeApply($scope)
   if (sets.length) {
-    setTimeout(onUpdate, 100)
+    await sleep(100)
+    onUpdate()
   }
 }
 
