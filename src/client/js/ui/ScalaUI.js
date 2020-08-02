@@ -4,13 +4,26 @@ import CodeMirror from 'codemirror'
 import 'codemirror/addon/mode/simple'
 import 'codemirror/theme/mbo.css'
 
-import { subtract, flip, sort, join, compose, map, filter, forEach, has, isEmpty } from 'ramda'
+import {
+  subtract,
+  flip,
+  sort,
+  join,
+  compose,
+  map,
+  forEach,
+  has,
+  isEmpty,
+  reject,
+  prop,
+  propEq
+} from 'ramda'
 
 import monochord from 'monochord-core'
 import Model from '../Model'
 
 import Converter from '../Converter'
-import { safeApply } from '../helpers'
+import { safeApply, minAll, maxAll, roundToNDecimals } from '../helpers'
 import * as stats from '../stats'
 
 const {
@@ -62,10 +75,10 @@ function removeMessages($scope) {
 
 function normalizeMultipliers(multipliers, type, model) {
   if (type === Model.TYPE.CENT) {
-    const lowest = Math.min.apply(null, multipliers)
+    const lowest = minAll(multipliers)
     if (lowest > model._lowestCent) {
       multipliers = multipliers.map(function(cent) {
-        return Math.round((cent - lowest) * 10000) / 10000
+        return roundToNDecimals(5, cent - lowest)
       })
     }
   } else {
@@ -81,21 +94,10 @@ function normalizeMultipliers(multipliers, type, model) {
 }
 
 function exportSession($scope, model) {
-  let scl = '!\n'
-  scl += `! ${exporterBanner}\n`
-  scl += '!\n'
-  scl += `${$scope.name.trim() || 'Unnamed Scale'}\n`
-  scl += ` ${
-    $scope.sets.filter(function(set) {
-      return !set.muted
-    }).length
-  }\n`
-  scl += '!\n'
-
   let prev = 0
-  const rows = $scope.sets
+  let rows = $scope.sets
     .map(function(set) {
-      const type = Model.TYPE[model.harmonics.isStringSet(set) ? 'STRING' : 'CENT']
+      const type = model.harmonics.isStringSet(set) ? Model.TYPE.STRING : Model.TYPE.CENT
       let multipliers = model.harmonics.getMultipliers(set, type)
 
       if (multipliers.length > 1) {
@@ -132,16 +134,16 @@ function exportSession($scope, model) {
             if (multipliers.length === 1) {
               row.multipliers = multipliers
             } else {
-              row.multipliers = [Math.min.apply(null, multipliers)]
-              row.removed = scalaPrintRatio([Math.max.apply(null, multipliers)])
+              row.multipliers = [minAll(multipliers)]
+              row.removed = scalaPrintRatio([maxAll(multipliers)])
             }
           } else {
             row.type = 'cent'
             if (multipliers.length === 1) {
               row.multipliers = multipliers
             } else {
-              row.multipliers = [Math.min.apply(null, multipliers)]
-              row.removed = scalaPrintCent(Math.max.apply(null, multipliers))
+              row.multipliers = [minAll(multipliers)]
+              row.removed = scalaPrintCent(maxAll(multipliers))
             }
           }
           break
@@ -238,12 +240,22 @@ function exportSession($scope, model) {
     }, rows)
   }
 
+  rows = compose(reject(prop('muted')), reject(propEq('multipliers', [1])))(rows)
+
+  let scl = '!\n'
+  scl += `! ${exporterBanner}\n`
+  scl += '!\n'
+  scl += `${$scope.name.trim() || 'Unnamed Scale'}\n`
+  scl += ` ${rows.length}\n`
+  scl += '!\n'
   scl += compose(
     join('\n'),
     map(row => {
       let str =
         row.type === 'ratio' ? scalaPrintRatio(row.multipliers) : scalaPrintCent(row.multipliers[0])
 
+      // TODO: comments don't work for some reason
+      // we might do simplifications, but we don't keep the information about it to this point
       const comment = []
 
       if (has('transformed', row) && row.transformed !== str) {
@@ -259,8 +271,7 @@ function exportSession($scope, model) {
       }
 
       return ` ${str}`
-    }),
-    filter(row => !row.muted)
+    })
   )(rows)
 
   return scl
@@ -377,7 +388,11 @@ class ScalaUI {
     const { $scope, converter } = this._
 
     if (filename !== null) {
-      await this.loadSclToEditor(filename)
+      try {
+        await this.loadSclToEditor(filename)
+      } catch (e) {
+        return
+      }
     }
 
     const raw = $scope.ui.scala.importTextField

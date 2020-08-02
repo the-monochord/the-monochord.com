@@ -10,9 +10,6 @@ import {
   curry,
   split,
   toLower,
-  reduce,
-  min,
-  max,
   modulo,
   __,
   when,
@@ -70,8 +67,8 @@ function watchForHover(container) {
   enableHover()
 }
 
-const minAll = reduce(min, Infinity)
-const maxAll = reduce(max, -Infinity)
+const minAll = xs => Math.min.apply(null, xs)
+const maxAll = xs => Math.max.apply(null, xs)
 const isOdd = modulo(__, 2)
 const clampToPositiveInt = when(either(complement(Number.isInteger), lt(__, 1)), always(1))
 
