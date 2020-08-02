@@ -290,6 +290,19 @@ const fetchSCL = (() => {
   }
 })()
 
+const download = (filename, text) => {
+  const element = document.createElement('a')
+  element.setAttribute('href', `data:text/plain;charset=utf-8,${encodeURIComponent(text)}`)
+  element.setAttribute('download', filename)
+
+  element.style.display = 'none'
+  document.body.appendChild(element)
+
+  element.click()
+
+  document.body.removeChild(element)
+}
+
 // ------------------------------
 
 class ScalaUI {
@@ -422,6 +435,18 @@ class ScalaUI {
           $scope.$apply()
         })
     }
+  }
+
+  download() {
+    const { $scope } = this._
+    const name =
+      $scope.name
+        .trim()
+        .toLowerCase()
+        .replace(/\W+/g, '-') || 'unnamed-scale'
+    const content = $scope.ui.scala.importTextField
+
+    download(`${name}.scl`, content)
   }
 
   refreshEditor() {

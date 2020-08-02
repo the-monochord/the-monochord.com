@@ -36,7 +36,12 @@
   
   <label class="labelled-button">
     <button type="button" class="icon-import" ng-class="{disabled:!ui.scala.importTextField.length}" mobile-click="mctrl.ui.scala.importSCL()"></button>
-    Import scale
+    Import to scale designer
+  </label>
+
+  <label class="labelled-button">
+    <button type="button" class="icon-import" ng-class="{disabled:!ui.scala.importTextField.length}" mobile-click="mctrl.ui.scala.download()"></button>
+    Download as scl file
   </label>
 
   <h2 class="success" ng-show="ui.scala.success === true">
