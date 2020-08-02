@@ -15,13 +15,12 @@
 
   <hr />
 
-  <h2>&hellip; or load an existing one &hellip;</h2>
+  <h2>&hellip; or load an existing one by clicking on the scale names below &hellip;</h2>
 
   <table>
     <tr ng-repeat="(label, filename) in ui.scala.presetList">
-      <td>{{label}}</td>
       <td>
-        <button type="button" autosize mobile-click="mctrl.ui.scala.importSCL(filename)">import</button>
+        <button type="button" autosize mobile-click="mctrl.ui.scala.importSCL(filename)">{{label}}</button>
       </td>
     </tr>
   </table>
