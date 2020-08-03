@@ -240,7 +240,11 @@ function exportSession($scope, model) {
     }, rows)
   }
 
-  rows = compose(reject(prop('muted')), reject(propEq('multipliers', [1])))(rows)
+  rows = compose(
+    reject(prop('muted')),
+    reject(propEq('multipliers', [1])),
+    reject(propEq('multipliers', [0]))
+  )(rows)
 
   let scl = '!\n'
   scl += `! ${exporterBanner}\n`
