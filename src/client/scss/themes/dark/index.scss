@@ -58,10 +58,14 @@
       }
 
       &.highlighted {
-        background: $tableRowBgHighlighted;
+        background: $tableRowBgHighlightedOdd;
+
+        &.even {
+          background: $tableRowBgHighlightedEven;
+        }
 
         .interval-name {
-          color: $highlightedDisabled;
+          color: $tableRowBgEven;
         }
 
         [disabled],

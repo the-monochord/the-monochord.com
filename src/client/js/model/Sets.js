@@ -1,4 +1,4 @@
-import { propOr } from 'ramda'
+import { propOr, insert } from 'ramda'
 import { isFunction } from '../helpers'
 
 class Sets {
@@ -29,6 +29,33 @@ class Sets {
     return data
   }
 
+  addAfter(target, params = {}) {
+    const { model, $scope } = this._
+
+    let index = -1
+    if (Number.isInteger(target)) {
+      this.findById(target, (set, _index) => {
+        index = _index
+      })
+    } else {
+      index = $scope.sets.indexOf(target)
+    }
+
+    const data = {
+      id: ++model._lastSetId,
+      retune: $scope.retune.defaultForNew,
+      strings: [],
+      cents: [],
+      muted: propOr(false, 'muted', params)
+    }
+
+    if (index !== -1) {
+      $scope.sets = insert(index + 1, data, $scope.sets)
+    }
+
+    return data
+  }
+
   // removes a set, specified by target
   // @param target : <object> | <int>
   //   object should be a valid set from the $scope.sets
@@ -44,6 +71,7 @@ class Sets {
     } else {
       index = $scope.sets.indexOf(target)
     }
+
     if (index !== -1) {
       $scope.sets.splice(index, 1)
     }

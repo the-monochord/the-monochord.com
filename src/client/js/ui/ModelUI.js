@@ -16,7 +16,16 @@ import {
   propEq,
   evolve,
   find,
-  propOr
+  propOr,
+  includes,
+  without,
+  append,
+  all,
+  last,
+  head,
+  contains,
+  difference,
+  reverse
 } from 'ramda'
 
 import Model from '../Model'
@@ -58,7 +67,9 @@ class ModelUI {
     $scope.ui.model = {
       newSetType: Model.TYPE.STRING,
       selectedElement: null,
-      selectedSet: null,
+      selection: {
+        pitches: []
+      },
       prev: {
         baseVolume: $scope.baseVolume
       },
@@ -141,27 +152,23 @@ class ModelUI {
     }
   }
 
-  canCopySet() {
-    const { $scope } = this._
-
-    return $scope.ui.model.selectedSet !== null
-  }
-
   copySet() {
     const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
-    if (this.canCopySet()) {
-      const set = $scope.ui.model.selectedSet
-      const setId = model.sets.add({
-        muted: set.muted,
-        retune: set.retune
-      })
-      const type = model.harmonics.isStringSet(set) ? 'strings' : 'cents'
-      set[type].forEach(element => {
-        model[type].add(setId, {
-          muted: element.muted,
-          multiplier: element.multiplier,
-          wave: element.wave
+    if (!isEmpty(selection)) {
+      selection.forEach(pitch => {
+        const newSet = model.sets.addAfter(pitch, {
+          muted: pitch.muted,
+          retune: pitch.retune
+        })
+        const type = model.harmonics.isStringSet(pitch) ? 'strings' : 'cents'
+        pitch[type].forEach(element => {
+          model[type].add(newSet, {
+            muted: element.muted,
+            multiplier: element.multiplier,
+            wave: element.wave
+          })
         })
       })
     }
@@ -170,43 +177,49 @@ class ModelUI {
   canMoveDownSet() {
     const { $scope } = this._
 
-    const set = $scope.ui.model.selectedSet
-    const sets = $scope.sets
-    return set !== null && sets.indexOf(set) < sets.length - 1
+    const selection = $scope.ui.model.selection.pitches
+    const lastSet = last($scope.sets)
+
+    return !isEmpty(selection) && !contains(lastSet, selection)
   }
 
   canMoveUpSet() {
     const { $scope } = this._
 
-    const set = $scope.ui.model.selectedSet
-    const sets = $scope.sets
-    return set !== null && sets.indexOf(set) > 0
+    const selection = $scope.ui.model.selection.pitches
+    const firstSet = head($scope.sets)
+
+    return !isEmpty(selection) && !contains(firstSet, selection)
   }
 
   moveDownSet() {
     const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
     if (this.canMoveDownSet()) {
-      const set = $scope.ui.model.selectedSet
-      const sets = $scope.sets
-      const index = sets.indexOf(set)
-      const tmp = sets[index + 1]
-      sets[index + 1] = sets[index]
-      sets[index] = tmp
+      reverse(selection).forEach(pitch => {
+        const sets = $scope.sets
+        const index = sets.indexOf(pitch)
+        const tmp = sets[index + 1]
+        sets[index + 1] = sets[index]
+        sets[index] = tmp
+      })
       model.updateOrder()
     }
   }
 
   moveUpSet() {
     const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
     if (this.canMoveUpSet()) {
-      const set = $scope.ui.model.selectedSet
-      const sets = $scope.sets
-      const index = sets.indexOf(set)
-      const tmp = sets[index - 1]
-      sets[index - 1] = sets[index]
-      sets[index] = tmp
+      selection.forEach(pitch => {
+        const sets = $scope.sets
+        const index = sets.indexOf(pitch)
+        const tmp = sets[index - 1]
+        sets[index - 1] = sets[index]
+        sets[index] = tmp
+      })
       model.updateOrder()
     }
   }
@@ -217,11 +230,14 @@ class ModelUI {
     return model.harmonics.isStringSet(set)
   }
 
-  addElement(set) {
+  addElement() {
     const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
-    model[model.harmonics.isStringSet(set) ? 'strings' : 'cents'].add(set.id, {
-      wave: $scope.waveform
+    selection.forEach(pitch => {
+      model[model.harmonics.isStringSet(pitch) ? 'strings' : 'cents'].add(pitch.id, {
+        wave: $scope.waveform
+      })
     })
   }
 
@@ -231,10 +247,19 @@ class ModelUI {
     $scope.ui.model.selectedElement = $scope.ui.model.selectedElement === element ? null : element
   }
 
-  toggleSelectedSet(set) {
+  toggleSelectedSet(pitch) {
+    // TODO: allow selection of range when shift is pressed
+    // TODO: select all with Ctrl + A?
     const { $scope } = this._
+    const selection = $scope.ui.model.selection.pitches
+    const sets = $scope.sets
 
-    $scope.ui.model.selectedSet = $scope.ui.model.selectedSet === set ? null : set
+    if (includes(pitch, $scope.ui.model.selection.pitches)) {
+      $scope.ui.model.selection.pitches = without([pitch], selection)
+    } else {
+      // need to preserve order of sets in selection
+      $scope.ui.model.selection.pitches = difference(sets, without(append(pitch, selection), sets))
+    }
   }
 
   clearSelection() {
@@ -243,7 +268,7 @@ class ModelUI {
     if ($scope.ui.model.selectedElement !== null) {
       $scope.ui.model.selectedElement = null
     } else {
-      $scope.ui.model.selectedSet = null
+      $scope.ui.model.selection.pitches = []
     }
   }
 
@@ -255,6 +280,20 @@ class ModelUI {
       $scope.ui.model.prev.baseVolume = $scope.baseVolume
     }
     $scope.baseVolume = notMuted ? 0 : $scope.ui.model.prev.baseVolume
+  }
+
+  hasSelectedPitches() {
+    const { $scope } = this._
+    const selection = $scope.ui.model.selection.pitches
+
+    return !isEmpty(selection)
+  }
+
+  isPitchSelected(pitch) {
+    const { $scope } = this._
+    const selection = $scope.ui.model.selection.pitches
+
+    return includes(pitch, selection)
   }
 
   /*
@@ -287,76 +326,94 @@ class ModelUI {
   }
   */
 
-  canHalve(set) {
-    const { model } = this._
+  canHalve() {
+    const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
-    return model.harmonics.canHalve(set)
+    return !isEmpty(selection) && all(pitch => model.harmonics.canHalve(pitch), selection)
   }
 
-  halve(set) {
-    const { model } = this._
+  halve() {
+    const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
-    return model.harmonics.halve(set)
+    selection.forEach(pitch => model.harmonics.halve(pitch))
   }
 
-  canLower(set) {
-    const { model } = this._
+  canLower() {
+    const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
-    return model.harmonics.canLower(set)
+    return !isEmpty(selection) && all(pitch => model.harmonics.canLower(pitch), selection)
   }
 
-  lower(set) {
-    const { model } = this._
+  lower() {
+    const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
-    model.harmonics.lower(set)
+    selection.forEach(pitch => model.harmonics.lower(pitch))
   }
 
-  canRaise(set) {
-    const { model } = this._
+  canRaise() {
+    const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
-    return model.harmonics.canRaise(set)
+    return !isEmpty(selection) && all(pitch => model.harmonics.canRaise(pitch), selection)
   }
 
-  raise(set) {
-    const { model } = this._
+  raise() {
+    const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
-    model.harmonics.raise(set)
+    selection.forEach(pitch => model.harmonics.raise(pitch))
   }
 
-  canDouble(set) {
-    const { model } = this._
+  canDouble() {
+    const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
-    return model.harmonics.canDouble(set)
+    return !isEmpty(selection) && all(pitch => model.harmonics.canDouble(pitch), selection)
   }
 
-  double(set) {
-    const { model } = this._
+  double() {
+    const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
-    model.harmonics.double(set)
+    selection.forEach(pitch => model.harmonics.double(pitch))
   }
 
-  canNormalize(set) {
-    const { model } = this._
+  canNormalize() {
+    const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
-    return model.harmonics.canBeNormalized(
-      set,
-      Model.TYPE[model.harmonics.isStringSet(set) ? 'STRING' : 'CENT']
+    return (
+      !isEmpty(selection) &&
+      all(pitch => {
+        return model.harmonics.canBeNormalized(
+          pitch,
+          model.harmonics.isStringSet(pitch) ? Model.TYPE.STRING : Model.TYPE.CENT
+        )
+      }, selection)
     )
   }
 
-  normalize(set) {
-    const { model } = this._
+  normalize() {
+    const { $scope, model } = this._
+    const selection = $scope.ui.model.selection.pitches
 
-    model.harmonics.normalize(set, Model.TYPE[model.harmonics.isStringSet(set) ? 'STRING' : 'CENT'])
+    selection.forEach(pitch => {
+      model.harmonics.normalize(
+        pitch,
+        model.harmonics.isStringSet(pitch) ? Model.TYPE.STRING : Model.TYPE.CENT
+      )
+    })
   }
 
-  deleteSet(set) {
+  deleteSelectedPitches() {
     const { $scope, model } = this._
 
-    if ($scope.ui.model.selectedSet !== null && set.id === $scope.ui.model.selectedSet.id) {
-      $scope.ui.model.selectedSet = null
-    }
-    model.sets.remove(set)
+    $scope.ui.model.selection.pitches.forEach(pitch => model.sets.remove(pitch))
+    $scope.ui.model.selection.pitches = []
   }
 
   canLowerElement(element, step = 1) {
@@ -414,9 +471,7 @@ class ModelUI {
     let a = $scope.ui.model.bfRandomParams.limit.lower
     let b = $scope.ui.model.bfRandomParams.limit.upper
     if (a > b) {
-      const tmp = a
-      a = b
-      b = tmp
+      ;[a, b] = [b, a]
     }
     $scope.baseFrequency = Math.floor(Math.random() * (b - a)) + a
   }
@@ -446,7 +501,7 @@ class ModelUI {
   }
 
   getIntervalName(set) {
-    const { ratios } = this._
+    const { ratios, model } = this._
 
     const setCopy = clone(set)
     this.normalize(setCopy)
@@ -473,7 +528,7 @@ class ModelUI {
 
       ret = names.length
         ? `[ ${names.join(', ')} ]${
-            this.canNormalize(set)
+            model.harmonics.canHalve(set)
               ? ` ( ${
                   this.isStringSet(setCopy) ? `${bigger} : ${smaller}` : `${bigger - smaller}¢`
                 } )`
@@ -483,6 +538,23 @@ class ModelUI {
     }
 
     return ret
+  }
+
+  isAllSelectionMuted() {
+    const { $scope } = this._
+    const selection = $scope.ui.model.selection.pitches
+
+    return !isEmpty(selection) && all(propEq('muted', true), selection)
+  }
+
+  toggleSelectionMuted() {
+    const { $scope } = this._
+    const selection = $scope.ui.model.selection.pitches
+    const isAllMuted = this.isAllSelectionMuted()
+
+    selection.forEach(pitch => {
+      pitch.muted = !isAllMuted
+    })
   }
 }
 
