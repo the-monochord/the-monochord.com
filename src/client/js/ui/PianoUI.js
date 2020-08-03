@@ -173,7 +173,8 @@ class PianoUI {
       whiteOnly: false,
       pressureSensitivity: true,
       sustainOn: false,
-      sustainToggle: true
+      sustainToggle: true,
+      hideMuted: false
     }
 
     $scope.ui.chords = {
