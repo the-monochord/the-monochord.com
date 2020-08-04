@@ -249,10 +249,10 @@ class ModelUI {
 
   toggleSelectedSet(pitch) {
     // TODO: allow selection of range when shift is pressed
-    // TODO: select all with Ctrl + A?
     const { $scope } = this._
     const selection = $scope.ui.model.selection.pitches
     const sets = $scope.sets
+    // const isShiftPressed = $scope.system.shiftPressed
 
     if (includes(pitch, $scope.ui.model.selection.pitches)) {
       $scope.ui.model.selection.pitches = without([pitch], selection)

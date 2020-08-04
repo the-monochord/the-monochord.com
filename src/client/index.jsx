@@ -104,6 +104,10 @@ angular
 
       delete window.__settings
 
+      $scope.system = {
+        shiftPressed: false
+      }
+
       const model = new Model($scope, settings.path.static)
 
       compose(
@@ -223,6 +227,28 @@ angular
       }
 
       watchForHover(document.querySelector('.wrapper'))
+
+      document.body.addEventListener(
+        'keydown',
+        e => {
+          if (e.key === 'Shift' && $scope.system.shiftPressed === false) {
+            $scope.system.shiftPressed = true
+            safeApply($scope)
+          }
+        },
+        true
+      )
+
+      document.body.addEventListener(
+        'keyup',
+        e => {
+          if (e.key === 'Shift' && $scope.system.shiftPressed === true) {
+            $scope.system.shiftPressed = false
+            safeApply($scope)
+          }
+        },
+        true
+      )
     }
   ])
 
