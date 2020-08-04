@@ -1,24 +1,23 @@
 @import '../../../../common/hsva.scss';
 
-$background:               #0b0c0b;
-$color:                    #ebf8f7;
-$color2:                   #bcc6c5;
-$disabled:                 #3f4f51;
+$background:                #0b0c0b;
+$color:                     #ebf8f7;
+$color2:                    #bcc6c5;
+$disabled:                  #3f4f51;
 
-$active:                   #ff1f31;
-$bad:                      hsva-to-color(0deg, 100%, 100%, 1); // red
-$good:                     #1d9c04;
+$active:                    #ff1f31;
+$bad:                       red;
+$good:                      #1d9c04;
 
-$separator:                $disabled;
-$tableRowBgOdd:            transparent;
-$tableRowBgEven:           #1b1b1b;
-$tableRowBgHighlighted:    #484644;
-$tableRowBgHighlightedOdd:  $tableRowBgHighlighted;
-$tableRowBgHighlightedEven: lighten($tableRowBgHighlightedOdd, 20%);
-$highlightedDisabled:      #434b4c;
-$unsupportedBg:            hsva-to-color(0deg, 100%, 20%, 0.8);
-$tutorialCoverBg:          hsva-to-color(0deg, 0%, 0%, 0.75);
-$tutorialBubbleBg:         hsva-to-color(0deg, 0%, 0%, 0.5);
+$separator:                 $disabled;
+$tableRowBgOdd:             $background;
+$tableRowBgEven:            #1b1b1b;
+$tableRowBgHighlightedOdd:  #243547;
+$tableRowBgHighlightedEven: #334659;
+$highlightedDisabled:       #434b4c;
+$unsupportedBg:             hsva-to-color(0deg, 100%, 20%, 0.8);
+$tutorialCoverBg:           hsva-to-color(0deg, 0%, 0%, 0.75);
+$tutorialBubbleBg:          hsva-to-color(0deg, 0%, 0%, 0.5);
 
-$pianoButtonActiveBg:      darken($active, 50%);
-$pianoButtonBadBg:         darken($bad, 20%);
+$pianoButtonActiveBg:       darken($active, 50%);
+$pianoButtonBadBg:          darken($bad, 20%);

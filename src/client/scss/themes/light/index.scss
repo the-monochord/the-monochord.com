@@ -65,8 +65,7 @@
         }
 
         .interval-name {
-          // color: $tableRowBgEven;
-          color: darken($tableRowBgEven, 70%);
+          color: $background;
         }
 
         [disabled],
