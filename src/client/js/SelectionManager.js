@@ -29,6 +29,10 @@ class SelectionManager {
     this._.selectedIndices = []
   }
 
+  map(fn) {
+    this._.selectedIndices = map(fn, this._.selectedIndices)
+  }
+
   isSelected(idx) {
     return includes(idx, this._.selectedIndices)
   }

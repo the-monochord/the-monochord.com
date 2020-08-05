@@ -20,7 +20,9 @@ import {
   all,
   reverse,
   indexOf,
-  __
+  __,
+  inc,
+  dec
 } from 'ramda'
 
 import Model from '../Model'
@@ -173,9 +175,8 @@ class ModelUI {
         })
       })
 
-      // TODO: BUG-os!!!!! indexOf helyett findIndex és pluck('id')
       selection.pitches.clear()
-      selection.pitches.add(map(indexOf(__, selectedPitches), selectedPitches))
+      selection.pitches.add(map(indexOf(__, $scope.sets), selectedPitches))
     }
   }
 
@@ -197,35 +198,35 @@ class ModelUI {
   }
 
   moveDownSet() {
-    const { $scope, model } = this._
-    const selection = this._.selection.pitches
-    // TODO !!!
+    const { $scope, model, selection } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
     if (this.canMoveDownSet()) {
-      reverse(selection).forEach(pitch => {
+      reverse(selectedPitches).forEach(pitch => {
         const sets = $scope.sets
         const index = sets.indexOf(pitch)
         const tmp = sets[index + 1]
         sets[index + 1] = sets[index]
         sets[index] = tmp
       })
+      selection.pitches.map(inc)
       model.updateOrder()
     }
   }
 
   moveUpSet() {
-    const { $scope, model } = this._
-    const selection = this._.selection.pitches
-    // TODO !!!
+    const { $scope, model, selection } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
     if (this.canMoveUpSet()) {
-      selection.forEach(pitch => {
+      selectedPitches.forEach(pitch => {
         const sets = $scope.sets
         const index = sets.indexOf(pitch)
         const tmp = sets[index - 1]
         sets[index - 1] = sets[index]
         sets[index] = tmp
       })
+      selection.pitches.map(dec)
       model.updateOrder()
     }
   }
