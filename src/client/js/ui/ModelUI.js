@@ -17,20 +17,17 @@ import {
   evolve,
   find,
   propOr,
-  includes,
-  without,
-  append,
   all,
-  last,
-  head,
-  contains,
-  difference,
-  reverse
+  reverse,
+  indexOf,
+  __
 } from 'ramda'
 
 import Model from '../Model'
 
 import { corrigateNumber } from '../helpers'
+import SelectionManager from '../SelectionManager'
+import EventBus from '../EventBus'
 
 const retuneMethods = [
   { method: 'off', label: 'none' },
@@ -61,15 +58,15 @@ class ModelUI {
     this._ = {
       $scope,
       model,
-      ratios: []
+      ratios: [],
+      selection: {
+        pitches: new SelectionManager()
+      }
     }
 
     $scope.ui.model = {
       newSetType: Model.TYPE.STRING,
       selectedElement: null,
-      selection: {
-        pitches: []
-      },
       prev: {
         baseVolume: $scope.baseVolume
       },
@@ -80,6 +77,10 @@ class ModelUI {
         }
       }
     }
+
+    EventBus.on('scale imported', () => {
+      this._.selection.pitches.clear()
+    })
 
     this.webAudioSupported = model.webAudioSupported
     this.getwaveforms = model.getwaveforms
@@ -153,11 +154,11 @@ class ModelUI {
   }
 
   copySet() {
-    const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { model, selection, $scope } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
-    if (!isEmpty(selection)) {
-      selection.forEach(pitch => {
+    if (!isEmpty(selectedPitches)) {
+      selectedPitches.forEach(pitch => {
         const newSet = model.sets.addAfter(pitch, {
           muted: pitch.muted,
           retune: pitch.retune
@@ -171,30 +172,34 @@ class ModelUI {
           })
         })
       })
+
+      // TODO: BUG-os!!!!! indexOf helyett findIndex és pluck('id')
+      selection.pitches.clear()
+      selection.pitches.add(map(indexOf(__, selectedPitches), selectedPitches))
     }
   }
 
   canMoveDownSet() {
     const { $scope } = this._
 
-    const selection = $scope.ui.model.selection.pitches
-    const lastSet = last($scope.sets)
+    const selection = this._.selection.pitches
+    const setSize = $scope.sets.length
 
-    return !isEmpty(selection) && !contains(lastSet, selection)
+    return setSize > 0 && !selection.isEmpty() && !selection.isSelected(setSize - 1)
   }
 
   canMoveUpSet() {
     const { $scope } = this._
 
-    const selection = $scope.ui.model.selection.pitches
-    const firstSet = head($scope.sets)
+    const selection = this._.selection.pitches
 
-    return !isEmpty(selection) && !contains(firstSet, selection)
+    return !isEmpty($scope.sets) && !selection.isEmpty() && !selection.isSelected(0)
   }
 
   moveDownSet() {
     const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const selection = this._.selection.pitches
+    // TODO !!!
 
     if (this.canMoveDownSet()) {
       reverse(selection).forEach(pitch => {
@@ -210,7 +215,8 @@ class ModelUI {
 
   moveUpSet() {
     const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const selection = this._.selection.pitches
+    // TODO !!!
 
     if (this.canMoveUpSet()) {
       selection.forEach(pitch => {
@@ -231,10 +237,10 @@ class ModelUI {
   }
 
   addElement() {
-    const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { selection, $scope, model } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
-    selection.forEach(pitch => {
+    selectedPitches.forEach(pitch => {
       model[model.harmonics.isStringSet(pitch) ? 'strings' : 'cents'].add(pitch.id, {
         wave: $scope.waveform
       })
@@ -247,28 +253,27 @@ class ModelUI {
     $scope.ui.model.selectedElement = $scope.ui.model.selectedElement === element ? null : element
   }
 
-  toggleSelectedSet(pitch) {
-    // TODO: allow selection of range when shift is pressed
-    const { $scope } = this._
-    const selection = $scope.ui.model.selection.pitches
-    const sets = $scope.sets
-    // const isShiftPressed = $scope.system.shiftPressed
+  selectSet(pitchIdx) {
+    const { selection } = this._
 
-    if (includes(pitch, $scope.ui.model.selection.pitches)) {
-      $scope.ui.model.selection.pitches = without([pitch], selection)
+    if (selection.pitches.isSelected(pitchIdx)) {
+      selection.pitches.clear()
     } else {
-      // need to preserve order of sets in selection
-      $scope.ui.model.selection.pitches = difference(sets, without(append(pitch, selection), sets))
+      selection.pitches.clear()
+      selection.pitches.add(pitchIdx)
     }
+
+    // TODO: range selection
+    // const isShiftPressed = $scope.system.shiftPressed
   }
 
   clearSelection() {
-    const { $scope } = this._
+    const { $scope, selection } = this._
 
     if ($scope.ui.model.selectedElement !== null) {
       $scope.ui.model.selectedElement = null
     } else {
-      $scope.ui.model.selection.pitches = []
+      selection.pitches.clear()
     }
   }
 
@@ -283,17 +288,13 @@ class ModelUI {
   }
 
   hasSelectedPitches() {
-    const { $scope } = this._
-    const selection = $scope.ui.model.selection.pitches
-
-    return !isEmpty(selection)
+    const { selection } = this._
+    return !selection.pitches.isEmpty()
   }
 
-  isPitchSelected(pitch) {
-    const { $scope } = this._
-    const selection = $scope.ui.model.selection.pitches
-
-    return includes(pitch, selection)
+  isPitchSelected(pitchIdx) {
+    const { selection } = this._
+    return selection.pitches.isSelected(pitchIdx)
   }
 
   /*
@@ -327,81 +328,90 @@ class ModelUI {
   */
 
   canHalve() {
-    const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { selection, $scope, model } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
-    return !isEmpty(selection) && all(pitch => model.harmonics.canHalve(pitch), selection)
+    return (
+      !selection.pitches.isEmpty() && all(pitch => model.harmonics.canHalve(pitch), selectedPitches)
+    )
   }
 
   halve() {
-    const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { selection, $scope, model } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
-    selection.forEach(pitch => model.harmonics.halve(pitch))
+    selectedPitches.forEach(pitch => model.harmonics.halve(pitch))
   }
 
   canLower() {
-    const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { selection, $scope, model } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
-    return !isEmpty(selection) && all(pitch => model.harmonics.canLower(pitch), selection)
+    return (
+      !selection.pitches.isEmpty() && all(pitch => model.harmonics.canLower(pitch), selectedPitches)
+    )
   }
 
   lower() {
-    const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { selection, $scope, model } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
-    selection.forEach(pitch => model.harmonics.lower(pitch))
+    selectedPitches.forEach(pitch => model.harmonics.lower(pitch))
   }
 
   canRaise() {
-    const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { selection, $scope, model } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
-    return !isEmpty(selection) && all(pitch => model.harmonics.canRaise(pitch), selection)
+    return (
+      !selection.pitches.isEmpty() && all(pitch => model.harmonics.canRaise(pitch), selectedPitches)
+    )
   }
 
   raise() {
-    const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { selection, $scope, model } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
-    selection.forEach(pitch => model.harmonics.raise(pitch))
+    selectedPitches.forEach(pitch => model.harmonics.raise(pitch))
   }
 
   canDouble() {
-    const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { selection, $scope, model } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
-    return !isEmpty(selection) && all(pitch => model.harmonics.canDouble(pitch), selection)
+    return (
+      !selection.pitches.isEmpty() &&
+      all(pitch => model.harmonics.canDouble(pitch), selectedPitches)
+    )
   }
 
   double() {
-    const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { selection, $scope, model } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
-    selection.forEach(pitch => model.harmonics.double(pitch))
+    selectedPitches.forEach(pitch => model.harmonics.double(pitch))
   }
 
   canNormalize() {
-    const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { selection, $scope, model } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
     return (
-      !isEmpty(selection) &&
+      !selection.pitches.isEmpty() &&
       all(pitch => {
         return model.harmonics.canBeNormalized(
           pitch,
           model.harmonics.isStringSet(pitch) ? Model.TYPE.STRING : Model.TYPE.CENT
         )
-      }, selection)
+      }, selectedPitches)
     )
   }
 
   normalize() {
-    const { $scope, model } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { selection, $scope, model } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
-    selection.forEach(pitch => {
+    selectedPitches.forEach(pitch => {
       model.harmonics.normalize(
         pitch,
         model.harmonics.isStringSet(pitch) ? Model.TYPE.STRING : Model.TYPE.CENT
@@ -412,8 +422,10 @@ class ModelUI {
   deleteSelectedPitches() {
     const { $scope, model } = this._
 
-    $scope.ui.model.selection.pitches.forEach(pitch => model.sets.remove(pitch))
-    $scope.ui.model.selection.pitches = []
+    const selection = this._.selection.pitches
+
+    selection.mapTo($scope.sets).forEach(pitch => model.sets.remove(pitch))
+    selection.clear()
   }
 
   canLowerElement(element, step = 1) {
@@ -541,18 +553,18 @@ class ModelUI {
   }
 
   isAllSelectionMuted() {
-    const { $scope } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { selection, $scope } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
 
-    return !isEmpty(selection) && all(propEq('muted', true), selection)
+    return !selection.pitches.isEmpty() && all(propEq('muted', true), selectedPitches)
   }
 
   toggleSelectionMuted() {
-    const { $scope } = this._
-    const selection = $scope.ui.model.selection.pitches
+    const { selection, $scope } = this._
+    const selectedPitches = selection.pitches.mapTo($scope.sets)
     const isAllMuted = this.isAllSelectionMuted()
 
-    selection.forEach(pitch => {
+    selectedPitches.forEach(pitch => {
       pitch.muted = !isAllMuted
     })
   }

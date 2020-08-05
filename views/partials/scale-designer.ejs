@@ -115,11 +115,11 @@
 
   <table id="sets" ng-show="sets.length">
     <tr ng-repeat="set in sets track by $index">
-      <td width="40" class="center smaller" ng-class="{highlighted : mctrl.ui.model.isPitchSelected(set), even : $index % 2 === 1, odd : $index % 2 === 0}">
+      <td width="40" class="center smaller" ng-class="{highlighted : mctrl.ui.model.isPitchSelected($index), even : $index % 2 === 1, odd : $index % 2 === 0}">
         {{$index + 1}}
       </td>
       
-      <td class="ulreset" ng-class="{highlighted : mctrl.ui.model.isPitchSelected(set), even : $index % 2 === 1, odd : $index % 2 === 0}" mobile-click="mctrl.ui.model.toggleSelectedSet(set)">
+      <td class="ulreset" ng-class="{highlighted : mctrl.ui.model.isPitchSelected($index), even : $index % 2 === 1, odd : $index % 2 === 0}" mobile-click="mctrl.ui.model.selectSet($index)">
         {{elementSelected = _element &amp;&amp; _element.id > 0 &amp;&amp; (set.strings.indexOf(_element) !== -1 || set.cents.indexOf(_element) !== -1);''}}
         {{elementSelectedIsString = set.strings.indexOf(_element) !== -1;''}}
         <div class="scale-row">

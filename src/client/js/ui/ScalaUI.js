@@ -25,6 +25,7 @@ import Model from '../Model'
 import Converter from '../Converter'
 import { safeApply, minAll, maxAll, roundToNDecimals } from '../helpers'
 import * as stats from '../stats'
+import EventBus from '../EventBus'
 
 const {
   convert: { fractionToCents, ratioToFraction },
@@ -408,6 +409,7 @@ class ScalaUI {
       try {
         await this.loadSclToEditor(filename)
       } catch (e) {
+        this.generalError(`Failed to load ${filename}`)
         return
       }
     }
@@ -439,6 +441,8 @@ class ScalaUI {
           $scope.$apply()
         })
     }
+
+    EventBus.emit('scale imported')
   }
 
   download() {
@@ -472,12 +476,8 @@ class ScalaUI {
   async loadSclToEditor(filename) {
     const { $scope } = this._
     if (filename !== null && filename !== 'custom') {
-      try {
-        $scope.ui.scala.importTextField = await fetchSCL(filename)
-        removeMessages($scope)
-      } catch (e) {
-        this.generalError(`Failed to load ${filename}`)
-      }
+      $scope.ui.scala.importTextField = await fetchSCL(filename)
+      removeMessages($scope)
       safeApply($scope)
     }
   }
