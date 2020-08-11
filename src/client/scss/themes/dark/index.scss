@@ -14,14 +14,6 @@
 
   .wrapper {
     color: $color2;
-
-    header {
-      box-shadow: 0 -1px 0 0 $separator inset;
-    }
-
-    footer {
-      box-shadow: 0 1px 0 0 $separator inset;
-    }
   }
 
   #loading {
@@ -219,7 +211,7 @@
   }
 
   header [class*="icon"].active {
-    box-shadow: 0 -2px 0 0 $active inset;
+    box-shadow: 0 3px 0 0 $active inset;
   }
 
   hr {

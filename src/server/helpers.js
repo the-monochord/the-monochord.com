@@ -47,9 +47,11 @@ const redirectToHttps = (req, res, next) => {
 }
 
 const getHttpsOptions = async () => {
-  const key = await fs.promises.readFile(path.resolve(__dirname, '../../security/localhost.key'))
-  const cert = await fs.promises.readFile(path.resolve(__dirname, '../../security/localhost.crt'))
-  const ca = await fs.promises.readFile(path.resolve(__dirname, '../../security/rootCA.crt'))
+  const key = await fs.promises.readFile(path.resolve(__dirname, '../../../security/localhost.key'))
+  const cert = await fs.promises.readFile(
+    path.resolve(__dirname, '../../../security/localhost.crt')
+  )
+  const ca = await fs.promises.readFile(path.resolve(__dirname, '../../../security/rootCA.crt'))
 
   return {
     key,
