@@ -140,7 +140,7 @@ i18n.configure(i18nConfig)
 const app = express()
 const FileStore = sessionFileStore(session)
 
-app.set('views', path.resolve(__dirname, '../../views'))
+app.set('views', path.resolve(__dirname, '../../../views'))
 app.set('view engine', 'ejs')
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -156,7 +156,7 @@ app.use(
   session({
     ...sessionConfig,
     store: new FileStore({
-      path: path.resolve(__dirname, '../../sessions'),
+      path: path.resolve(__dirname, '../../../sessions'),
       ttl: sessionConfig.cookie.maxAge / 1000
     })
   })

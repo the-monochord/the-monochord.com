@@ -111,7 +111,7 @@ const minifyHTMLConfig = {
 const i18nConfig = {
   locales: keys(languages),
   defaultLocale: 'en',
-  directory: path.resolve(__dirname, '../../i18n'),
+  directory: path.resolve(__dirname, '../../../i18n'),
   updateFiles: false
 }
 
