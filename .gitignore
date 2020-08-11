@@ -8,3 +8,4 @@ static-cdn/js/**/*
 .DS_Store
 .env
 security
+dist/**/*

@@ -114,7 +114,7 @@ const serverConfig = {
     'server.min': ['core-js/stable', 'regenerator-runtime/runtime', './src/server/index.jsx']
   },
   output: {
-    path: path.resolve(__dirname, 'app'),
+    path: path.resolve(__dirname, 'dist/server'),
     filename: 'js/[name].js'
   },
   plugins: [
