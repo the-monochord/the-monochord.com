@@ -211,7 +211,6 @@ angular
         setTimeout(() => {
           $scope.loadingState = 'loaded'
           safeApply($scope)
-          document.body.classList.add('background-transition')
         }, 2000)
       }
 

@@ -143,10 +143,6 @@
     font-family: $font;
     font-size: 18px;
     min-width: 320px;
-
-    &.background-transition {
-      transition: background-color 1s ease-in;
-    }
   }
 
   .fleft {
