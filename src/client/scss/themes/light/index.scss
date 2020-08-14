@@ -14,6 +14,24 @@
 
   .wrapper {
     color: $color2;
+    $background2: desaturate(darken($background, 2%), 50%);
+
+    header,
+    footer {
+      background: $background2;
+
+      // https://stackoverflow.com/a/14205976/1806628
+      input:-webkit-autofill,
+      input:-webkit-autofill:hover,
+      input:-webkit-autofill:focus,
+      input:-webkit-autofill:active {
+        box-shadow: 0 0 0 50px $background2 inset !important;
+      }
+
+      td {
+        background: $background2;
+      }
+    }
   }
 
   #loading {
