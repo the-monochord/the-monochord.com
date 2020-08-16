@@ -2,7 +2,7 @@
   <table class="full">
     <tr>
       <td width="80">
-        <button type="button" class="icon-cog" ng-class="{active:mctrl.ui.panel.isActive('menu')}" mobile-click="mctrl.ui.panel.toggle('menu')">
+        <button type="button" class="icon-cog" ng-class="{active:mctrl.ui.panel.isActive('settings')}" mobile-click="mctrl.ui.panel.toggle('settings')">
           <span class="label">toggle settings</span>
         </button>
       </td>
@@ -23,7 +23,7 @@
         </button>
       </td>
 
-      <td><input class="right hide-if-screen-is-narrow" type="text" placeholder="Unnamed Scale" ng-model="name" ng-focus="mctrl.ui.scala.exportSessionToEditor()" /></td>
+      <td><input id="scaleName" class="right hide-if-screen-is-narrow" type="text" placeholder="Unnamed Scale" ng-model="name" ng-focus="mctrl.ui.scala.exportSessionToEditor()" /></td>
     </tr>
   </table>
 </header>

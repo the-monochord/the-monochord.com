@@ -716,6 +716,13 @@
       }
     }
   }
+
+  #settings {
+    // TODO: don't override aside, but instead change it
+    padding-right: $sizeA;
+    padding-left: $sizeA;
+    margin: 0;
+  }
 }
 
 @import './themes/dark/index.scss';

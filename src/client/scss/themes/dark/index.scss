@@ -253,4 +253,9 @@
   #scale-designer .actions .separator::before {
     background: $disabled;
   }
+
+  #settings,
+  #settings table td {
+    background: lighten($background, 3%);
+  }
 }

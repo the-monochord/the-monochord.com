@@ -25,7 +25,7 @@ class PanelUI extends EventEmitter {
   toggle(what) {
     const { $scope } = this._
 
-    if (what === 'menu') {
+    if (what === 'settings') {
       $scope.ui.panel.isSidebarVisible = !$scope.ui.panel.isSidebarVisible
     } else {
       if (isCompressedView()) {
@@ -45,7 +45,7 @@ class PanelUI extends EventEmitter {
   isActive(what) {
     const { $scope } = this._
 
-    if (what === 'menu') {
+    if (what === 'settings') {
       return $scope.ui.panel.isSidebarVisible
     } else {
       return $scope.ui.panel.main === what
