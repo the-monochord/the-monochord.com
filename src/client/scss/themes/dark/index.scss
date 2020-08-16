@@ -10,7 +10,9 @@
 
   // ----- build ----- //
 
-  background: $background;
+  body {
+    background: $background;
+  }
 
   .wrapper {
     color: $color2;
@@ -29,10 +31,6 @@
         background: $background;
       }
     }
-  }
-
-  #loading {
-    background: $background;
   }
 
   a.active {

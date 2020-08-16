@@ -3,8 +3,7 @@
   <link rel="stylesheet" href="<%= path.static %>/css/monochord.min.css" />
 </head>
 <body class="theme-<%= theme %>">
-  <div class="wrapper" ng-app="Monochord" ng-controller="MonochordCtrl as mctrl" pointer-press="mctrl.ui.mouseDown()" pointer-release="mctrl.ui.mouseUp()">
-    <%- include('../partials/loading') %>
+  <div class="wrapper loading" ng-app="Monochord" ng-controller="MonochordCtrl as mctrl" pointer-press="mctrl.ui.mouseDown()" pointer-release="mctrl.ui.mouseUp()">
     <%- include('../partials/header') %>
     <%- include('../partials/settings') %>
 

@@ -36,22 +36,6 @@ const languages = {
 }
 const themes = ['dark', 'light']
 const displayModes = ['normal', 'frequency', 'cents', 'pitches', 'alphabetical', 'solfeggio']
-const splashes = [
-  'All pianos are out of tune',
-  'Oh, the joy of hearing a justly tuned chord...',
-  'Fretless instruments are awesome!',
-  `It's not out of tune, but tuned differently`,
-  'Can you sing a harmonic seventh chord?',
-  'Let this app be a haven for your ears',
-  `Once you dive in, there's no turning back!`,
-  'A = 432Hz is baloney!',
-  'Yes, there are also undertones',
-  'All waveforms can be synthesized from sine waves!',
-  'Supports both MIDI IN and MIDI OUT',
-  'Music is just organized noise',
-  'Now with HTTPS',
-  'We miss you, Joakim!'
-]
 
 const defaultSessionData = {
   theme: 'dark',
@@ -140,7 +124,6 @@ export {
   staticPath,
   staticPathSecure,
   languages,
-  splashes,
   defaultSessionData,
   settings,
   sessionConfig,

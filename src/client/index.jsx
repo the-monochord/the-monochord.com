@@ -69,7 +69,6 @@ const updateSetsAndWaveform = async (
 }
 
 const defaultDatas = {
-  loadingState: 'loading',
   baseVolume: 30,
   baseFrequency: 262,
   waveform: 'sine',
@@ -206,14 +205,6 @@ angular
         $scope.ui.panel.main = settings._.mainWindow
       }
 
-      if ($scope.loadingState === 'loading') {
-        $scope.loadingState = 'fadeout'
-        setTimeout(() => {
-          $scope.loadingState = 'loaded'
-          safeApply($scope)
-        }, 2000)
-      }
-
       this.setTheme = theme => {
         if (includes(theme, $scope.themes)) {
           $scope.theme = theme
@@ -224,8 +215,6 @@ angular
           $scope.language = language
         }
       }
-
-      watchForHover(document.querySelector('.wrapper'))
 
       document.body.addEventListener(
         'keydown',
@@ -248,6 +237,10 @@ angular
         },
         true
       )
+
+      const wrapper = document.querySelector('.wrapper')
+      watchForHover(wrapper)
+      wrapper.classList.remove('loading')
     }
   ])
 

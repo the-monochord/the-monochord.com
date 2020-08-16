@@ -12,7 +12,6 @@ import {
   prop,
   dissoc,
   of,
-  length,
   test,
   is,
   toString
@@ -59,9 +58,6 @@ const promiseAll = Promise.all.bind(Promise)
 // wrapInArrayIfNeeded :: any -> Array<any>
 const wrapInArrayIfNeeded = unless(Array.isArray, of)
 
-// pickRandom :: Array<any> -> any
-const pickRandom = values => values[Math.floor(Math.random() * length(values))]
-
 // stringifyIfNeeded :: any -> String
 const stringifyIfNeeded = unless(is(String), toString)
 
@@ -82,7 +78,6 @@ export {
   renameProp,
   promiseAll,
   wrapInArrayIfNeeded,
-  pickRandom,
   stringifyIfNeeded,
   hasFraction
 }

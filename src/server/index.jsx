@@ -35,7 +35,6 @@ import {
   generateMainTitle
 } from '../common/listen'
 
-import { pickRandom } from '../common/helpers'
 import {
   mode,
   host,
@@ -43,7 +42,6 @@ import {
   languages,
   staticPathSecure,
   mainPathSecure,
-  splashes,
   defaultSessionData,
   settings,
   sessionConfig,
@@ -77,8 +75,7 @@ const getDefaultParams = req => {
     },
     seo: {
       brand: 'The Monochord',
-      description: 'The Monochord is an app, which lets you experiment with microtonal scales',
-      splash: i18n.__({ phrase: pickRandom(splashes), locale: session.language })
+      description: 'The Monochord is an app, which lets you experiment with microtonal scales'
     },
     __settings: {
       ...settings,
