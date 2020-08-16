@@ -1,29 +1,13 @@
 <footer>
   <table>
     <tr>
-      <td width="40" id="add-set" ng-hide="!mctrl.ui.panel.isActive('scale-designer')">
+      <td width="40" ng-hide="!mctrl.ui.panel.isActive('scale-designer')">
         <button title="Add a new set" type="button" class="icon-add" mobile-click="mctrl.ui.model.addSet()"></button>
       </td>
-      <td width="110" id="add-set-type" ng-hide="!mctrl.ui.panel.isActive('scale-designer')">
+      <td ng-hide="!mctrl.ui.panel.isActive('scale-designer')">
         <label class="selectwrapper">
           <select ng-options="item.type as item.label for item in mctrl.ui.model.getSetTypes()" ng-model="ui.model.newSetType"></select>
         </label>
-      </td>
-
-      <td width="200" ng-show="!mctrl.ui.panel.isActive('scale-designer')"></td>
-
-      <td class="brand">The Monochord</td>
-
-      <td width="200" class="right">
-        <div style="padding-right:10px">
-          <a ng-hide="ui.tutorial.active" mobile-click="mctrl.ui.tutorial.start()">view tutorial</a>
-
-          <span ng-show="ui.tutorial.active" id="tutorial-counter">( {{ui.tutorial.step + 1}} / {{ui.tutorial.totalSteps}} )</span>
-          <span ng-show="ui.tutorial.active" class="tutorial-separator">|</span>
-          <a ng-show="ui.tutorial.active" id="tutorial-next">next step</a>
-          <span ng-show="ui.tutorial.active" class="tutorial-separator">|</span>
-          <a ng-show="ui.tutorial.active" id="tutorial-exit">exit tutorial</a>
-        </div>
       </td>
     </tr>
   </table>

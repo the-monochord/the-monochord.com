@@ -1,5 +1,5 @@
 <aside id="menu" ng-class="{active:mctrl.ui.panel.isActive('menu')}">
-  <table id="enable-audio" ng-class="{disabled:!mctrl.ui.model.webAudioSupported}">
+  <table ng-class="{disabled:!mctrl.ui.model.webAudioSupported}">
     <tr>
       <td width="140">Audio</td>
       <td>
@@ -7,7 +7,7 @@
       </td>
     </tr>
   </table>
-  <table id="master-volume">
+  <table>
     <tr>
       <td width="140">Master volume</td>
       <td class="vmiddle"><input type="range" min="0" max="100" ng-model="baseVolume" /></td>
@@ -17,7 +17,7 @@
       </td>
     </tr>
   </table>
-  <table id="base-frequency">
+  <table>
     <tr>
       <td width="130">Base frequency</td>
       <td width="40"><button title="Decrease fundamental frequency" type="button" class="icon-remove" hold-click="mctrl.ui.model.decreaseBaseFrequency()" ng-class="{disabled:!mctrl.ui.model.canDecreaseBaseFrequency()}"></button></td>
@@ -35,7 +35,7 @@
       <td width="40"><button title="Randomize fundamental frequency" type="button" class="icon-dice" hold-click="mctrl.ui.model.randomizeBaseFrequency()|10"></button></td>
     </tr>
   </table>
-  <table id="retune-method" ng-class="{disabled:playbackMode === 'piano'}">
+  <table ng-class="{disabled:playbackMode === 'piano'}">
     <tr>
       <td width="140">Retune method</td>
       <td>
@@ -45,7 +45,7 @@
       </td>
     </tr>
   </table>
-  <table id="display-mode">
+  <table>
     <tr>
       <td width="140">Display mode</td>
       <td>
@@ -58,7 +58,7 @@
 
   <hr />
 
-  <table id="waveform" ng-class={disabled:!mctrl.ui.model.isAudioEnabled()}>
+  <table ng-class={disabled:!mctrl.ui.model.isAudioEnabled()}>
     <tr>
       <td colspan="2">Synth options</td>
     </tr>

@@ -341,48 +341,6 @@
     padding: 7px 0;
   }
 
-  #dashboard {
-    h2 {
-      text-align: center;
-      line-height: 60pt;
-      height: 60pt;
-      font-size: 16pt;
-      font-weight: normal;
-    }
-
-    #tiles {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      justify-content: space-around;
-
-      button {
-        width: 150pt;
-        height: 150pt;
-        border-radius: 4pt;
-        margin: 0 10pt 10pt 10pt;
-
-        & > * {
-          display: block;
-        }
-      }
-
-      [class^="icon"],
-      [class^="icon"]::before {
-        font-size: 50pt;
-        line-height: 55pt;
-        height: 55pt;
-        width: 100%;
-      }
-
-      label {
-        font-size: 15pt;
-        line-height: 30pt;
-        height: 30pt;
-      }
-    }
-  }
-
   #scala {
     overflow: hidden;
     padding-right: 0;
@@ -610,65 +568,9 @@
     .hide-if-screen-is-narrow {
       display: none !important;
     }
-
-    footer .brand {
-      font-size: 0 !important;
-    }
   }
 
   // ------------------
-
-  .tutorial {
-    z-index: 50;
-    position: relative;
-  }
-
-  #tutorial-cover {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 10;
-  }
-
-  #tutorial-bubble {
-    position: absolute;
-    z-index: 51;
-    border-radius: 10px;
-    width: calc(100% - 100px);
-    box-sizing: border-box;
-    max-width: 800px;
-    padding: 0 10px;
-    cursor: default;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
-    bottom: 2 * $sizeN;
-
-    h2 {
-      @include center;
-
-      font-size: 1.2em;
-      height: 30px;
-      line-height: 30px;
-      margin: 0;
-    }
-
-    div {
-      padding: 10px 0;
-      font-size: 0.9em;
-
-      @include center;
-    }
-
-    hr {
-      border: 0;
-      height: 1px;
-      width: 50%;
-      margin: 20px auto;
-    }
-  }
 
   #piano {
     box-sizing: border-box;
@@ -765,13 +667,6 @@
 
   footer {
     overflow: hidden;
-
-    .brand {
-      font-size: 18px;
-      font-weight: bold;
-      white-space: nowrap;
-      text-align: center;
-    }
   }
 
   hr {

@@ -145,23 +145,6 @@
 
   // ------------------
 
-  #tutorial-cover {
-    background: $tutorialCoverBg;
-  }
-
-  #tutorial-bubble {
-    background: $tutorialBubbleBg;
-    border: 1px solid $color2;
-
-    .warning {
-      color: $active;
-    }
-
-    hr {
-      background: $color2;
-    }
-  }
-
   #piano {
     div {
       .key {
@@ -225,16 +208,6 @@
     background: $separator;
   }
 
-  #dashboard {
-    h2 {
-      color: $color;
-    }
-
-    #tiles button {
-      box-shadow: 0 0 0 1pt $color;
-    }
-  }
-
   .has-hover {
     button:hover,
     a:hover {
@@ -272,10 +245,6 @@
 
     .labelled-button:hover {
       color: $active;
-    }
-
-    #dashboard #tiles button:hover {
-      box-shadow: 0 0 0 1pt $active;
     }
   }
 

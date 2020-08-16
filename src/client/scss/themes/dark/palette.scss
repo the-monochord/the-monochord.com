@@ -15,9 +15,6 @@ $tableRowBgEven:            #1b1b1b;
 $tableRowBgHighlightedOdd:  #243547;
 $tableRowBgHighlightedEven: #334659;
 $highlightedDisabled:       #434b4c;
-$unsupportedBg:             hsva-to-color(0deg, 100%, 20%, 0.8);
-$tutorialCoverBg:           hsva-to-color(0deg, 0%, 0%, 0.75);
-$tutorialBubbleBg:          hsva-to-color(0deg, 0%, 0%, 0.5);
 
 $pianoButtonActiveBg:       darken($active, 50%);
 $pianoButtonBadBg:          darken($bad, 20%);

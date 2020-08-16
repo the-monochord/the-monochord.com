@@ -58,7 +58,7 @@ const settings = {
     lastElementId: 0,
     lastSetId: 0,
     isSettingsVisible: false,
-    mainWindow: 'dashboard'
+    mainWindow: 'scale-designer'
   },
   themes,
   languages,

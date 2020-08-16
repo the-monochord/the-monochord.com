@@ -3,7 +3,6 @@ import ModelUI from './ui/ModelUI'
 import PanelUI from './ui/PanelUI'
 import PianoUI from './ui/PianoUI'
 import ScalaUI from './ui/ScalaUI'
-import TutorialUI from './ui/TutorialUI'
 import Model from './Model'
 
 class UI {
@@ -16,7 +15,6 @@ class UI {
     this.panel = new PanelUI($scope)
     this.piano = new PianoUI($scope, model)
     this.scala = new ScalaUI($scope, model)
-    this.tutorial = new TutorialUI($scope)
 
     this.panel.on('change', what => {
       if (what === 'scala') {
