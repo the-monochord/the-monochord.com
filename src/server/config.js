@@ -10,7 +10,7 @@ const mode = process.env.NODE_ENV || 'production'
 
 const mainDomain = 'the-monochord.com'
 const staticDomain = `cdn.${mainDomain}`
-const localDomain = getLocalIP()
+const localDomain = getLocalIP() || 'localhost'
 
 const isRunningLocally = isLocal(mainDomain)
 const isRunningOnMac = process.platform === 'darwin'

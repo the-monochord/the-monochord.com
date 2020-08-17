@@ -1,11 +1,13 @@
 @import '../../../../common/hsva.scss';
 
-$background:                #fafdff;
+$background:                #fcfdff;
+$background2:               darken($background, 4%);
+$background3:               darken($background2, 3%);
 $color:                     #313131;
 $color2:                    #262829;
 $disabled:                  #9bb0bb;
 
-$active:                    #32a5f9;
+$active:                    #58b8fc;
 $bad:                       red;
 $good:                      #44e500;
 

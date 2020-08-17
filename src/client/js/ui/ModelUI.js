@@ -39,11 +39,6 @@ const retuneMethods = [
   { method: 'highestToPrevLowest', label: `stack highest to previous' lowest` }
 ]
 
-const setTypes = [
-  { type: Model.TYPE.STRING, label: 'harmonics' },
-  { type: Model.TYPE.CENT, label: 'cents' }
-]
-
 const displayModes = [
   'normal',
   'frequency',
@@ -67,7 +62,6 @@ class ModelUI {
     }
 
     $scope.ui.model = {
-      newSetType: Model.TYPE.STRING,
       selectedElement: null,
       prev: {
         baseVolume: $scope.baseVolume
@@ -77,7 +71,8 @@ class ModelUI {
           lower: 250,
           upper: 600
         }
-      }
+      },
+      isAddSetFabActive: false
     }
 
     EventBus.on('scale imported', () => {
@@ -134,12 +129,12 @@ class ModelUI {
     }
   }
 
-  addSet() {
+  addSet(setType) {
     const { $scope, model } = this._
 
     const set = model.sets.add({ muted: false })
 
-    if ($scope.ui.model.newSetType === Model.TYPE.CENT) {
+    if (setType === 'cent') {
       model.cents.add(set, {
         wave: $scope.waveform,
         multiplier: 0,
@@ -505,10 +500,6 @@ class ModelUI {
     return retuneMethods
   }
 
-  getSetTypes() {
-    return setTypes
-  }
-
   getDisplayModes() {
     return displayModes
   }
@@ -568,6 +559,11 @@ class ModelUI {
     selectedPitches.forEach(pitch => {
       pitch.muted = !isAllMuted
     })
+  }
+
+  toggleAddSetFab() {
+    const { $scope } = this._
+    $scope.ui.model.isAddSetFabActive = !$scope.ui.model.isAddSetFabActive
   }
 }
 

@@ -201,44 +201,22 @@
     }
 
     section,
-    aside {
-      min-height: calc(100% - (#{$sizeN + 30px} * 2 + 1px));
-      margin-left: $sizeA;
-      margin-right: $sizeA;
+    #settings {
+      min-height: calc(100% - #{$sizeN + 30px});
       display: none;
       box-sizing: border-box;
-      padding-left: 8px;
-      padding-top: 10px;
 
       &.active {
         display: block;
       }
     }
 
-    header,
-    footer {
+    header {
       padding-left: $sizeA;
       padding-right: $sizeA;
       font-size: 14px;
       height: $sizeN + 30px;
       line-height: $sizeN + 30px;
-    }
-
-    footer {
-      clear: both;
-
-      table td {
-        height: $sizeN + 30px;
-        line-height: $sizeN + 30px;
-      }
-
-      #add-set button {
-        margin-top: ($sizeN + 30px) / 4;
-      }
-
-      #add-set-type label {
-        margin-top: ($sizeN + 30px) / 3 + 1px;
-      }
     }
   }
 
@@ -248,10 +226,6 @@
     cursor: pointer;
 
     @include unselectable;
-  }
-
-  footer a {
-    display: inline-block;
   }
 
   h2 {
@@ -342,9 +316,6 @@
   }
 
   #scala {
-    overflow: hidden;
-    padding-right: 0;
-
     .full-height {
       padding-bottom: 2000px;
       margin-bottom: -2000px;
@@ -370,7 +341,7 @@
     font-size: 20px;
     background: transparent;
     outline: none;
-    transition: color 0.2s;
+    transition: color 0.2s, box-shadow 0.2s;
     cursor: pointer;
     position: relative;
 
@@ -517,7 +488,14 @@
     }
   }
 
-  aside.active ~ section.active {
+  section,
+  #settings {
+    padding-left: $sizeA + 8;
+    padding-right: $sizeA;
+    margin: 0;
+  }
+
+  #settings.active ~ section.active {
     display: none;
   }
 
@@ -529,17 +507,20 @@
         display: block !important;
       }
 
-      aside {
-        float: right;
+      #settings {
+        float: left;
         width: $sidebarWidth;
-        padding-left: 0;
 
         & ~ section.active {
-          padding-right: 0;
+          padding: 0 $sizeA 0 $sizeA + 8;
         }
 
         &.active ~ section.active {
-          padding-right: calc(#{$sidebarWidth} + #{$sizeA});
+          padding-left: calc(#{$sidebarWidth} + #{$sizeA});
+
+          .fab .main {
+            left: calc(#{$sidebarWidth} + #{$sizeA});
+          }
         }
       }
     }
@@ -549,17 +530,16 @@
     }
   }
 
-  @media (max-width: 600pt) {
+  @media (max-width: 600px) {
     .wrapper {
       section,
-      aside {
-        min-height: calc(100% - (#{$sizeN} * 2 + 30px + 1px));
-        margin-left: $sizeA / 4;
-        margin-right: $sizeA / 4;
+      #settings {
+        min-height: calc(100% - #{$sizeN + 30px});
+        padding-left: $sizeA / 2;
+        padding-right: $sizeA / 2;
       }
 
-      header,
-      footer {
+      header {
         padding-left: $sizeA / 4;
         padding-right: $sizeA / 4;
       }
@@ -665,10 +645,6 @@
     }
   }
 
-  footer {
-    overflow: hidden;
-  }
-
   hr {
     border: 0;
     height: 1px;
@@ -689,39 +665,75 @@
     }
   }
 
-  #scale-designer .actions {
-    float: right;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    font-size: 0;
-
-    li {
+  #scale-designer {
+    .actions {
+      float: right;
       margin: 0;
       padding: 0;
-      display: inline-block;
-      vertical-align: middle;
+      list-style: none;
+      font-size: 0;
 
-      &.separator {
-        padding: 0 3px;
+      li {
+        margin: 0;
+        padding: 0;
+        display: inline-block;
+        vertical-align: middle;
 
-        &::before {
-          content: '';
-          display: inline-block;
-          width: 1px;
-          height: $sizeN / 4 * 3;
-          line-height: $sizeN;
-          vertical-align: top;
+        &.separator {
+          padding: 0 3px;
+
+          &::before {
+            content: '';
+            display: inline-block;
+            width: 1px;
+            height: $sizeN / 4 * 3;
+            line-height: $sizeN;
+            vertical-align: top;
+          }
         }
       }
     }
-  }
 
-  #settings {
-    // TODO: don't override aside, but instead change it
-    padding-right: $sizeA;
-    padding-left: $sizeA;
-    margin: 0;
+    .fab {
+      button {
+        border-radius: 50%;
+        vertical-align: top;
+        overflow: hidden;
+      }
+
+      .main {
+        position: absolute;
+        width: $sizeA * 2;
+        height: $sizeA * 2;
+        left: $sizeA;
+        bottom: $sizeA;
+
+        &::before {
+          height: $sizeA * 2;
+          line-height: $sizeA * 2;
+          width: $sizeA * 2;
+        }
+      }
+
+      .sub {
+        position: absolute;
+        left: $sizeA * 1.25;
+        bottom: $sizeA * 3;
+        width: $sizeA * 1.5;
+
+        button {
+          width: $sizeA * 1.5;
+          height: $sizeA * 1.5;
+          margin-bottom: $sizeA / 4;
+
+          &::before {
+            height: $sizeA * 1.5;
+            line-height: $sizeA * 1.5;
+            width: $sizeA * 1.5;
+          }
+        }
+      }
+    }
   }
 }
 

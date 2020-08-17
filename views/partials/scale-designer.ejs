@@ -108,7 +108,14 @@
 
   <h2>Notes of the scale</h2>
 
-  <!-- <button title="Add a new set" type="button" class="icon-add" mobile-click="mctrl.ui.model.addSet()"></button> -->
+  <div class="fab">
+    <button class="main icon-add" ng-class="{active: ui.model.isAddSetFabActive}" mobile-click="mctrl.ui.model.toggleAddSetFab()"></button>
+
+    <div class="sub" ng-show="ui.model.isAddSetFabActive">
+      <button mobile-click="mctrl.ui.model.addSet('harmonics')">JI</button>
+      <button mobile-click="mctrl.ui.model.addSet('cent')">¢</button>
+    </div>
+  </div>
 
   <table id="sets" ng-show="sets.length">
     <tr ng-repeat="set in sets track by $index">

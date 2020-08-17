@@ -15,18 +15,19 @@
   .wrapper {
     color: $color2;
 
-    header,
-    footer {
+    header {
+      background: $background3;
+
       // https://stackoverflow.com/a/14205976/1806628
       input:-webkit-autofill,
       input:-webkit-autofill:hover,
       input:-webkit-autofill:focus,
       input:-webkit-autofill:active {
-        box-shadow: 0 0 0 50px $background inset !important;
+        box-shadow: 0 0 0 50px $background3 inset !important;
       }
 
       td {
-        background: $background;
+        background: $background3;
       }
     }
   }
@@ -248,12 +249,26 @@
     }
   }
 
-  #scale-designer .actions .separator::before {
-    background: $disabled;
+  #scale-designer {
+    .actions .separator::before {
+      background: $disabled;
+    }
+
+    .fab {
+      button {
+        background: $background;
+        box-shadow: 0 0 0 1px $color inset;
+
+        &:hover,
+        &.active {
+          box-shadow: 0 0 0 1px $active inset;
+        }
+      }
+    }
   }
 
   #settings,
   #settings table td {
-    background: darken($background, 3%);
+    background: $background2;
   }
 }
