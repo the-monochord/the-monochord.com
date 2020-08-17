@@ -250,17 +250,18 @@ class ModelUI {
   }
 
   selectSet(pitchIdx) {
-    const { selection } = this._
+    const { selection, $scope } = this._
 
-    if (selection.pitches.isSelected(pitchIdx)) {
-      selection.pitches.clear()
+    if ($scope.system.shiftPressed && !selection.pitches.isEmpty()) {
+      selection.pitches.addRange(pitchIdx)
     } else {
-      selection.pitches.clear()
-      selection.pitches.add(pitchIdx)
+      if (selection.pitches.isSelected(pitchIdx) && selection.pitches.count() === 1) {
+        selection.pitches.clear()
+      } else {
+        selection.pitches.clear()
+        selection.pitches.add(pitchIdx)
+      }
     }
-
-    // TODO: range selection
-    // const isShiftPressed = $scope.system.shiftPressed
   }
 
   clearSelection() {

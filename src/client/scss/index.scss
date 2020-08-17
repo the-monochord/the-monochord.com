@@ -143,6 +143,8 @@
     font-family: $font;
     font-size: 18px;
     min-width: 320px;
+
+    @include unselectable;
   }
 
   .fleft {
@@ -224,8 +226,6 @@
     color: inherit;
     text-decoration: underline;
     cursor: pointer;
-
-    @include unselectable;
   }
 
   h2 {
@@ -348,8 +348,6 @@
     &[disabled],
     &.disabled {
       cursor: default;
-
-      @include unselectable;
     }
 
     &[autosize] {
@@ -375,8 +373,6 @@
   }
 
   button {
-    @include unselectable;
-
     text-align: center;
     vertical-align: top;
     position: relative;
@@ -521,6 +517,10 @@
           .fab .main {
             left: calc(#{$sidebarWidth} + #{$sizeA});
           }
+
+          .fab .sub {
+            left: calc(#{$sidebarWidth} + #{$sizeA * 1.25});
+          }
         }
       }
     }
@@ -579,7 +579,6 @@
     margin-left: -8px;
     width: calc(100% + 8px);
     padding-top: 10px;
-    user-select: none;
   }
 
   .scale-row {
@@ -651,8 +650,6 @@
   }
 
   .labelled-button {
-    @include unselectable;
-
     height: 40px;
     line-height: 40px;
     display: inline-block;

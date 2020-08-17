@@ -11,8 +11,11 @@ import {
   compose,
   map,
   nth,
-  isEmpty
+  isEmpty,
+  range,
+  length
 } from 'ramda'
+import { minAll, maxAll } from './helpers'
 
 class SelectionManager {
   constructor() {
@@ -37,10 +40,14 @@ class SelectionManager {
     return includes(idx, this._.selectedIndices)
   }
 
+  count() {
+    return length(this._.selectedIndices)
+  }
+
   isAllSelected(...indices) {
     const uniqIndices = uniq(flatten(indices))
 
-    const [selected, unselected] = partition(includes(__, this._.selectedIndices), uniqIndices)
+    const [selected, unselected] = partition(this.isSelected.bind(this), uniqIndices)
 
     return {
       selected,
@@ -55,6 +62,18 @@ class SelectionManager {
       concat(__, this._.selectedIndices),
       flatten
     )(indices)
+  }
+
+  addRange(idx) {
+    if (!this.isSelected(idx)) {
+      const minIdx = minAll(this._.selectedIndices)
+      const maxIdx = maxAll(this._.selectedIndices)
+      if (idx < minIdx) {
+        this.add(range(idx, minIdx))
+      } else {
+        this.add(range(maxIdx + 1, idx + 1))
+      }
+    }
   }
 
   remove(...indices) {
