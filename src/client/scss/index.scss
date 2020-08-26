@@ -547,14 +547,6 @@
 
         &.active ~ section.active {
           padding-left: calc(#{$sidebarWidth} + #{$sizeA});
-
-          .fab .main {
-            left: calc(#{$sidebarWidth} + #{$sizeA});
-          }
-
-          .fab .sub {
-            left: calc(#{$sidebarWidth} + #{$sizeA * 1.25});
-          }
         }
       }
     }
@@ -736,7 +728,7 @@
         position: absolute;
         width: $sizeA * 2;
         height: $sizeA * 2;
-        left: $sizeA;
+        right: $sizeA;
         bottom: $sizeA;
 
         &::before {
@@ -748,7 +740,7 @@
 
       .sub {
         position: absolute;
-        left: $sizeA * 1.25;
+        right: $sizeA * 1.25;
         bottom: $sizeA * 3;
         width: $sizeA * 1.5;
 
