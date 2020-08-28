@@ -540,9 +540,10 @@
       #settings {
         float: left;
         width: $sidebarWidth;
+        padding-top: 20px;
 
         & ~ section.active {
-          padding: 0 $sizeA 0 $sizeA + 8;
+          padding: 20px $sizeA 20px $sizeA + 8;
         }
 
         &.active ~ section.active {
