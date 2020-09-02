@@ -78,14 +78,14 @@ function normalizeMultipliers(multipliers, type, model) {
   if (type === Model.TYPE.CENT) {
     const lowest = minAll(multipliers)
     if (lowest > model._lowestCent) {
-      multipliers = multipliers.map(function(cent) {
+      multipliers = multipliers.map(function (cent) {
         return roundToNDecimals(5, cent - lowest)
       })
     }
   } else {
     const gcd = parseInt(findGreatestCommonDivisorArray(multipliers).toString())
     if (multipliers.length > 1 && gcd > 1) {
-      multipliers = multipliers.map(function(string) {
+      multipliers = multipliers.map(function (string) {
         return string / gcd
       })
     }
@@ -97,7 +97,7 @@ function normalizeMultipliers(multipliers, type, model) {
 function exportSession($scope, model) {
   let prev = 0
   let rows = $scope.sets
-    .map(function(set) {
+    .map(function (set) {
       const type = model.harmonics.isStringSet(set) ? Model.TYPE.STRING : Model.TYPE.CENT
       let multipliers = model.harmonics.getMultipliers(set, type)
 
@@ -447,11 +447,7 @@ class ScalaUI {
 
   download() {
     const { $scope } = this._
-    const name =
-      $scope.name
-        .trim()
-        .toLowerCase()
-        .replace(/\W+/g, '-') || 'unnamed-scale'
+    const name = $scope.name.trim().toLowerCase().replace(/\W+/g, '-') || 'unnamed-scale'
     const content = $scope.ui.scala.importTextField
 
     download(`${name}.scl`, content)

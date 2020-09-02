@@ -92,13 +92,13 @@ angular
   .module('Monochord', ['Directive', ngSanitize, 'ui.codemirror'])
   .config([
     '$compileProvider',
-    function($compileProvider) {
+    function ($compileProvider) {
       $compileProvider.debugInfoEnabled(false)
     }
   ])
   .controller('MonochordCtrl', [
     '$scope',
-    function($scope) {
+    function ($scope) {
       const settings = mergeDeepLeftAll(__settings, defaultDatas)
 
       delete window.__settings

@@ -22,10 +22,10 @@ class UI {
       }
     })
 
-    this.calculateStringFrequency = function(string) {
+    this.calculateStringFrequency = function (string) {
       return model.calculate.frequency(string, Model.TYPE.STRING)
     }
-    this.calculateCentFrequency = function(cent) {
+    this.calculateCentFrequency = function (cent) {
       return model.calculate.frequency(cent, Model.TYPE.CENT)
     }
     this.stringToCent = memoizeWith(
@@ -33,10 +33,10 @@ class UI {
       string => Math.round(model.calculate.cent(string) * 100) / 100
     )
 
-    this.mouseDown = function() {
+    this.mouseDown = function () {
       $scope.ui.mousedown = true
     }
-    this.mouseUp = function() {
+    this.mouseUp = function () {
       $scope.ui.mousedown = false
     }
   }

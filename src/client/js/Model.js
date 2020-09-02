@@ -63,7 +63,7 @@ class Model {
     this._lowestCent = 0
     this._highestCent = Infinity
 
-    this.commit = function() {
+    this.commit = function () {
       $scope.$apply()
     }
 
@@ -270,7 +270,7 @@ class Model {
 
     $scope.$watch(
       'sets',
-      function(newValue, oldValue) {
+      function (newValue, oldValue) {
         if ($scope.playbackMode === AudioModel.MODES.NORMAL) {
           _oldValue = oldValue
           scopeChanged()
@@ -279,7 +279,7 @@ class Model {
       true
     )
 
-    $scope.$watch('baseFrequency', function(newValue) {
+    $scope.$watch('baseFrequency', function (newValue) {
       let dirty = false
 
       $scope.sets.forEach(set => {
@@ -304,14 +304,14 @@ class Model {
       }
     })
 
-    $scope.$watch('baseVolume', function(newValue) {
+    $scope.$watch('baseVolume', function (newValue) {
       audioModel.updateSynth($scope)
       audioModel.setMainVolume(newValue / 100).commit()
     })
 
     $scope.$watch(
       'retune',
-      function(newValue, oldValue) {
+      function (newValue, oldValue) {
         if (newValue.default === oldValue.default) {
           return
         }
@@ -346,7 +346,7 @@ class Model {
       true
     )
 
-    $scope.$watch('playbackMode', function() {
+    $scope.$watch('playbackMode', function () {
       if ($scope.playbackMode === AudioModel.MODES.NORMAL) {
         scopeChanged()
       } else if ($scope.playbackMode === AudioModel.MODES.PIANO) {
@@ -354,7 +354,7 @@ class Model {
       }
     })
 
-    $scope.$watch('waveform', function(value) {
+    $scope.$watch('waveform', function (value) {
       if ($scope.playbackMode === AudioModel.MODES.PIANO) {
         $scope.sets.forEach(set => {
           set.strings.forEach(string => {
@@ -376,7 +376,7 @@ class Model {
 
     $scope.$watch(
       'synth',
-      function() {
+      function () {
         audioModel.updateSynth($scope)
       },
       true

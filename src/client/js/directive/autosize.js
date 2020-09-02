@@ -1,7 +1,7 @@
 import angular from 'angular'
 
 angular.module('AutosizeDirective', []).directive('autosize', [
-  function() {
+  function () {
     function resizeInput() {
       this.style.width = `${this.value.length * 14}px`
     }

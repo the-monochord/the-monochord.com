@@ -57,6 +57,10 @@ class MIDI extends EventEmitter {
     }
   }
 
+  get mode() {
+    return this._.whiteOnly
+  }
+
   set mode(value) {
     this._.whiteOnly = value
     forEach(note => {

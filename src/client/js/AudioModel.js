@@ -99,7 +99,7 @@ const getOctaveRatio = (virtual, setOrder) => {
   return _last / _first
 }
 
-const AudioModel = function(staticPathSecure) {
+const AudioModel = function (staticPathSecure) {
   let ctx = null
   let wave = null
 
@@ -351,7 +351,7 @@ const AudioModel = function(staticPathSecure) {
 
   return {
     getWave: () => wave,
-    enableAudio: function() {
+    enableAudio: function () {
       ctx = new AudioContext()
       wave = new Wave(ctx, staticPathSecure)
 
@@ -373,12 +373,12 @@ const AudioModel = function(staticPathSecure) {
         gateController.enable()
       }
     },
-    setMainVolume: function(volume) {
+    setMainVolume: function (volume) {
       virtual.mainGain = volume
       dirty = true
       return this
     },
-    setString: function(stringId, config) {
+    setString: function (stringId, config) {
       if (virtual.oscillators[stringId]) {
         if (has('frequency', config)) {
           virtual.oscillators[stringId].frequency = config.frequency
@@ -393,10 +393,10 @@ const AudioModel = function(staticPathSecure) {
       dirty = true
       return this
     },
-    setCent: function(centId, config) {
+    setCent: function (centId, config) {
       return this.setString(`c${centId}`, config)
     },
-    setSet: function(setId, config) {
+    setSet: function (setId, config) {
       if (virtual.setGains[setId] && has('muted', config)) {
         virtual.setGains[setId].gain = config.muted ? 0 : 1
       }
@@ -404,7 +404,7 @@ const AudioModel = function(staticPathSecure) {
       return this
     },
 
-    addString: function(stringId, setId, config) {
+    addString: function (stringId, setId, config) {
       virtual.elementGains[stringId] = {
         gain: has('muted', config) && config.muted ? 0 : 1,
         connectTo: `${setId}`
@@ -417,10 +417,10 @@ const AudioModel = function(staticPathSecure) {
       dirty = true
       return this
     },
-    addCent: function(centId, setId, config) {
+    addCent: function (centId, setId, config) {
       return this.addString(`c${centId}`, setId, config)
     },
-    addSet: function(setId, config) {
+    addSet: function (setId, config) {
       virtual.setGains[setId] = {
         gain: has('muted', config) && config.muted ? 0 : 1
       }
@@ -428,34 +428,34 @@ const AudioModel = function(staticPathSecure) {
       return this
     },
 
-    removeString: function(stringId) {
+    removeString: function (stringId) {
       delete virtual.oscillators[stringId]
       delete virtual.elementGains[stringId]
       dirty = true
       return this
     },
-    removeCent: function(centId) {
+    removeCent: function (centId) {
       delete virtual.oscillators[`c${centId}`]
       delete virtual.elementGains[`c${centId}`]
       dirty = true
       return this
     },
-    removeSet: function(setId) {
+    removeSet: function (setId) {
       delete virtual.setGains[setId]
       dirty = true
       return this
     },
 
-    commit: function() {
+    commit: function () {
       commit()
       return this
     },
 
-    updateOrder: function(ids) {
+    updateOrder: function (ids) {
       setOrder = ids
     },
 
-    setMode: function(value) {
+    setMode: function (value) {
       if (value !== mode) {
         mode = value
 
@@ -471,17 +471,17 @@ const AudioModel = function(staticPathSecure) {
         }
       }
     },
-    gateOn: function(rawId) {
+    gateOn: function (rawId) {
       if (ctx !== null) {
         gateController.noteOn(this.getPianoKeyFrequencies(rawId))
       }
     },
-    gateOff: function(rawId) {
+    gateOff: function (rawId) {
       if (ctx !== null) {
         gateController.noteOff(this.getPianoKeyFrequencies(rawId))
       }
     },
-    getGateIds: function() {
+    getGateIds: function () {
       return ifElse(
         isEmpty,
         always([]),

@@ -9,7 +9,7 @@ angular
   .constant('uiCodemirrorConfig', {})
   .directive('uiCodemirror', [
     'uiCodemirrorConfig',
-    function(uiCodemirrorConfig) {
+    function (uiCodemirrorConfig) {
       return {
         restrict: 'EA',
         require: '?ngModel',
@@ -36,7 +36,7 @@ angular
 
         // Allow access to the CodeMirror instance through a broadcasted event
         // eg: $broadcast('CodeMirror', function(cm){...});
-        scope.$on('CodeMirror', function(event, callback) {
+        scope.$on('CodeMirror', function (event, callback) {
           if (angular.isFunction(callback)) {
             callback(codemirror)
           } else {
@@ -58,7 +58,7 @@ angular
           codemirrot = CodeMirror.fromTextArea(iElement[0], codemirrorOptions)
         } else {
           iElement.html('')
-          codemirrot = new CodeMirror(function(cmEl) {
+          codemirrot = new CodeMirror(function (cmEl) {
             iElement.append(cmEl)
           }, codemirrorOptions)
         }
@@ -77,7 +77,7 @@ angular
           if (!angular.isObject(newValues)) {
             return
           }
-          codemirrorDefaultsKeys.forEach(function(key) {
+          codemirrorDefaultsKeys.forEach(function (key) {
             if (has(key, newValues)) {
               if (oldValue && newValues[key] === oldValue[key]) {
                 return
@@ -95,7 +95,7 @@ angular
         }
         // CodeMirror expects a string, so make sure it gets one.
         // This does not change the model.
-        ngModel.$formatters.push(function(value) {
+        ngModel.$formatters.push(function (value) {
           if (angular.isUndefined(value) || value === null) {
             return ''
           } else if (angular.isObject(value) || angular.isArray(value)) {
@@ -106,7 +106,7 @@ angular
 
         // Override the ngModelController $render method, which is what gets called when the model is updated.
         // This takes care of the synchronizing the codeMirror element with the underlying model, in the case that it is changed by something else.
-        ngModel.$render = function() {
+        ngModel.$render = function () {
           // Code mirror expects a string so make sure it gets one
           // Although the formatter have already done this, it can be possible that another formatter returns undefined (for example the required directive)
           const safeViewValue = ngModel.$viewValue || ''
@@ -114,10 +114,10 @@ angular
         }
 
         // Keep the ngModel in sync with changes from CodeMirror
-        codemirror.on('change', function(instance) {
+        codemirror.on('change', function (instance) {
           const newValue = instance.getValue()
           if (newValue !== ngModel.$viewValue) {
-            scope.$evalAsync(function() {
+            scope.$evalAsync(function () {
               ngModel.$setViewValue(newValue)
             })
           }
@@ -129,10 +129,10 @@ angular
           return
         }
 
-        scope.$watch(uiRefreshAttr, function(newVal, oldVal) {
+        scope.$watch(uiRefreshAttr, function (newVal, oldVal) {
           // Skip the initial watch firing
           if (newVal !== oldVal) {
-            setTimeout(function() {
+            setTimeout(function () {
               codeMirror.refresh()
               safeApply(scope)
             })
