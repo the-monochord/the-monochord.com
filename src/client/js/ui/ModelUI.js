@@ -39,16 +39,7 @@ const retuneMethods = [
   { method: 'highestToPrevLowest', label: `stack highest to previous' lowest` }
 ]
 
-const displayModes = [
-  'normal',
-  'frequency',
-  'cents',
-  'pitches',
-  // 'tredeks', // http://www.tonalsoft.com/enc/t/tredek.aspx
-  // 'tinas', // http://www.tonalsoft.com/enc/t/tina.aspx
-  'alphabetical',
-  'solfeggio'
-]
+const displayModes = ['normal', 'frequency', 'cents', 'pitches', 'alphabetical']
 
 class ModelUI {
   constructor($scope, model) {

@@ -21,7 +21,10 @@ class Sets {
       retune: $scope.retune.defaultForNew,
       strings: [],
       cents: [],
-      muted: propOr(false, 'muted', params)
+      muted: propOr(false, 'muted', params),
+      label: {
+        alphabetical: ''
+      }
     }
 
     $scope.sets.push(data)
@@ -46,7 +49,10 @@ class Sets {
       retune: $scope.retune.defaultForNew,
       strings: [],
       cents: [],
-      muted: propOr(false, 'muted', params)
+      muted: propOr(false, 'muted', params),
+      label: {
+        alphabetical: ''
+      }
     }
 
     if (index !== -1) {

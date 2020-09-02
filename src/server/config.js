@@ -35,7 +35,7 @@ const languages = {
   hu: 'Magyar'
 }
 const themes = ['dark', 'light']
-const displayModes = ['normal', 'frequency', 'cents', 'pitches', 'alphabetical', 'solfeggio']
+const displayModes = ['normal', 'frequency', 'cents', 'pitches', 'alphabetical']
 
 const defaultSessionData = {
   theme: 'dark',

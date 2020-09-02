@@ -88,7 +88,7 @@ const getSustainedNoteIDs = compose(keys, filter(propEq('sustained', true)))
 
 const labelCalculator = memoizeWith(
   params => `${params.mode}|${params.rawId}|${params.hash}`,
-  ({ mode, rawId, model }) => {
+  ({ mode, rawId, model, $scope }) => {
     let label = ''
 
     if (mode === 'pitches') {
@@ -129,14 +129,7 @@ const labelCalculator = memoizeWith(
           )(multipliers)
           break
         case 'alphabetical':
-          {
-            const id = parseInt(rawId.replace(prefixPattern, ''))
-            console.log(id)
-            label = 'C#'
-          }
-          break
-        case 'solfeggio':
-          label = 'sol'
+          label = set.label[mode]
           break
       }
     }
@@ -507,7 +500,8 @@ class PianoUI {
       mode: $scope.displayMode,
       hash: $scope.hashOfSet,
       rawId,
-      model
+      model,
+      $scope
     })
   }
 

@@ -109,16 +109,25 @@ const splitSets = compose(
   getSetsArg
 )
 
-const getSets = curry((waveform, args) =>
-  compose(
+const defaultLabels = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B', 'C']
+
+const getSets = curry((waveform, args) => {
+  const sets = splitSets(args)
+
+  return compose(
     defaultTo([]),
     unless(
       isNil,
-      addIndex(map)((set, idx) => parseSet({ waveform, setId: idx + 1 })(set))
-    ),
-    splitSets
-  )(args)
-)
+      addIndex(map)((set, idx) => {
+        const setData = parseSet({ waveform, setId: idx + 1 }, set)
+        setData.label = {
+          alphabetical: sets.length === 13 ? defaultLabels[idx] : ''
+        }
+        return setData
+      })
+    )
+  )(sets)
+})
 
 const getSanitizedSets = compose(unless(isNil, join('-')), splitSets)
 

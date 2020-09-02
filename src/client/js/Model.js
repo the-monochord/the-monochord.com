@@ -39,7 +39,10 @@ $scope.sets = [{
     multiplier : lowestHarmonic..highestHarmonic,
     muted : <bool>
   }, ...],
-  retune : <string>
+  retune : <string>,
+  label: {
+    alphabetical: 'C#'
+  }
 }, ...];
 */
 

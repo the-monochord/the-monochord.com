@@ -496,6 +496,10 @@
           &:not([autosize]) {
             width: $sizeN;
           }
+
+          &.centered {
+            text-align: center;
+          }
         }
       }
 
@@ -503,16 +507,6 @@
         li {
           position: relative;
           padding-left: 10px;
-
-          &.type {
-            cursor: default;
-            font-size: 14px;
-            line-height: $sizeN;
-            vertical-align: top;
-            width: 20px;
-            text-align: center;
-            padding-left: 20px;
-          }
         }
       }
     }

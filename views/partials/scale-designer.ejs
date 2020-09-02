@@ -139,19 +139,19 @@
             <li class="hide-if-screen-is-narrow">
               <button title="Mute/unmute the whole set" type="button" class="set-selector" ng-class="{on : !set.muted}" mobile-click="set.muted = !set.muted;$event.stopPropagation()"></button>
             </li>
-            <li class="type">
-              {{mctrl.ui.model.isStringSet(set) ? 'JI' : '¢'}}
+            <li>
+              <input type="text" ng-model="set.label.alphabetical" class="centered" />
             </li>
             <li ng-repeat="string in set.strings" mobile-click="mctrl.ui.model.toggleSelectedElement(string);$event.stopPropagation()">
               <button title="Edit properties of this harmonic element" type="button" class="element string" autosize ng-class="{active : _element.id === string.id, muted : string.muted}">
-                <span ng-if="displayMode === 'normal' || displayMode === 'pitches' || displayMode === 'alphabetical' || displayMode === 'solfeggio'">{{string.multiplier}}</span>
+                <span ng-if="displayMode === 'normal' || displayMode === 'pitches' || displayMode === 'alphabetical'">{{string.multiplier}}</span>
                 <span class="smaller" ng-if="displayMode === 'frequency'">{{mctrl.ui.calculateStringFrequency(string) | number:2}} Hz</span>
                 <span class="smaller" ng-if="displayMode === 'cents'">{{mctrl.ui.stringToCent(string)}} ¢</span>
               </button>
             </li>
             <li ng-repeat="cent in set.cents" mobile-click="mctrl.ui.model.toggleSelectedElement(cent);$event.stopPropagation()">
               <button title="Edit properties of this cent element" type="button" class="element cent" autosize ng-class="{active : _element.id === cent.id, muted : cent.muted}">
-                <span class="smaller" ng-if="displayMode === 'normal' || displayMode === 'cents' || displayMode === 'pitches' || displayMode === 'alphabetical' || displayMode === 'solfeggio'">{{cent.multiplier}} ¢</span>
+                <span class="smaller" ng-if="displayMode === 'normal' || displayMode === 'cents' || displayMode === 'pitches' || displayMode === 'alphabetical'">{{cent.multiplier}} ¢</span>
                 <span class="smaller" ng-if="displayMode === 'frequency'">{{mctrl.ui.calculateCentFrequency(cent) | number:2}} Hz</span>
               </button>
             </li>
