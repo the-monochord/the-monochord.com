@@ -27,7 +27,7 @@ import {
 
 import Model from '../Model'
 
-import { corrigateNumber } from '../helpers'
+import { roundTo2Decimals } from '../helpers'
 import SelectionManager from '../SelectionManager'
 import EventBus from '../EventBus'
 
@@ -425,7 +425,7 @@ class ModelUI {
 
   lowerElement(element) {
     if (this.canLowerElement(element)) {
-      element.multiplier = corrigateNumber(element.multiplier - 1)
+      element.multiplier = roundTo2Decimals(element.multiplier - 1)
     }
   }
 
@@ -438,7 +438,7 @@ class ModelUI {
 
   raiseElement(element) {
     if (this.canRaiseElement(element)) {
-      element.multiplier = corrigateNumber(element.multiplier + 1)
+      element.multiplier = roundTo2Decimals(element.multiplier + 1)
     }
   }
 

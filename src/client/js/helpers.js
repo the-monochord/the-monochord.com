@@ -22,7 +22,6 @@ import {
 
 const isFunction = fn => typeof fn === 'function'
 const generatePrefix = curry((symbol, amount) => join('', repeat(symbol, amount)))
-const corrigateNumber = number => Math.floor(number * 100) / 100
 
 const angularToNormalJSON = compose(fromPairs, reject(compose(startsWith('$$'), head)), toPairs)
 
@@ -36,7 +35,7 @@ function safeApply(scope, callback = NOP) {
 }
 
 const roundToNDecimals = curry(
-  (decimals, number) => Math.round(number * Math.pow(10, decimals)) / Math.pow(10, decimals)
+  (decimals, number) => Math.round(number * 10 ** decimals) / 10 ** decimals
 )
 const roundTo2Decimals = roundToNDecimals(2)
 
@@ -77,7 +76,6 @@ const isOutsideOfHearingRange = either(lt(__, 16), gt(__, 20000))
 export {
   isFunction,
   generatePrefix,
-  corrigateNumber,
   angularToNormalJSON,
   safeApply,
   roundToNDecimals,

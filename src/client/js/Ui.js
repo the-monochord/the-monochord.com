@@ -4,6 +4,7 @@ import PanelUI from './ui/PanelUI'
 import PianoUI from './ui/PianoUI'
 import ScalaUI from './ui/ScalaUI'
 import Model from './Model'
+import { roundTo2Decimals } from './helpers'
 
 class UI {
   constructor($scope, model) {
@@ -28,9 +29,8 @@ class UI {
     this.calculateCentFrequency = function (cent) {
       return model.calculate.frequency(cent, Model.TYPE.CENT)
     }
-    this.stringToCent = memoizeWith(
-      JSON.stringify,
-      string => Math.round(model.calculate.cent(string) * 100) / 100
+    this.stringToCent = memoizeWith(JSON.stringify, string =>
+      roundTo2Decimals(model.calculate.cent(string))
     )
 
     this.mouseDown = function () {

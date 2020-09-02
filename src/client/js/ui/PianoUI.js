@@ -28,7 +28,7 @@ import {
 
 import monochord from 'monochord-core'
 
-import { safeApply } from '../helpers'
+import { safeApply, roundTo2Decimals } from '../helpers'
 import AudioModel from '../AudioModel'
 import Model from '../Model'
 import { postfix } from '../../../common/helpers'
@@ -101,9 +101,7 @@ const labelCalculator = memoizeWith(
       const isStringSet = model.harmonics.isStringSet(set)
       const type = Model.TYPE[isStringSet ? 'STRING' : 'CENT']
 
-      const multipliers = model.harmonics
-        .getMultipliers(set, type)
-        .map(multiplier => Math.round(multiplier * 100) / 100)
+      const multipliers = model.harmonics.getMultipliers(set, type).map(roundTo2Decimals)
 
       switch (mode) {
         case 'normal':
@@ -123,7 +121,7 @@ const labelCalculator = memoizeWith(
               always(isStringSet),
               map(multiplier => {
                 const string = model.harmonics.findInSet(set, multiplier)
-                return Math.round(model.calculate.cent(string) * 100) / 100
+                return roundTo2Decimals(model.calculate.cent(string))
               })
             )
           )(multipliers)
