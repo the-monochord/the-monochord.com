@@ -52,7 +52,7 @@
 
   @mixin icon-remove { content: '\e813'; }
 
-  @mixin icon-scala { content: '\e814'; }
+  @mixin icon-library { content: '\e814'; }
 
   @mixin icon-sequencer { content: '\e815'; }
 
@@ -110,7 +110,7 @@
   .icon-piano::before { @include icon-piano; }
   .icon-redo::before { @include icon-redo; }
   .icon-remove::before { @include icon-remove; }
-  .icon-scala::before { @include icon-scala; }
+  .icon-library::before { @include icon-library; }
   .icon-speaker-off::before { @include icon-speaker-off; }
   .icon-speaker-on::before { @include icon-speaker-on; }
   .icon-tuning-fork::before { @include icon-tuning-fork; }
@@ -349,7 +349,7 @@
     padding: 7px 0;
   }
 
-  #scala {
+  #library {
     .full-height {
       padding-bottom: 2000px;
       margin-bottom: -2000px;
