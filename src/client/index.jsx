@@ -138,7 +138,7 @@ angular
         const propsToExport = {
           name: escape($scope.name),
           labels: join(
-            ',',
+            '-',
             map(compose(escape, pathOr('', ['label', 'alphabetical'])), $scope.sets)
           )
         }

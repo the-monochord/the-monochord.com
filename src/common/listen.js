@@ -212,11 +212,21 @@ const generateMainTitle = () => 'The Monochord'
 const generateMainUrl = () => '/'
 
 const escape = str => {
-  return compose(replaceAll('/', '[slash]'), replaceAll('#', '[hashtag]'))(str)
+  return compose(
+    replaceAll('-', '[dash]'),
+    replaceAll('\\', '[backslash]'),
+    replaceAll('/', '[slash]'),
+    replaceAll('#', '[hashtag]')
+  )(str)
 }
 
 const unescape = str => {
-  return compose(replaceAll('[slash]', '/'), replaceAll('[hashtag]', '#'))(str)
+  return compose(
+    replaceAll('[dash]', '-'),
+    replaceAll('[backslash]', '\\'),
+    replaceAll('[slash]', '/'),
+    replaceAll('[hashtag]', '#')
+  )(str)
 }
 
 // ---------------------

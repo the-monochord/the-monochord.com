@@ -127,7 +127,7 @@ const getListenParametersFromArgs = args => {
     data.__settings.name = unescape(props.name)
   }
   if (props.labels) {
-    const labels = (props.labels || '').split(',').map(label => unescape(label))
+    const labels = (props.labels || '').split('-').map(label => unescape(label))
     data.__settings.sets.forEach((set, idx) => {
       set.label.alphabetical = labels[idx] || ''
     })
