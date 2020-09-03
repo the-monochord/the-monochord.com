@@ -34,7 +34,9 @@ import {
   converge,
   prepend,
   startsWith,
-  replace
+  replace,
+  fromPairs,
+  toPairs
 } from 'ramda'
 
 import { prefixIfNotEmpty } from './helpers'
@@ -109,8 +111,6 @@ const splitSets = compose(
   getSetsArg
 )
 
-const defaultLabels = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B', 'C']
-
 const getSets = curry((waveform, args) => {
   const sets = splitSets(args)
 
@@ -121,7 +121,7 @@ const getSets = curry((waveform, args) => {
       addIndex(map)((set, idx) => {
         const setData = parseSet({ waveform, setId: idx + 1 }, set)
         setData.label = {
-          alphabetical: sets.length === 13 ? defaultLabels[idx] : ''
+          alphabetical: '' // TODO
         }
         return setData
       })
@@ -163,18 +163,36 @@ const getLastElementId = () => lastElementId
 
 // ---------------------
 
+const argsToKVPairs = args => {
+  return compose(
+    fromPairs,
+    map(split(':')),
+    filter(test(/^[a-zA-Z]+:.+$/)),
+    map(decodeURIComponent)
+  )(args)
+}
+
+const kvPairsToArgs = kvPairs => {
+  return compose(join('/'), map(join(':')), toPairs)(kvPairs)
+}
+
 const getParametersFromArgs = args => {
   const waveform = getWaveform(args)
   const sets = muteDuplicateFundamentals(getSets(waveform, args))
 
+  const props = argsToKVPairs(args)
+
   const sanitizedSets = getSanitizedSets(args)
   const sanitizedWaveform = defaultTo('', getWaveformArg(args))
+  const sanitizedProps = kvPairsToArgs(props)
 
   return {
     waveform,
     sets,
+    props,
     sanitizedSets,
-    sanitizedWaveform
+    sanitizedWaveform,
+    sanitizedProps
   }
 }
 
@@ -182,8 +200,11 @@ const generateListenTitle = sanitizedSets => {
   return `Listen to the sound of ${grammaticallyJoinArrayValues(sanitizedSets)} - The Monochord`
 }
 
-const generateListenUrl = (sanitizedSets, sanitizedWaveform) => {
-  return `/listen/${sanitizedSets}${prefixIfNotEmpty('/', sanitizedWaveform)}`
+const generateListenUrl = (sanitizedSets, sanitizedWaveform, sanitizedProps) => {
+  return `/listen/${sanitizedSets}${prefixIfNotEmpty('/', sanitizedWaveform)}${prefixIfNotEmpty(
+    '/',
+    sanitizedProps
+  )}`
 }
 
 const generateMainTitle = () => 'The Monochord'
@@ -210,6 +231,8 @@ export {
   muteDuplicateFundamentals,
   grammaticallyJoinArrayValues,
   getLastElementId,
+  argsToKVPairs,
+  kvPairsToArgs,
   getParametersFromArgs,
   generateListenTitle,
   generateListenUrl,

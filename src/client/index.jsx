@@ -25,9 +25,10 @@ import {
 } from 'ramda'
 import React from 'react'
 import { hydrate } from 'react-dom'
-import { getParametersFromArgs, getLastElementId } from '../common/listen'
+import { getParametersFromArgs, getLastElementId, kvPairsToArgs } from '../common/listen'
 import App from '../common/components/App'
 import { sleep } from '../common/helpers/function'
+import { prefixIfNotEmpty } from '../common/helpers'
 import AudioModel from './js/AudioModel'
 import Model from './js/Model'
 import UI from './js/Ui'
@@ -47,8 +48,10 @@ const parsePath = compose(
   replace(/\/$/, '')
 )
 
-const scopeToPath = (sets, waveform) =>
-  ifElse(length, generateUrlFromState(waveform), always(''))(sets)
+const scopeToPath = (sets, waveform, props = {}) => {
+  const url = ifElse(length, generateUrlFromState(waveform), always(''))(sets)
+  return `${url}${prefixIfNotEmpty('/', kvPairsToArgs(props))}`
+}
 
 const pathToSEOData = compose(getSEOData, parsePath)
 
@@ -130,7 +133,11 @@ angular
       let seo = pathToSEOData(location.pathname)
 
       const handleChange = () => {
-        const newSeo = pathToSEOData(scopeToPath($scope.sets, $scope.waveform))
+        const newSeo = pathToSEOData(
+          scopeToPath($scope.sets, $scope.waveform, {
+            name: $scope.name
+          })
+        )
         $scope.hashOfSet = JSON.stringify($scope.sets)
 
         if (newSeo.url !== seo.url) {
@@ -140,6 +147,7 @@ angular
       }
       $scope.$watch('sets', handleChange, true)
       $scope.$watch('waveform', handleChange)
+      $scope.$watch('name', handleChange)
 
       const updateSettings = async data => {
         const rawResponse = await fetch('/settings', {

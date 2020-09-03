@@ -85,12 +85,19 @@ const getDefaultParams = req => {
 }
 
 const getListenParametersFromArgs = args => {
-  const { waveform, sets, sanitizedSets, sanitizedWaveform } = getParametersFromArgs(args)
+  const {
+    waveform,
+    sets,
+    props,
+    sanitizedSets,
+    sanitizedWaveform,
+    sanitizedProps
+  } = getParametersFromArgs(args)
 
   return length(sets)
     ? {
         title: generateListenTitle(sanitizedSets),
-        url: generateListenUrl(sanitizedSets, sanitizedWaveform),
+        url: generateListenUrl(sanitizedSets, sanitizedWaveform, sanitizedProps),
         __settings: {
           // baseVolume: sanitizedWaveform === 'square' || sanitizedWaveform === 'sawtooth' ? 20 : 30,
           baseVolume: 30,
@@ -99,6 +106,7 @@ const getListenParametersFromArgs = args => {
           },
           waveform,
           sets,
+          name: props.name || '',
           _: {
             lastElementId: getLastElementId(),
             lastSetId: length(sets),

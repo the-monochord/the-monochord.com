@@ -84,10 +84,10 @@ const getSEOData = args => {
       image: getImage()
     }
   } else {
-    const { sanitizedSets, sanitizedWaveform } = getParametersFromArgs(args)
+    const { sanitizedSets, sanitizedWaveform, sanitizedProps } = getParametersFromArgs(args)
 
     return {
-      url: generateListenUrl(sanitizedSets, sanitizedWaveform),
+      url: generateListenUrl(sanitizedSets, sanitizedWaveform, sanitizedProps),
       title: generateListenTitle(sanitizedSets),
       description: null,
       image: getImage()
