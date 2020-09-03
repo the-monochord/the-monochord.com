@@ -38,6 +38,7 @@ import {
   fromPairs,
   toPairs
 } from 'ramda'
+import { replaceAll } from 'ramda-adjunct'
 
 import { prefixIfNotEmpty } from './helpers'
 
@@ -121,7 +122,7 @@ const getSets = curry((waveform, args) => {
       addIndex(map)((set, idx) => {
         const setData = parseSet({ waveform, setId: idx + 1 }, set)
         setData.label = {
-          alphabetical: '' // TODO
+          alphabetical: idx + 1
         }
         return setData
       })
@@ -178,9 +179,8 @@ const kvPairsToArgs = kvPairs => {
 
 const getParametersFromArgs = args => {
   const waveform = getWaveform(args)
-  const sets = muteDuplicateFundamentals(getSets(waveform, args))
-
   const props = argsToKVPairs(args)
+  const sets = muteDuplicateFundamentals(getSets(waveform, args, props))
 
   const sanitizedSets = getSanitizedSets(args)
   const sanitizedWaveform = defaultTo('', getWaveformArg(args))
@@ -211,6 +211,14 @@ const generateMainTitle = () => 'The Monochord'
 
 const generateMainUrl = () => '/'
 
+const escape = str => {
+  return compose(replaceAll('/', '[slash]'), replaceAll('#', '[hashtag]'))(str)
+}
+
+const unescape = str => {
+  return compose(replaceAll('[slash]', '/'), replaceAll('[hashtag]', '#'))(str)
+}
+
 // ---------------------
 
 export {
@@ -237,5 +245,7 @@ export {
   generateListenTitle,
   generateListenUrl,
   generateMainTitle,
-  generateMainUrl
+  generateMainUrl,
+  escape,
+  unescape
 }

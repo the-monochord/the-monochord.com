@@ -32,7 +32,8 @@ import {
   generateListenTitle,
   generateListenUrl,
   getLastElementId,
-  generateMainTitle
+  generateMainTitle,
+  unescape
 } from '../common/listen'
 
 import {
@@ -94,7 +95,7 @@ const getListenParametersFromArgs = args => {
     sanitizedProps
   } = getParametersFromArgs(args)
 
-  return length(sets)
+  const data = length(sets)
     ? {
         title: generateListenTitle(sanitizedSets),
         url: generateListenUrl(sanitizedSets, sanitizedWaveform, sanitizedProps),
@@ -106,7 +107,7 @@ const getListenParametersFromArgs = args => {
           },
           waveform,
           sets,
-          name: props.name || '',
+          name: '',
           _: {
             lastElementId: getLastElementId(),
             lastSetId: length(sets),
@@ -120,6 +121,19 @@ const getListenParametersFromArgs = args => {
           baseVolume: 30
         }
       }
+
+  // propsToImport
+  if (props.name) {
+    data.__settings.name = unescape(props.name)
+  }
+  if (props.labels) {
+    const labels = (props.labels || '').split(',').map(label => unescape(label))
+    data.__settings.sets.forEach((set, idx) => {
+      set.label.alphabetical = labels[idx] || ''
+    })
+  }
+
+  return data
 }
 
 const renderSEO = (req, config) => {

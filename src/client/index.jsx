@@ -21,11 +21,13 @@ import {
   reduce,
   unapply,
   includes,
-  has
+  has,
+  map,
+  join
 } from 'ramda'
 import React from 'react'
 import { hydrate } from 'react-dom'
-import { getParametersFromArgs, getLastElementId, kvPairsToArgs } from '../common/listen'
+import { getParametersFromArgs, getLastElementId, kvPairsToArgs, escape } from '../common/listen'
 import App from '../common/components/App'
 import { sleep } from '../common/helpers/function'
 import { prefixIfNotEmpty } from '../common/helpers'
@@ -133,11 +135,15 @@ angular
       let seo = pathToSEOData(location.pathname)
 
       const handleChange = () => {
-        const newSeo = pathToSEOData(
-          scopeToPath($scope.sets, $scope.waveform, {
-            name: $scope.name
-          })
-        )
+        const propsToExport = {
+          name: escape($scope.name),
+          labels: join(
+            ',',
+            map(compose(escape, pathOr('', ['label', 'alphabetical'])), $scope.sets)
+          )
+        }
+
+        const newSeo = pathToSEOData(scopeToPath($scope.sets, $scope.waveform, propsToExport))
         $scope.hashOfSet = JSON.stringify($scope.sets)
 
         if (newSeo.url !== seo.url) {
