@@ -9,7 +9,6 @@
   @import './ui-range.scss';
   @import './ui-select.scss';
 
-  // $font: Tahoma, Geneva, sans-serif;
   $font: 'Source Sans Pro', sans-serif;
 
   @mixin icon-add { content: '\e800'; }
@@ -207,6 +206,8 @@
       min-height: calc(100% - #{$sizeN + 30px});
       display: none;
       box-sizing: border-box;
+      padding-top: 20px;
+      padding-bottom: 20px;
 
       &.active {
         display: block;
@@ -560,8 +561,7 @@
       section,
       #settings {
         min-height: calc(100% - #{$sizeN + 30px});
-        padding-left: $sizeA / 2;
-        padding-right: $sizeA / 2;
+        padding: 20px $sizeA / 2;
       }
 
       header {
