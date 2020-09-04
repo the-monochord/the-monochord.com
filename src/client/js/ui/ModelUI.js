@@ -263,6 +263,7 @@ class ModelUI {
     } else {
       selection.pitches.clear()
     }
+    $scope.ui.model.isAddSetFabActive = false
   }
 
   toggleBaseVolume() {

@@ -1,7 +1,7 @@
 {{_element = ui.model.selectedElement;''}}
 
-<section id="scale-designer" ng-class="{active:mctrl.ui.panel.isActive('scale-designer')}" mobile-click="$event.target.id === 'scale-designer' && mctrl.ui.model.clearSelection()">
-  <ul class="actions">
+<section id="scale-designer" ng-class="{active:mctrl.ui.panel.isActive('scale-designer')}" mobile-click="mctrl.ui.model.clearSelection()">
+  <ul class="actions" ng-hide="sets.length === 0">
     <li class="hide-if-screen-is-narrow">
       <button
         title="Halve values of all elements in set"
