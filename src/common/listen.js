@@ -39,7 +39,7 @@ import {
   toPairs,
   toString
 } from 'ramda'
-import { replaceAll } from 'ramda-adjunct'
+import { replaceAll, isString } from 'ramda-adjunct'
 
 import { prefixIfNotEmpty } from './helpers'
 
@@ -218,7 +218,7 @@ const escape = str => {
     replaceAll('\\', '[backslash]'),
     replaceAll('/', '[slash]'),
     replaceAll('#', '[hashtag]'),
-    toString
+    unless(isString, toString)
   )(str)
 }
 
@@ -228,7 +228,7 @@ const unescape = str => {
     replaceAll('[backslash]', '\\'),
     replaceAll('[slash]', '/'),
     replaceAll('[hashtag]', '#'),
-    toString
+    unless(isString, toString)
   )(str)
 }
 
