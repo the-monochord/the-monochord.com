@@ -202,10 +202,11 @@ const generateListenTitle = sanitizedSets => {
 }
 
 const generateListenUrl = (sanitizedSets, sanitizedWaveform, sanitizedProps) => {
-  return `/listen/${sanitizedSets}${prefixIfNotEmpty('/', sanitizedWaveform)}${prefixIfNotEmpty(
-    '/',
-    sanitizedProps
-  )}`
+  return compose(
+    join(''),
+    prepend('/listen'),
+    map(prefixIfNotEmpty('/'))
+  )([sanitizedSets, sanitizedWaveform, sanitizedProps])
 }
 
 const generateMainTitle = () => 'The Monochord'

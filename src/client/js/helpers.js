@@ -73,6 +73,13 @@ const clampToPositiveInt = when(either(complement(Number.isInteger), lt(__, 1)),
 
 const isOutsideOfHearingRange = either(lt(__, 16), gt(__, 20000))
 
+// source: https://stackoverflow.com/a/18915585/1806628
+const skipInitialWatchRun = fn => (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    fn(newValue, oldValue)
+  }
+}
+
 export {
   isFunction,
   generatePrefix,
@@ -87,5 +94,6 @@ export {
   maxAll,
   isOdd,
   clampToPositiveInt,
-  isOutsideOfHearingRange
+  isOutsideOfHearingRange,
+  skipInitialWatchRun
 }

@@ -15,8 +15,6 @@ import {
   reject,
   isEmpty,
   length,
-  ifElse,
-  always,
   pathOr,
   reduce,
   unapply,
@@ -35,7 +33,7 @@ import AudioModel from './js/AudioModel'
 import Model from './js/Model'
 import UI from './js/Ui'
 import { getSEOData, setSEOData, generateUrlFromState } from './js/seo'
-import { safeApply, NOP, watchForHover } from './js/helpers'
+import { safeApply, NOP, watchForHover, skipInitialWatchRun } from './js/helpers'
 import PolySynth from './js/synth/gate-controllers/PolySynth'
 
 import './scss/index.scss'
@@ -51,8 +49,11 @@ const parsePath = compose(
 )
 
 const scopeToPath = (sets, waveform, props = {}) => {
-  const url = ifElse(length, generateUrlFromState(waveform), always(''))(sets)
-  return `${url}${prefixIfNotEmpty('/', kvPairsToArgs(props))}`
+  if (isEmpty(sets)) {
+    return ''
+  } else {
+    return `${generateUrlFromState(waveform, sets)}${prefixIfNotEmpty('/', kvPairsToArgs(props))}`
+  }
 }
 
 const pathToSEOData = compose(getSEOData, parsePath)
@@ -151,9 +152,10 @@ angular
           seo = newSeo
         }
       }
-      $scope.$watch('sets', handleChange, true)
-      $scope.$watch('waveform', handleChange)
-      $scope.$watch('name', handleChange)
+
+      $scope.$watch('sets', skipInitialWatchRun(handleChange), true)
+      $scope.$watch('waveform', skipInitialWatchRun(handleChange))
+      $scope.$watch('name', skipInitialWatchRun(handleChange))
 
       const updateSettings = async data => {
         const rawResponse = await fetch('/settings', {

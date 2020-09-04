@@ -15,7 +15,8 @@ import {
   curry,
   reject,
   equals,
-  append
+  append,
+  isNil
 } from 'ramda'
 
 import {
@@ -76,7 +77,7 @@ const setSEOData = ({ url, title, description, image }, addToHistory = true) => 
 }
 
 const getSEOData = args => {
-  if (isEmpty(args)) {
+  if (isEmpty(args) || isNil(args)) {
     return {
       url: generateMainUrl(),
       title: generateMainTitle(),
