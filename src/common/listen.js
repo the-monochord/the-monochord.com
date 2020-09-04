@@ -36,7 +36,8 @@ import {
   startsWith,
   replace,
   fromPairs,
-  toPairs
+  toPairs,
+  toString
 } from 'ramda'
 import { replaceAll } from 'ramda-adjunct'
 
@@ -216,7 +217,8 @@ const escape = str => {
     replaceAll('-', '[dash]'),
     replaceAll('\\', '[backslash]'),
     replaceAll('/', '[slash]'),
-    replaceAll('#', '[hashtag]')
+    replaceAll('#', '[hashtag]'),
+    toString
   )(str)
 }
 
@@ -225,7 +227,8 @@ const unescape = str => {
     replaceAll('[dash]', '-'),
     replaceAll('[backslash]', '\\'),
     replaceAll('[slash]', '/'),
-    replaceAll('[hashtag]', '#')
+    replaceAll('[hashtag]', '#'),
+    toString
   )(str)
 }
 
