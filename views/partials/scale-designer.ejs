@@ -1,6 +1,10 @@
 {{_element = ui.model.selectedElement;''}}
 
 <section id="scale-designer" ng-class="{active:mctrl.ui.panel.isActive('scale-designer')}" mobile-click="mctrl.ui.model.clearSelection()">
+  <h2 ng-show="sets.length === 0">
+    Start building a scale by adding notes with the + button, or import one from the <button class="link" mobile-click="mctrl.ui.panel.toggle('library')">library</button>
+  </h2>
+
   <ul class="actions" ng-hide="sets.length === 0">
     <li class="hide-if-screen-is-narrow">
       <button
