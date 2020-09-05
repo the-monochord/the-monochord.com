@@ -1,8 +1,8 @@
 @import '../../../../common/hsva.scss';
 
 $background:                #d2e9e9;
-$background2:               darken($background, 7%);
-$background3:               darken($background2, 7%);
+$background2:               darken($background, 6%);
+$background3:               darken($background2, 6%);
 $color:                     #0a2020;
 $color2:                    #1d6363;
 $disabled:                  #657a7a;
@@ -12,10 +12,10 @@ $bad:                       red;
 $good:                      #44e500;
 
 $separator:                 $disabled;
-$tableRowBgOdd:             #abc7c7;
-$tableRowBgEven:            #b6d4d4;
-$tableRowBgHighlightedOdd:  #679999;
-$tableRowBgHighlightedEven: #79b3b3;
+$tableRowBgOdd:             $background2;
+$tableRowBgEven:            $background3;
+$tableRowBgHighlightedOdd:  darken($background2, 20%);
+$tableRowBgHighlightedEven: darken($background3, 20%);
 $highlightedDisabled:       #c2c1c1;
 
 $pianoButtonActiveBg:       rgba($active, 0.3);
