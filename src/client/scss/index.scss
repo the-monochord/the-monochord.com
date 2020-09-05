@@ -265,6 +265,7 @@
 
   button.link {
     text-decoration: underline;
+    width: auto !important;
   }
 
   h2 {
@@ -759,6 +760,22 @@
           }
         }
       }
+    }
+  }
+
+  .overlay-card {
+    width: 100%;
+    margin-top: 30vh;
+    height: auto;
+    line-height: 1.1em;
+    font-weight: normal;
+    text-align: center;
+
+    .link {
+      display: inline-block;
+      height: auto;
+      line-height: inherit;
+      font-size: inherit;
     }
   }
 }
