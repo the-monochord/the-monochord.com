@@ -22,7 +22,8 @@ import {
   indexOf,
   __,
   inc,
-  dec
+  dec,
+  range
 } from 'ramda'
 
 import Model from '../Model'
@@ -68,6 +69,21 @@ class ModelUI {
 
     EventBus.on('scale imported', () => {
       this._.selection.pitches.clear()
+    })
+
+    EventBus.on('escape pressed', () => {
+      this._.selection.pitches.clear()
+    })
+
+    EventBus.on('ctrl + a pressed', () => {
+      if (!isEmpty($scope.sets)) {
+        this._.selection.pitches.clear()
+        this._.selection.pitches.add(range(0, $scope.sets.length))
+      }
+    })
+
+    EventBus.on('delete pressed', () => {
+      this.deleteSelectedPitches()
     })
 
     this.webAudioSupported = model.webAudioSupported

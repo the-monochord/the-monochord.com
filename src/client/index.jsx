@@ -35,6 +35,7 @@ import UI from './js/Ui'
 import { getSEOData, setSEOData, generateUrlFromState } from './js/seo'
 import { safeApply, NOP, watchForHover, skipInitialWatchRun } from './js/helpers'
 import PolySynth from './js/synth/gate-controllers/PolySynth'
+import EventBus from './js/EventBus'
 
 import './scss/index.scss'
 import 'codemirror/lib/codemirror.css'
@@ -110,7 +111,11 @@ angular
       delete window.__settings
 
       $scope.system = {
-        shiftPressed: false
+        shiftPressed: false,
+        escapePressed: false,
+        ctrlPressed: false,
+        deletePressed: false,
+        ctrlAPressed: false
       }
 
       const model = new Model($scope, settings.path.static)
@@ -239,6 +244,33 @@ angular
             $scope.system.shiftPressed = true
             safeApply($scope)
           }
+
+          if (e.key === 'Escape' && $scope.system.escapePressed === false) {
+            $scope.system.escapePressed = true
+            safeApply($scope)
+            EventBus.emit('escape pressed')
+          }
+
+          if (e.key === 'Delete' && $scope.system.deletePressed === false) {
+            $scope.system.deletePressed = true
+            safeApply($scope)
+            EventBus.emit('delete pressed')
+          }
+
+          if ((e.ctrlKey || e.metaKey) && $scope.system.ctrlPressed === false) {
+            $scope.system.ctrlPressed = true
+            safeApply($scope)
+          }
+
+          if (
+            $scope.system.ctrlPressed &&
+            (e.key === 'a' || e.key === 'A') &&
+            $scope.system.ctrlAPressed === false
+          ) {
+            $scope.system.ctrlAPressed = true
+            safeApply($scope)
+            EventBus.emit('ctrl + a pressed')
+          }
         },
         true
       )
@@ -248,6 +280,26 @@ angular
         e => {
           if (e.key === 'Shift' && $scope.system.shiftPressed === true) {
             $scope.system.shiftPressed = false
+            safeApply($scope)
+          }
+
+          if (e.key === 'Escape' && $scope.system.escapePressed === true) {
+            $scope.system.escapePressed = false
+            safeApply($scope)
+          }
+
+          if (e.key === 'Delete' && $scope.system.deletePressed === true) {
+            $scope.system.deletePressed = false
+            safeApply($scope)
+          }
+
+          if ((e.ctrlKey || e.metaKey) && $scope.system.ctrlPressed === true) {
+            $scope.system.ctrlPressed = false
+            safeApply($scope)
+          }
+
+          if ((e.key === 'a' || e.key === 'A') && $scope.system.ctrlAPressed === true) {
+            $scope.system.ctrlAPressed = false
             safeApply($scope)
           }
         },
