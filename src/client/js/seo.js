@@ -16,7 +16,9 @@ import {
   reject,
   equals,
   append,
-  isNil
+  isNil,
+  split,
+  replace
 } from 'ramda'
 
 import {
@@ -130,6 +132,16 @@ const generateUrlFromState = curry((waveform, sets) => {
   return prefix(setsString, prefixIfNotEmpty('/', waveformString))
 })
 
+const parsePath = compose(
+  reject(isEmpty),
+  split('/'),
+  replace(/^listen\//, ''),
+  replace(/^\//, ''),
+  replace(/\/$/, '')
+)
+
+const pathToSEOData = compose(getSEOData, parsePath)
+
 export {
   setUrl,
   setTitle,
@@ -138,5 +150,7 @@ export {
   getImage,
   setSEOData,
   getSEOData,
-  generateUrlFromState
+  generateUrlFromState,
+  parsePath,
+  pathToSEOData
 }

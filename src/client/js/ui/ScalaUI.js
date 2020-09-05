@@ -1,4 +1,4 @@
-/* global fetch */
+/* global fetch, history */
 
 import CodeMirror from 'codemirror'
 import 'codemirror/addon/mode/simple'
@@ -350,7 +350,19 @@ class ScalaUI {
       },
       onEditorLoaded: editor => {
         this._.editorRef = editor
-      }
+      },
+      popular: [
+        {
+          name: '12ED(2/1)',
+          link:
+            '/listen/1:1-100.0-200.0-300.0-400.0-500.0-600.0-700.0-800.0-900.0-1000.0-1100.0-2:1/name:12ED(2[slash]1)/labels:C-C[hashtag]-D-D[hashtag]-E-F-F[hashtag]-G-G[hashtag]-A-A[hashtag]-B-C'
+        },
+        {
+          name: 'Carlos Alpha',
+          link:
+            '/listen/1:1-77.995-155.99-233.985-311.98-389.975-467.970001-545.965001-623.960001-3:2/name:Carlos%20Alpha/labels:---------'
+        }
+      ]
     }
 
     $scope.$watchGroup(['ui.scala.EDx.n', 'ui.scala.EDx.x.first', 'ui.scala.EDx.x.second'], () => {
@@ -499,6 +511,16 @@ class ScalaUI {
       ])
       removeMessages($scope)
     }
+  }
+
+  generateEDx() {
+    this.generateEDxToEditor()
+    this.importSCL()
+  }
+
+  loadURL(url) {
+    history.pushState({}, '', url)
+    EventBus.emit('url changed')
   }
 }
 

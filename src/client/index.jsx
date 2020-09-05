@@ -10,9 +10,6 @@ import {
   toPairs,
   mergeDeepLeft,
   omit,
-  split,
-  replace,
-  reject,
   isEmpty,
   length,
   pathOr,
@@ -21,18 +18,27 @@ import {
   includes,
   has,
   map,
-  join
+  join,
+  range,
+  split,
+  addIndex
 } from 'ramda'
 import React from 'react'
 import { hydrate } from 'react-dom'
-import { getParametersFromArgs, getLastElementId, kvPairsToArgs, escape } from '../common/listen'
+import {
+  getParametersFromArgs,
+  getLastElementId,
+  kvPairsToArgs,
+  escape,
+  unescape
+} from '../common/listen'
 import App from '../common/components/App'
 import { sleep } from '../common/helpers/function'
 import { prefixIfNotEmpty } from '../common/helpers'
 import AudioModel from './js/AudioModel'
 import Model from './js/Model'
 import UI from './js/Ui'
-import { getSEOData, setSEOData, generateUrlFromState } from './js/seo'
+import { pathToSEOData, parsePath, setSEOData, generateUrlFromState } from './js/seo'
 import { safeApply, NOP, watchForHover, skipInitialWatchRun } from './js/helpers'
 import PolySynth from './js/synth/gate-controllers/PolySynth'
 import EventBus from './js/EventBus'
@@ -41,14 +47,6 @@ import './scss/index.scss'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/mbo.css'
 
-const parsePath = compose(
-  reject(isEmpty),
-  split('/'),
-  replace(/^listen\//, ''),
-  replace(/^\//, ''),
-  replace(/\/$/, '')
-)
-
 const scopeToPath = (sets, waveform, props = {}) => {
   if (isEmpty(sets)) {
     return ''
@@ -56,8 +54,6 @@ const scopeToPath = (sets, waveform, props = {}) => {
     return `${generateUrlFromState(waveform, sets)}${prefixIfNotEmpty('/', kvPairsToArgs(props))}`
   }
 }
-
-const pathToSEOData = compose(getSEOData, parsePath)
 
 const updateSetsAndWaveform = async (
   $scope,
@@ -113,7 +109,6 @@ angular
       $scope.system = {
         shiftPressed: false,
         escapePressed: false,
-        ctrlPressed: false,
         deletePressed: false,
         ctrlAPressed: false
       }
@@ -201,21 +196,31 @@ angular
         }
       })
 
-      window.addEventListener('popstate', () => {
+      const onURLChange = () => {
         const newSeo = pathToSEOData(location.pathname)
         if (newSeo.url !== seo.url) {
           setSEOData(newSeo, false)
           seo = newSeo
-          const { sets, waveform } = getParametersFromArgs(parsePath(location.pathname))
+          const { sets, waveform, props } = getParametersFromArgs(parsePath(location.pathname))
+
+          const labels = compose(map(unescape), split('-'))(props.labels)
 
           updateSetsAndWaveform($scope, model, {
             lastSetId: length(sets),
             lastElementId: getLastElementId(),
-            sets,
+            sets: addIndex(map)((set, index) => {
+              set.label.alphabetical = labels[index]
+              return set
+            }, sets),
             waveform
           })
+
+          $scope.name = unescape(props.name)
         }
-      })
+      }
+
+      window.addEventListener('popstate', onURLChange)
+      EventBus.on('url changed', onURLChange)
 
       // --------------
 
@@ -237,6 +242,35 @@ angular
         }
       }
 
+      EventBus.on('escape pressed', () => {
+        if (
+          this.ui.panel.isActive('scale-designer') &&
+          document.activeElement.tagName.toLowerCase() === 'body'
+        ) {
+          this.ui.model._.selection.pitches.clear()
+        }
+      })
+
+      EventBus.on('ctrl + a pressed', () => {
+        if (
+          this.ui.panel.isActive('scale-designer') &&
+          document.activeElement.tagName.toLowerCase() === 'body' &&
+          !isEmpty($scope.sets)
+        ) {
+          this.ui.model._.selection.pitches.clear()
+          this.ui.model._.selection.pitches.add(range(0, $scope.sets.length))
+        }
+      })
+
+      EventBus.on('delete pressed', () => {
+        if (
+          this.ui.panel.isActive('scale-designer') &&
+          document.activeElement.tagName.toLowerCase() === 'body'
+        ) {
+          this.ui.model.deleteSelectedPitches()
+        }
+      })
+
       document.body.addEventListener(
         'keydown',
         e => {
@@ -257,13 +291,8 @@ angular
             EventBus.emit('delete pressed')
           }
 
-          if ((e.ctrlKey || e.metaKey) && $scope.system.ctrlPressed === false) {
-            $scope.system.ctrlPressed = true
-            safeApply($scope)
-          }
-
           if (
-            $scope.system.ctrlPressed &&
+            (e.ctrlKey || e.metaKey) &&
             (e.key === 'a' || e.key === 'A') &&
             $scope.system.ctrlAPressed === false
           ) {
@@ -290,11 +319,6 @@ angular
 
           if (e.key === 'Delete' && $scope.system.deletePressed === true) {
             $scope.system.deletePressed = false
-            safeApply($scope)
-          }
-
-          if ((e.ctrlKey || e.metaKey) && $scope.system.ctrlPressed === true) {
-            $scope.system.ctrlPressed = false
             safeApply($scope)
           }
 

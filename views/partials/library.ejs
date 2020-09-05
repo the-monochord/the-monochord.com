@@ -1,8 +1,8 @@
 <section id="library" ng-class="{active:mctrl.ui.panel.isActive('library')}">
-  <h2>Generate a scale &hellip;</h2>
-
   <div>
-    Divide the ratio (
+    <button type="button" autosize mobile-click="mctrl.ui.scala.generateEDx()">generate</button>
+    |
+    divide the ratio (
       <input autosize class="center" type="number" min="1" step="1" ng-model="ui.scala.EDx.x.first" ng-focus="mctrl.ui.scala.generateEDxToEditor()" />
       :
       <input autosize class="center" type="number" min="1" step="1" ng-model="ui.scala.EDx.x.second" ng-focus="mctrl.ui.scala.generateEDxToEditor()" />
@@ -11,25 +11,17 @@
     equal parts
   </div>
 
-  <p>Click/Tap on any of the inputs or change their values to display the generated scale</p>
-
   <hr />
 
-  <h2>&hellip; or load an existing one by clicking on the scale names below &hellip;</h2>
+  <h2>Popular scales</h2>
 
   <table>
-    <tr ng-repeat="(label, filename) in ui.scala.presetList">
-      <td>
-        <button type="button" autosize mobile-click="mctrl.ui.scala.importSCL(filename)">{{label}}</button>
+    <tr ng-repeat="data in ui.scala.popular track by $index">
+      <td ng-class="{even : $index % 2 === 1, odd : $index % 2 === 0}">
+        <button autosize mobile-click="mctrl.ui.scala.loadURL(data.link)">{{data.name}}</button>
       </td>
     </tr>
   </table>
-
-  <hr />
-
-  <h2>&hellip; or export your current session</h2>
-
-  <p>Click/Tap the scale in the header or change it's value or change any of the notes in the scale editor to generate a scale from the current session</p>
 
   <hr />
   
