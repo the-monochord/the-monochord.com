@@ -63,15 +63,6 @@
       ></button>
     </li>
     <li class="separator"></li>
-    <li>
-      <button
-        title="Add a new element to the set"
-        type="button"
-        class="icon-add"
-        ng-disabled="!mctrl.ui.model.hasSelectedPitches()"
-        mobile-click="mctrl.ui.model.addElement();$event.stopPropagation()"
-      ></button>
-    </li>
     <li id="duplicate-set">
       <button
         title="Duplicate selected set"
@@ -111,9 +102,13 @@
   </ul>
 
   <div class="fab">
-    <button class="main icon-add" ng-class="{active: ui.model.isAddSetFabActive}" mobile-click="mctrl.ui.model.toggleAddSetFab()"></button>
+    <button
+      class="main icon-add"
+      ng-class="{active: ui.model.isAddSetFabActive && !mctrl.ui.model.hasSelectedPitches()}"
+      mobile-click="mctrl.ui.model.hasSelectedPitches() ? mctrl.ui.model.addElement() : mctrl.ui.model.toggleAddSetFab()"
+    ></button>
 
-    <div class="sub" ng-show="ui.model.isAddSetFabActive">
+    <div class="sub" ng-show="ui.model.isAddSetFabActive && !mctrl.ui.model.hasSelectedPitches()">
       <button mobile-click="mctrl.ui.model.addSet('harmonics')">JI</button>
       <button mobile-click="mctrl.ui.model.addSet('cent')">¢</button>
     </div>
