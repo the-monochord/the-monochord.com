@@ -1,17 +1,17 @@
 @import '../../../../common/hsva.scss';
 
-$background:                #d1e0e0;
+$background:                #d2e9e9;
 $background2:               darken($background, 7%);
 $background3:               darken($background2, 7%);
 $color:                     #0a2020;
 $color2:                    #1d6363;
 $disabled:                  #657a7a;
 
-$active:                    #fff9f7;
+$active:                    #976000;
 $bad:                       red;
 $good:                      #44e500;
 
-$separator:                 $active;
+$separator:                 $disabled;
 $tableRowBgOdd:             #abc7c7;
 $tableRowBgEven:            #b6d4d4;
 $tableRowBgHighlightedOdd:  #679999;

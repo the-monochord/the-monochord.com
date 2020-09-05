@@ -168,13 +168,14 @@
 
         &.muted {
           color: $disabled !important;
-          border-color: $disabled;
+          border-color: $disabled !important;
+          background: none !important;
         }
 
         &.highlighted {
-          background: desaturate($pianoButtonActiveBg, 50%);
-          color: desaturate($active, 50%);
-          border-color: desaturate($active, 50%);
+          background: desaturate($pianoButtonActiveBg, 70%);
+          color: desaturate($active, 70%);
+          border-color: desaturate($active, 70%);
         }
       }
     }
@@ -226,10 +227,6 @@
           }
         }
       }
-    }
-
-    #piano div button:hover {
-      color: $color;
     }
 
     .st-btn[data-network] {
