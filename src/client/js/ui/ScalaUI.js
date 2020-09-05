@@ -358,9 +358,29 @@ class ScalaUI {
             '/listen/1:1-100.0-200.0-300.0-400.0-500.0-600.0-700.0-800.0-900.0-1000.0-1100.0-2:1/name:12ED(2[slash]1)/labels:C-C[hashtag]-D-D[hashtag]-E-F-F[hashtag]-G-G[hashtag]-A-A[hashtag]-B-C'
         },
         {
-          name: 'Carlos Alpha',
+          name: '12 JI - 7 limit',
           link:
-            '/listen/1:1-77.995-155.99-233.985-311.98-389.975-467.970001-545.965001-623.960001-3:2/name:Carlos%20Alpha/labels:---------'
+            '/listen/1:1-16:15-9:8-6:5-5:4-4:3-7:5-3:2-8:5-5:3-9:5-15:8-2:1/name:12%20JI%20[dash]%207%20limit/labels:C-C[hashtag]-D-D[hashtag]-E-F-F[hashtag]-G-G[hashtag]-A-A[hashtag]-B-C'
+        },
+        {
+          name: 'Carlos Alpha - 9ED(3/2)',
+          link:
+            '/listen/1:1-77.995-155.99-233.985-311.98-389.975-467.970001-545.965001-623.960001-3:2/name:Carlos%20Alpha%20[dash]%209ED(3[slash]2)/labels:---------'
+        },
+        {
+          name: 'Bohlen-Pierce JI',
+          link:
+            '/listen/1:1-27:25-25:21-9:7-7:5-75:49-5:3-9:5-49:25-15:7-7:3-63:25-25:9-3:1/name:Bohlen[dash]Pierce%20JI/labels:C--D-E-F--G-H--J-A--B-C'
+        },
+        {
+          name: 'Carlos Beta - 11ED(3/2)',
+          link:
+            '/listen/1:1-63.814091-127.628182-191.442273-255.256364-319.070455-382.884546-446.698637-510.512728-574.326819-638.14091-3:2/name:Carlos%20Beta%20[dash]%2011ED(3[slash]2)/labels:-----------'
+        },
+        {
+          name: 'Carlos Gamma - 20ED(3/2)',
+          link:
+            '/listen/1:1-35.09775-70.1955-105.29325-140.391-175.48875-210.5865-245.68425-280.782-315.87975-350.9775-386.07525-421.173001-456.270751-491.368501-526.466251-561.564001-596.661751-631.759501-666.857251-3:2/name:Carlos%20Gamma%20[dash]%2020ED(3[slash]2)/labels:--------------------'
         }
       ]
     }
