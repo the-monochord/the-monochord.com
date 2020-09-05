@@ -58,7 +58,9 @@
 
   table {
     td {
-      background: $tableRowBgOdd;
+      &.odd {
+        background: $tableRowBgOdd;
+      }
 
       &.even {
         background: $tableRowBgEven;

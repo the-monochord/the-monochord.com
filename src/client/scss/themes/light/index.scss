@@ -56,7 +56,9 @@
 
   #sets {
     td {
-      background: $tableRowBgOdd;
+      &.odd {
+        background: $tableRowBgOdd;
+      }
 
       &.even {
         background: $tableRowBgEven;
@@ -170,9 +172,9 @@
         }
 
         &.highlighted {
-          background: desaturate($pianoButtonActiveBg, 70%);
-          color: desaturate($active, 70%);
-          border-color: desaturate($active, 70%);
+          background: desaturate($pianoButtonActiveBg, 50%);
+          color: desaturate($active, 50%);
+          border-color: desaturate($active, 50%);
         }
       }
     }

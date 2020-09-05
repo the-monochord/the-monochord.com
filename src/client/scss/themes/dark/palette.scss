@@ -12,11 +12,11 @@ $bad:                       red;
 $good:                      #1d9c04;
 
 $separator:                 $disabled;
-$tableRowBgOdd:             $background;
-$tableRowBgEven:            #1b1b1b;
+$tableRowBgOdd:             #1b1b1b;
+$tableRowBgEven:            #131010;
 $tableRowBgHighlightedOdd:  #243547;
 $tableRowBgHighlightedEven: #334659;
 $highlightedDisabled:       #434b4c;
 
-$pianoButtonActiveBg:       darken($active, 50%);
-$pianoButtonBadBg:          darken($bad, 20%);
+$pianoButtonActiveBg:       rgba($active, 0.3);
+$pianoButtonBadBg:          rgba($bad, 0.2);
