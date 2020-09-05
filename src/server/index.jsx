@@ -196,24 +196,6 @@ app.get('/', (req, res) => {
   res.render('pages/index', renderSEO(req, getDefaultParams(req)))
 })
 
-app.get('/presetlist', (req, res) => {
-  const {
-    path: { static: staticPathSecure }
-  } = getDefaultParams(req)
-  res.json({
-    'Bohlen-Pierce': `${staticPathSecure}/resources/scala-scales/bohlen-p.scl`,
-    'Carlos Alpha': `${staticPathSecure}/resources/scala-scales/carlos_alpha.scl`,
-    'Carlos Beta': `${staticPathSecure}/resources/scala-scales/carlos_beta.scl`,
-    'Carlos Gamma': `${staticPathSecure}/resources/scala-scales/carlos_gamma.scl`,
-    '7 tone just intonation': `${staticPathSecure}/resources/scala-scales/ji_7.scl`,
-    '11 tone just intonation': `${staticPathSecure}/resources/scala-scales/ji_11.scl`,
-    '12 tone just intonation': `${staticPathSecure}/resources/scala-scales/ji_12.scl`,
-    '13 tone just intonation': `${staticPathSecure}/resources/scala-scales/ji_13.scl`,
-    '17 tone just intonation': `${staticPathSecure}/resources/scala-scales/ji_17.scl`,
-    '19 tone just intonation': `${staticPathSecure}/resources/scala-scales/ji_19.scl`
-  })
-})
-
 app.get('/thank-you', (req, res) => {
   res.render('pages/thank-you', {
     ...getDefaultParams(req),

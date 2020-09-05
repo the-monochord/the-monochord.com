@@ -329,7 +329,6 @@ class ScalaUI {
       success: null,
       error: {},
       importTextField: '',
-      presetList: {},
       EDx: {
         n: 12,
         x: {
@@ -422,16 +421,6 @@ class ScalaUI {
         this.exportSessionToEditor()
       }, 100)
     }
-
-    this.fetchPresetList($scope)
-  }
-
-  async fetchPresetList($scope) {
-    const response = await fetch('/presetlist')
-    const data = await response.json()
-
-    $scope.ui.scala.presetList = data
-    safeApply($scope)
   }
 
   async importSCL(filename = null) {
