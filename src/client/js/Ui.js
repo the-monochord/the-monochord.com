@@ -18,7 +18,7 @@ class UI {
     this.scala = new ScalaUI($scope, model)
 
     this.panel.on('change', what => {
-      if (what === 'scala') {
+      if (what === 'library') {
         this.scala.refreshEditor()
       }
     })
