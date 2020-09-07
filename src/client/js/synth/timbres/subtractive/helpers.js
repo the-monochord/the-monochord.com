@@ -14,7 +14,8 @@ const sound = (voices, { mainVolume, waveform }, wave) => {
   forEach(({ frequency, volumes }) => {
     const osc = wave.createOscillator(waveform, frequency)
     const gain = ctx.createGain()
-    gain.gain.setValueAtTime(0, ctx.currentTime)
+    // gain.gain.setValueAtTime(0, ctx.currentTime)
+    gain.gain.value = 0
     gain.gain.linearRampToValueAtTime(
       volumes[0].volume * mainVolume,
       ctx.currentTime + volumes[0].duration * unitOfDurationInSeconds
@@ -33,7 +34,6 @@ const change = (virtualCtx, ctx) => {
   if (old === null) {
     render(virtualCtx, ctx)
   } else {
-    console.log('diff:', diff(old, virtualCtx))
     patch(diff(old, virtualCtx), ctx)
   }
 

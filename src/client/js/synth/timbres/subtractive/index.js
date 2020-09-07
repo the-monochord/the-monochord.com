@@ -25,7 +25,6 @@ class Subtractive extends AbstractTimbre {
   }
 
   _render() {
-    console.log('re-rendering:', this._.frequencies, this._.settings)
     change(sound(this._.frequencies, this._.settings, this._.wave), this._.ctx)
   }
 
@@ -41,9 +40,13 @@ class Subtractive extends AbstractTimbre {
     this._render()
   }
 
+  updateVoicePool(frequencies) {
+    this.noteOn(frequencies)
+  }
+
   noteOn(frequencies) {
     this._.frequencies = map(
-      compose(assoc('volumes', [{ duration: 1, volume: 1 }]), objOf('frequency'))
+      compose(assoc('volumes', [{ duration: 5, volume: 1 }]), objOf('frequency'))
     )(frequencies)
 
     this._render()

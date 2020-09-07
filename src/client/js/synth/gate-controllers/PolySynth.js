@@ -1,4 +1,5 @@
-import { append, without, head, equals, takeLast, isEmpty, sort } from 'ramda'
+import { isEmpty, sort, compose, reduce, __, takeLast, concat, max, min } from 'ramda'
+import { arrayReplace, arraySizeClamp, arrayRemoveExact, arrayPadRight } from '../../helpers'
 
 const prioritize = (priority, pitches) => {
   if (priority === PolySynth.NOTE_PRIORITY.LAST) {
@@ -16,7 +17,9 @@ class PolySynth {
       timbre,
       pressedNotes: [],
       lastPressedNotes: [],
+      lastPrioritizedNotes: [],
       voices: 2,
+      previousVoicePool: [],
       notePriority: PolySynth.NOTE_PRIORITY.LAST
     }
   }
@@ -24,60 +27,64 @@ class PolySynth {
   update(settings) {
     this._.voices = settings.voices
     this._.notePriority = settings.notePriority
+
+    this._noteDiff()
   }
 
   enable() {
-    // this is a dummy function for now, don't know if anything needs to be done here at the moment
+    // this is a dummy function, don't know if anything needs to be done here at the moment
   }
 
   disable() {
     this._.pressedNotes = []
     this._.lastPressedNotes = []
+    this._.previousVoicePool = []
     this._.timbre.reset()
   }
 
   _noteDiff() {
-    const lastActiveNotes = takeLast(
-      this._.voices,
-      prioritize(this._.notePriority, this._.lastPressedNotes)
-    )
-    const activeNotes = takeLast(
-      this._.voices,
-      prioritize(this._.notePriority, this._.pressedNotes)
-    )
+    const {
+      pressedNotes,
+      voices,
+      notePriority,
+      previousVoicePool,
+      timbre,
+      lastPrioritizedNotes
+    } = this._
 
-    if (!equals(lastActiveNotes, activeNotes)) {
-      const notesToTurnOff = without(activeNotes, lastActiveNotes)
+    const prioritizedNotes = takeLast(voices, prioritize(notePriority, pressedNotes))
 
-      // TODO: does this work with envelope too?
-      if (!isEmpty(notesToTurnOff)) {
-        this._.timbre.noteOff(notesToTurnOff)
-      }
+    const size = max(voices, lastPrioritizedNotes.length)
+    const prev = arrayPadRight(size, null, lastPrioritizedNotes)
+    const next = arrayPadRight(size, null, prioritizedNotes)
 
-      if (!isEmpty(activeNotes)) {
-        this._.timbre.noteOn(activeNotes)
-      }
-    }
+    const notesToAdd = arrayRemoveExact(prev, next)
+    const notesToRemove = arrayRemoveExact(next, prev)
+
+    const voicePool = compose(
+      reduce((arr, x) => arrayReplace(null, x, arr), __, notesToAdd),
+      reduce((arr, x) => arrayReplace(x, null, arr), __, notesToRemove),
+      arraySizeClamp(min(voices, size), max(voices, size), null)
+    )(previousVoicePool)
+
+    // TODO: remove duplicates from voicePool at this point by setting all but one of them to null
+
+    timbre.updateVoicePool(voicePool)
+
+    this._.previousVoicePool = voicePool
+    this._.lastPrioritizedNotes = prioritizedNotes
   }
 
   noteOn(frequencies) {
     if (!isEmpty(frequencies)) {
-      this._.lastPressedNotes = this._.pressedNotes
-      this._.pressedNotes = append(head(frequencies), this._.pressedNotes)
-
-      // console.log('on', this._.lastPressedNotes, this._.pressedNotes)
-
+      this._.pressedNotes = concat(this._.pressedNotes, frequencies)
       this._noteDiff()
     }
   }
 
   noteOff(frequencies) {
     if (!isEmpty(frequencies)) {
-      this._.lastPressedNotes = this._.pressedNotes
-      this._.pressedNotes = without([head(frequencies)], this._.pressedNotes)
-
-      // console.log('off', this._.lastPressedNotes, this._.pressedNotes)
-
+      this._.pressedNotes = arrayRemoveExact(frequencies, this._.pressedNotes)
       this._noteDiff()
     }
   }

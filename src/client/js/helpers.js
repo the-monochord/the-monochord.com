@@ -17,7 +17,13 @@ import {
   complement,
   lt,
   always,
-  gt
+  gt,
+  update,
+  indexOf,
+  concat,
+  slice,
+  remove,
+  reduce
 } from 'ramda'
 
 const isFunction = fn => typeof fn === 'function'
@@ -80,6 +86,54 @@ const skipInitialWatchRun = fn => (newValue, oldValue) => {
   }
 }
 
+const arrayReplace = curry((from, to, array) => {
+  const idx = indexOf(from, array)
+  if (idx === -1) {
+    return array
+  } else {
+    return update(idx, to, array)
+  }
+})
+
+const arrayPadRight = curry((length, value, array) => {
+  if (array.length < length) {
+    return concat(array, repeat(value, length - array.length))
+  } else {
+    return array
+  }
+})
+
+const arraySizeClamp = curry((min, max, fillerValue, array) => {
+  if (array.length > max) {
+    return slice(0, max, array)
+  }
+
+  if (array.length < min) {
+    return arrayPadRight(min, fillerValue, array)
+  }
+
+  return array
+})
+
+const arrayRemoveFirstMatch = curry((value, array) => {
+  const idx = indexOf(value, array)
+  if (idx === -1) {
+    return array
+  } else {
+    return remove(idx, 1, array)
+  }
+})
+
+const arrayRemoveExact = curry((values, array) => {
+  return reduce(
+    (acc, valueToRemove) => {
+      return arrayRemoveFirstMatch(valueToRemove, acc)
+    },
+    array,
+    values
+  )
+})
+
 export {
   isFunction,
   generatePrefix,
@@ -95,5 +149,10 @@ export {
   isOdd,
   clampToPositiveInt,
   isOutsideOfHearingRange,
-  skipInitialWatchRun
+  skipInitialWatchRun,
+  arrayReplace,
+  arrayPadRight,
+  arraySizeClamp,
+  arrayRemoveFirstMatch,
+  arrayRemoveExact
 }
