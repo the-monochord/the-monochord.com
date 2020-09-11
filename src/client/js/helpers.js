@@ -25,13 +25,13 @@ import {
   remove,
   reduce
 } from 'ramda'
+import { noop } from 'ramda-adjunct'
 
-const isFunction = fn => typeof fn === 'function'
 const generatePrefix = curry((symbol, amount) => join('', repeat(symbol, amount)))
 
 const angularToNormalJSON = compose(fromPairs, reject(compose(startsWith('$$'), head)), toPairs)
 
-function safeApply(scope, callback = NOP) {
+function safeApply(scope, callback = noop) {
   const phase = scope.$root.$$phase
   if (phase !== '$apply' && phase !== '$digest') {
     scope.$apply(callback)
@@ -46,8 +46,6 @@ const roundToNDecimals = curry(
 const roundTo2Decimals = roundToNDecimals(2)
 
 const toDashCase = compose(toLower, join('-'), split(/(?=[A-Z])/))
-
-const NOP = () => {}
 
 function watchForHover(container) {
   let lastTouchTime = 0
@@ -135,14 +133,12 @@ const arrayRemoveExact = curry((values, array) => {
 })
 
 export {
-  isFunction,
   generatePrefix,
   angularToNormalJSON,
   safeApply,
   roundToNDecimals,
   roundTo2Decimals,
   toDashCase,
-  NOP,
   watchForHover,
   minAll,
   maxAll,

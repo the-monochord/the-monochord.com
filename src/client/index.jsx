@@ -25,6 +25,7 @@ import {
 } from 'ramda'
 import React from 'react'
 import { hydrate } from 'react-dom'
+import { noop } from 'ramda-adjunct'
 import {
   getParametersFromArgs,
   getLastElementId,
@@ -39,7 +40,7 @@ import AudioModel from './js/AudioModel'
 import Model from './js/Model'
 import UI from './js/Ui'
 import { pathToSEOData, parsePath, setSEOData, generateUrlFromState } from './js/seo'
-import { safeApply, NOP, watchForHover, skipInitialWatchRun } from './js/helpers'
+import { safeApply, watchForHover, skipInitialWatchRun } from './js/helpers'
 import PolySynth from './js/synth/gate-controllers/PolySynth'
 import EventBus from './js/EventBus'
 
@@ -58,7 +59,7 @@ const scopeToPath = (sets, waveform, props = {}) => {
 const updateSetsAndWaveform = async (
   $scope,
   model,
-  { lastSetId, lastElementId, sets, waveform, onUpdate = NOP }
+  { lastSetId, lastElementId, sets, waveform, onUpdate = noop }
 ) => {
   $scope.sets = sets
   $scope.waveform = waveform
@@ -228,6 +229,8 @@ angular
           if (!isNaN(parseFloat(props.baseFrequency))) {
             $scope.baseFrequency = parseFloat(props.baseFrequency)
           }
+
+          safeApply($scope)
         }
       }
 

@@ -12,6 +12,7 @@ import {
   map,
   toString
 } from 'ramda'
+import { noop } from 'ramda-adjunct'
 import Calculate from './model/Calculate'
 import Element from './model/Elements'
 import Harmonics from './model/Harmonics'
@@ -20,8 +21,6 @@ import Retune from './model/Retune'
 import Sets from './model/Sets'
 import AudioModel from './AudioModel'
 import MIDI from './Midi'
-
-import { NOP } from './helpers'
 
 const midi = new MIDI()
 
@@ -51,7 +50,7 @@ class Model {
     const self = this
 
     const audioModel = new AudioModel(staticPathSecure)
-    let _oldValue = NOP
+    let _oldValue = noop
 
     let webAudioEnabled = false
 

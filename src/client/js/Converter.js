@@ -1,5 +1,6 @@
 import { sort, subtract } from 'ramda'
-import { angularToNormalJSON, safeApply, NOP } from './helpers'
+import { noop } from 'ramda-adjunct'
+import { angularToNormalJSON, safeApply } from './helpers'
 
 import { toJson } from './converter/scala'
 
@@ -30,7 +31,7 @@ class Converter {
     return ret
   }
 
-  injectIntoModel(data, callback = NOP) {
+  injectIntoModel(data, callback = noop) {
     const { $scope, model } = this._
 
     $scope.retune.default = 'lowestToBaseFreq'

@@ -1,8 +1,8 @@
 import React from 'react'
-import { NOP } from '../../helpers/function'
+import { noop } from 'ramda-adjunct'
 
 const Button = props => {
-  const { onClick = NOP, children } = props
+  const { onClick = noop, children } = props
   return <button onClick={onClick}>{children}</button>
 }
 

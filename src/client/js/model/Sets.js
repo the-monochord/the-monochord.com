@@ -1,5 +1,5 @@
 import { propOr, insert } from 'ramda'
-import { isFunction } from '../helpers'
+import { isFunction } from 'ramda-adjunct'
 
 class Sets {
   constructor(model, $scope) {
