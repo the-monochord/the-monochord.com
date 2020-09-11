@@ -12,9 +12,9 @@ $track-height: $width;
   background: $background;
 }
 
-@mixin thumb($border-color: $color) {
+@mixin thumb($border-color: $color, $background-color: $background) {
   border: $thumb-border-width solid $border-color;
-  background: $background;
+  background: $background-color;
 }
 
 input[type=range] {
@@ -63,11 +63,11 @@ input[type=range] {
       -webkit-radial-gradient(circle at calc(100% - #{$bumperPos}) 50%, $disabled $bumperSize, transparent 0%);
 
     &::-webkit-slider-thumb {
-      @include thumb($disabled);
+      @include thumb($disabled, $disabled);
     }
 
     &::-moz-range-thumb {
-      @include thumb($disabled);
+      @include thumb($disabled, $disabled);
     }
 
     &::-webkit-slider-runnable-track {
