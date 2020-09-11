@@ -141,7 +141,8 @@ angular
           labels: join(
             '-',
             map(compose(escape, pathOr('', ['label', 'alphabetical'])), $scope.sets)
-          )
+          ),
+          baseFrequency: escape($scope.baseFrequency)
         }
 
         const newSeo = pathToSEOData(scopeToPath($scope.sets, $scope.waveform, propsToExport))
@@ -156,6 +157,7 @@ angular
       $scope.$watch('sets', skipInitialWatchRun(handleChange), true)
       $scope.$watch('waveform', skipInitialWatchRun(handleChange))
       $scope.$watch('name', skipInitialWatchRun(handleChange))
+      $scope.$watch('baseFrequency', skipInitialWatchRun(handleChange))
 
       const updateSettings = async data => {
         const rawResponse = await fetch('/settings', {
@@ -216,6 +218,9 @@ angular
           })
 
           $scope.name = unescape(props.name)
+          if (!isNaN(parseFloat(props.baseFrequency))) {
+            $scope.baseFrequency = parseFloat(props.baseFrequency)
+          }
         }
       }
 

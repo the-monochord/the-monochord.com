@@ -132,6 +132,9 @@ const getListenParametersFromArgs = args => {
       set.label.alphabetical = labels[idx] || ''
     })
   }
+  if (!isNaN(parseFloat(props.baseFrequency))) {
+    data.__settings.baseFrequency = parseFloat(props.baseFrequency)
+  }
 
   return data
 }
