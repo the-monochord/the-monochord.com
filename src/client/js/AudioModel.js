@@ -364,7 +364,8 @@ const AudioModel = function (staticPathSecure) {
       if (mode === AudioModel.MODES.NORMAL) {
         gateController.disable()
         commit()
-        gate.gain.value = 1
+        gate.gain.value = 0
+        gate.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.5)
       } else if (mode === AudioModel.MODES.PIANO) {
         mode = AudioModel.MODES.NORMAL
         commit()
@@ -463,9 +464,11 @@ const AudioModel = function (staticPathSecure) {
           if (mode === AudioModel.MODES.NORMAL) {
             gateController.disable()
             commit()
-            gate.gain.setValueAtTime(1, ctx.currentTime)
+            gate.gain.value = 0
+            gate.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.5)
           } else if (mode === AudioModel.MODES.PIANO) {
-            gate.gain.setValueAtTime(0, ctx.currentTime)
+            gate.gain.value = 1
+            gate.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.15)
             gateController.enable()
           }
         }
