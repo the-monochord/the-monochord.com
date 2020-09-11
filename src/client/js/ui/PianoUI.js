@@ -23,7 +23,8 @@ import {
   propOr,
   has,
   clone,
-  isEmpty
+  isEmpty,
+  any
 } from 'ramda'
 
 import monochord from 'monochord-core'
@@ -196,7 +197,12 @@ class PianoUI {
         const x = {}
 
         forEach(id => {
-          noteTable[id] = { pressed: false, sustained: false, highlighted: false }
+          noteTable[id] = {
+            pressed: false,
+            sustained: false,
+            highlighted: false,
+            frequencies: model.piano.getFrequencies(id).join('-')
+          }
           const prefix = id.match(prefixPattern)[0]
           if (!x[prefix]) {
             x[prefix] = [id]
@@ -346,10 +352,19 @@ class PianoUI {
     }
   }
 
-  isNoteOn(id) {
+  getSameNotes(id) {
     const { noteTable } = this._
 
-    return noteTable[id] && (noteTable[id].pressed || noteTable[id].sustained)
+    return keys(filter(propEq('frequencies', noteTable[id].frequencies), noteTable))
+  }
+
+  isNoteOn(id, checkSameNotes = true) {
+    const { noteTable } = this._
+
+    return (
+      (noteTable[id] && (noteTable[id].pressed || noteTable[id].sustained)) ||
+      (checkSameNotes && any(idToTest => this.isNoteOn(idToTest, false), this.getSameNotes(id)))
+    )
   }
 
   isMuted(id) {
@@ -373,6 +388,9 @@ class PianoUI {
       }
 
       noteTable[id].highlighted = true
+      forEach(id => {
+        noteTable[id].highlighted = true
+      }, this.getSameNotes(id))
     }
   }
 
@@ -385,6 +403,9 @@ class PianoUI {
 
     if (noteTable[id]) {
       noteTable[id].highlighted = false
+      forEach(id => {
+        noteTable[id].highlighted = false
+      }, this.getSameNotes(id))
     }
   }
 
