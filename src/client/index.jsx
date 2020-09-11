@@ -133,6 +133,8 @@ angular
         }
       })
 
+      $scope.changeUrlFeedback = false
+
       let seo = pathToSEOData(location.pathname)
 
       const handleChange = () => {
@@ -149,7 +151,7 @@ angular
         $scope.hashOfSet = JSON.stringify($scope.sets)
 
         if (newSeo.url !== seo.url) {
-          setSEOData(newSeo)
+          setSEOData(newSeo, !$scope.changeUrlFeedback)
           seo = newSeo
         }
       }
@@ -205,26 +207,35 @@ angular
           seo = newSeo
           const { sets, waveform, props } = getParametersFromArgs(parsePath(location.pathname))
 
-          const labels = compose(map(unescape), split('-'))(props.labels)
+          let labels = []
+          if (props.labels) {
+            labels = compose(map(unescape), split('-'))(props.labels)
+          }
 
           updateSetsAndWaveform($scope, model, {
             lastSetId: length(sets),
             lastElementId: getLastElementId(),
             sets: addIndex(map)((set, index) => {
-              set.label.alphabetical = labels[index]
+              set.label.alphabetical = labels[index] || ''
               return set
             }, sets),
             waveform
           })
 
-          $scope.name = unescape(props.name)
+          if (props.name) {
+            $scope.name = unescape(props.name)
+          }
           if (!isNaN(parseFloat(props.baseFrequency))) {
             $scope.baseFrequency = parseFloat(props.baseFrequency)
           }
         }
       }
 
-      window.addEventListener('popstate', onURLChange)
+      window.addEventListener('popstate', () => {
+        $scope.changeUrlFeedback = true
+        onURLChange()
+        $scope.changeUrlFeedback = false
+      })
       EventBus.on('url changed', onURLChange)
 
       // --------------
