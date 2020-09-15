@@ -1,6 +1,6 @@
 <section id="piano" ng-class="{active:mctrl.ui.panel.isActive('piano')}">
   <label class="labelled-button">
-    <button style="margin-right:10px;" type="button" class="set-selector" ng-class="{on: ui.midi.sustainOn}" mobile-click="ui.midi.sustainOn = !ui.midi.sustainOn"></button>
+    <button style="margin-right:10px;" type="button" class="set-selector" ng-class="{on: ui.midi.sustainOn || system.shiftPressed}" mobile-click="ui.midi.sustainOn = !ui.midi.sustainOn"></button>
     Sustain
   </label>
 
