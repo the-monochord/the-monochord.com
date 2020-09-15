@@ -437,8 +437,8 @@ class ScalaUI {
 
     const raw = $scope.ui.scala.importTextField
       .replace(/<div[^>]*>/g, '\n')
-      .replace(/<br>/g, '\n')
-      .replace(/<\/div>/g, '')
+      .replaceAll('<br>', '\n')
+      .replaceAll('</div>', '')
 
     if (raw) {
       converter

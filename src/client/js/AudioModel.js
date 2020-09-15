@@ -499,7 +499,7 @@ const AudioModel = function (staticPathSecure) {
 
       if (prefix !== '') {
         const octaveRatio = getOctaveRatio(virtual, setOrder)
-        const factor = Math.pow(octaveRatio, prefix.length)
+        const factor = octaveRatio ** prefix.length
 
         adjustOctave = (startsWith('+', prefix) ? multiply : divide)(__, factor)
       }
