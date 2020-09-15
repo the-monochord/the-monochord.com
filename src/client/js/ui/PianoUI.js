@@ -246,10 +246,23 @@ class PianoUI {
       midi.mode = newValue
     })
 
-    $scope.$watch('ui.midi.sustainOn', value => {
+    $scope.$watch('system.shiftPressed', pressed => {
       const { notes, noteTable, model } = this._
 
-      if (notes.length && !value) {
+      if (notes.length && !$scope.ui.midi.sustainOn && !pressed) {
+        const ids = getSustainedNoteIDs(noteTable)
+
+        forEach(id => {
+          noteTable[id].sustained = false
+          model.piano.noteOff(id)
+        }, ids)
+      }
+    })
+
+    $scope.$watch('ui.midi.sustainOn', sustained => {
+      const { notes, noteTable, model } = this._
+
+      if (notes.length && !sustained && !$scope.system.shiftPressed) {
         const ids = getSustainedNoteIDs(noteTable)
 
         forEach(id => {
@@ -341,7 +354,7 @@ class PianoUI {
 
     if (noteTable[id] && !this.isMuted(id)) {
       if (this.isNoteOn(id)) {
-        if ($scope.ui.midi.sustainOn) {
+        if ($scope.ui.midi.sustainOn || $scope.system.shiftPressed) {
           noteTable[id].sustained = true
         } else {
           model.piano.noteOff(id)
