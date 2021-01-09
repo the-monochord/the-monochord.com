@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<browserconfig>
-    <msapplication>
-        <tile>
-            <square150x150logo src="http://static.the-monochord.com/img/mstile-150x150.png"/>
-            <TileColor>#33332b</TileColor>
-        </tile>
-    </msapplication>
-</browserconfig>
