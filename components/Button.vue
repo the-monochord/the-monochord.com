@@ -1,13 +1,15 @@
 <template>
-  <div>
-    <NuxtLink to="/scale-designer">Scale Designer</NuxtLink>
-    <NuxtLink to="/library">Library</NuxtLink>
-  </div>
+  <button>{{ label }}</button>
 </template>
 <script>
 import { defineComponent } from '@nuxtjs/composition-api'
 
 export default defineComponent({
+  props: {
+    label: {
+      type: String
+    }
+  },
   setup() {
     return {}
   }

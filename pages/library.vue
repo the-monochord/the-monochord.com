@@ -1,13 +1,15 @@
 <template>
-  <div>
-    <NuxtLink to="/scale-designer">Scale Designer</NuxtLink>
-    <NuxtLink to="/library">Library</NuxtLink>
-  </div>
+  <h2>Library</h2>
 </template>
+
 <script>
 import { defineComponent } from '@nuxtjs/composition-api'
+import Button from '../components/Button.vue'
 
 export default defineComponent({
+  components: {
+    Button
+  },
   setup() {
     return {}
   }
