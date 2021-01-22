@@ -1,25 +1,19 @@
 {
   "name": "the-monochord.com",
   "version": "1.0.0",
-  "description": "This is the backend and frontend code for the microtonal web app [The Monochord](http://the-monochord.com)",
+  "private": true,
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "lint:js": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "lint:style": "stylelint **/*.{vue,css} --ignore-path .gitignore",
+    "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
+    "lint:style": "stylelint \"**/*.{vue,css}\" --ignore-path .gitignore",
     "lint": "npm run lint:js && npm run lint:style"
   },
-  "author": "Lajos Meszaros <m_lajos@hotmail.com>",
-  "license": "GPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/the-monochord/the-monochord.com/issues"
-  },
-  "homepage": "https://github.com/the-monochord/the-monochord.com#readme",
   "lint-staged": {
-    "*.{js,vue}": "eslint --fix",
-    "*.{css,vue}": "stylelint --fix"
+    "*.{js,vue}": "eslint",
+    "*.{css,vue}": "stylelint"
   },
   "husky": {
     "hooks": {
@@ -27,25 +21,27 @@
     }
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.12.2",
-    "@nuxtjs/composition-api": "^0.18.0",
-    "@nuxtjs/pwa": "^3.0.2",
-    "core-js": "^3.6.5",
-    "nuxt": "^2.14.6"
+    "@nuxtjs/axios": "^5.12.5",
+    "core-js": "^3.8.2",
+    "nuxt": "^2.14.12"
   },
   "devDependencies": {
-    "@nuxtjs/eslint-config": "^3.1.0",
-    "@nuxtjs/eslint-module": "^2.0.0",
+    "@nuxtjs/composition-api": "^0.18.1",
+    "@nuxtjs/eslint-config": "^5.0.0",
+    "@nuxtjs/eslint-module": "^3.0.2",
+    "@nuxtjs/pwa": "^3.3.4",
     "@nuxtjs/stylelint-module": "^4.0.0",
+    "@nuxtjs/vuetify": "^1.11.3",
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.10.0",
-    "eslint-config-prettier": "^6.12.0",
-    "eslint-plugin-nuxt": "^1.0.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "husky": "^4.3.0",
-    "lint-staged": "^10.4.0",
-    "prettier": "^2.1.2",
-    "stylelint": "^13.7.2",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-nuxt": "^2.0.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-vue": "^7.4.1",
+    "husky": "^4.3.8",
+    "lint-staged": "^10.5.3",
+    "prettier": "^2.2.1",
+    "stylelint": "^13.8.0",
     "stylelint-config-prettier": "^8.0.2",
     "stylelint-config-standard": "^20.0.0"
   }
