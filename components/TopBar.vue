@@ -1,17 +1,12 @@
 <template>
-  <div>
-    <TopBar />
-    <Settings />
-  </div>
+  <div>toolbar</div>
 </template>
-
 <script>
 import { defineComponent } from '@nuxtjs/composition-api'
 
 export default defineComponent({
-  setup: () => {
+  setup() {
     return {}
-  },
-  head: {}
+  }
 })
 </script>
