@@ -9,7 +9,8 @@
     "generate": "nuxt generate",
     "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
     "lint:style": "stylelint \"**/*.{vue,css}\" --ignore-path .gitignore",
-    "lint": "npm run lint:js && npm run lint:style"
+    "lint": "npm run lint:js && npm run lint:style",
+    "ssh": "ssh -i '~/.ssh/the-monochord-ec2-key.pem' ec2-user@ec2-18-224-93-16.us-east-2.compute.amazonaws.com"
   },
   "lint-staged": {
     "*.{js,vue}": "eslint",

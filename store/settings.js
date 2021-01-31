@@ -1,7 +1,8 @@
 export const state = () => {
   return {
     volume: 100,
-    muted: false
+    muted: false,
+    darkMode: true
   }
 }
 
@@ -15,5 +16,11 @@ export const mutations = {
   setVolume(state, payload) {
     const { volume } = payload
     state.volume = volume
+  },
+  turnDarkModeOn(state) {
+    state.darkMode = true
+  },
+  turnDarkModeOff(state) {
+    state.darkMode = false
   }
 }
