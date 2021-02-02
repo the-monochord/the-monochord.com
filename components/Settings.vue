@@ -65,7 +65,6 @@ export default defineComponent({
       }
     }
 
-    // ennél hamarabb nem tudjuk beállítani? ezzel villan a light mode
     onMounted(() => {
       $vuetify.theme.dark = state.darkMode
     })

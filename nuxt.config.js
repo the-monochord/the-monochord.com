@@ -19,7 +19,7 @@ export default {
 
   css: [],
 
-  plugins: [],
+  plugins: [{ src: '~/plugins/vuetify.js', mode: 'server' }],
 
   components: true,
 
