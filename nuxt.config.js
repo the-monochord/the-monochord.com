@@ -39,12 +39,15 @@ export default {
     config: {
       apiKey: 'AIzaSyBxBWK6rty_hSs7pAkHp0CnqQ0HjiyWM_M',
       authDomain: 'the-monochord.firebaseapp.com',
+      databaseURL: 'https://the-monochord-default-rtdb.europe-west1.firebasedatabase.app',
       projectId: 'the-monochord',
       storageBucket: 'the-monochord.appspot.com',
       messagingSenderId: '213687865094',
       appId: '1:213687865094:web:c40991d13347f56667d887'
     },
-    services: {}
+    services: {
+      database: true
+    }
   },
 
   vuetify: {
