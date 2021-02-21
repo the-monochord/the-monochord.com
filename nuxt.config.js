@@ -46,6 +46,14 @@ export default {
       appId: '1:213687865094:web:c40991d13347f56667d887'
     },
     services: {
+      auth: {
+        persistence: 'local',
+        ssr: true,
+        initialize: {
+          onAuthStateChangedAction: 'user/onAuthStateChanged',
+          subscribeManually: false
+        }
+      },
       database: true
     }
   },
@@ -70,5 +78,12 @@ export default {
     }
   },
 
-  build: {}
+  build: {},
+
+  pwa: {
+    workbox: {
+      importScripts: ['/firebase-auth-sw.js'],
+      dev: process.env.NODE_ENV === 'development'
+    }
+  }
 }

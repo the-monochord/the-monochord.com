@@ -2,21 +2,31 @@
   <div>
     <TopBar />
     <Settings />
-    <button @click="incCntr">{{ state.counter }}</button>
+
+    <template v-if="state.isLoggedIn">
+      <EditProfile />
+      <Logout />
+    </template>
+    <template v-else>
+      <Login />
+    </template>
+
+    <!-- <button @click="incCntr">{{ state.counter }}</button> -->
   </div>
 </template>
 
 <script>
-import { defineComponent, useContext, reactive } from '@nuxtjs/composition-api'
+import { defineComponent, useContext, reactive, computed } from '@nuxtjs/composition-api'
 
 export default defineComponent({
   setup: () => {
-    const { $fire } = useContext()
+    const { store /*, $fire */ } = useContext()
 
     const state = reactive({
-      counter: null
+      isLoggedIn: computed(() => store.state.user.isLoggedIn)
     })
 
+    /*
     const cntr = $fire.database.ref('counter')
     cntr.on('value', (snapshot) => {
       state.counter = snapshot.val()
@@ -29,6 +39,8 @@ export default defineComponent({
     }
 
     return { state, incCntr }
+    */
+    return { state }
   },
   head: {}
 })
