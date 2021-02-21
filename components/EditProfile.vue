@@ -9,7 +9,14 @@
 </template>
 
 <script>
-import { computed, defineComponent, reactive, useContext } from '@nuxtjs/composition-api'
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  onServerPrefetch,
+  reactive,
+  useContext
+} from '@nuxtjs/composition-api'
 
 export default defineComponent({
   setup() {
@@ -20,7 +27,13 @@ export default defineComponent({
       userData: computed(() => store.state.user)
     })
 
-    state.displayName = state.userData.displayName
+    onServerPrefetch(() => {
+      state.displayName = state.userData.displayName
+    })
+
+    onMounted(() => {
+      state.displayName = state.userData.displayName
+    })
 
     const updateProfile = async () => {
       try {

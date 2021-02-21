@@ -1,3 +1,9 @@
+import { vuexfireMutations } from 'vuexfire'
+
+export const mutations = {
+  ...vuexfireMutations
+}
+
 export const actions = {
   nuxtServerInit({ dispatch }, { res }) {
     if (res && res.locals && res.locals.user) {
