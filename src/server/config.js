@@ -10,7 +10,7 @@ const isRunningOnMac = process.platform === 'darwin'
 
 const mode = process.env.NODE_ENV || 'production'
 
-const port = mode === 'development' ? 3000 : 80
+const port = mode === 'development' ? 3000 : 8080
 const host = '0.0.0.0'
 const portSecure = mode === 'development' ? 3443 : 443
 const hostSecure = host
